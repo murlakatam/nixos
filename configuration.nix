@@ -11,6 +11,7 @@
     ./hardware-configuration.nix
   ];
 
+  #latest kernel
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
   # Bootloader.
