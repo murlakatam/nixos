@@ -11,6 +11,8 @@
     ./hardware-configuration.nix
   ];
 
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -60,7 +62,7 @@
   console.keyMap = "by";
 
   # Enable CUPS to print documents.
-  services.printing.enable = true;
+  services.printing.enable = false;
 
   # Enable sound with pipewire.
   hardware.pulseaudio.enable = false;
@@ -97,7 +99,7 @@
 
   # Install firefox.
   programs.firefox.enable = true;
-
+  # Install direnv
   programs.direnv.enable = true;
 
   # allow unfree packages
