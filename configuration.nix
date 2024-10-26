@@ -12,6 +12,7 @@
   ];
 
   #latest kernel
+  #boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
   # opengl
@@ -93,6 +94,13 @@
     amdgpuBusId = "PCI:65:0:0";
     nvidiaBusId = "PCI:64:0:0";
   };
+
+  # Bluetooth
+  #hardware.bluetooth = {
+  #  enable = true;
+  #  powerOnBoot = true;
+  #};
+
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -188,9 +196,11 @@
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  
-
-  environment.systemPackages = with pkgs; [
+  environment.systemPackages =
+  let
+    nvidiaEnabled = lib.elem "nvidia" config.services.xserver.videoDrivers;
+  in
+  (with pkgs; [
     #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     #  wget
     git
@@ -200,6 +210,11 @@
     pciutils
     inxi
     lshw
+  ])
+  ++ lib.optionals nvidiaEnabled [
+    (config.hardware.nvidia.package.settings.overrideAttrs (oldAttrs: {
+      buildInputs = oldAttrs.buildInputs ++ [ pkgs.vulkan-headers ];
+    }))
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
