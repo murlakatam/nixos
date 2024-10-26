@@ -13,8 +13,15 @@
   ];
 
   #latest kernel
-  #boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
+  #boot.kernelPackages = pkgs.linuxPackages_latest;
+  
+  #disable amd gpu
+  #boot.blacklistedKernelModules = [ "amdgpu" ];
+
+  boot.kernelParams = [ "amd_iommu=on" ];
+  boot.initrd.kernelModules = ["nvidia" "nvidia_drm" "nvidia_uvm" "nvidia_modeset" ];
+  
 
   # opengl
   hardware.opengl = {
@@ -32,16 +39,18 @@
     #experimental fine grained power management. only works on newer nvidia cards
     powerManagement.finegrained = false;
     #buggy open source kernel module (do not mix up with nouveau third party
-    open = false;
+    open = true;
     #enable nvidia settings menu
     # vulkan header; re-enable whenever
     # 0384602eac8bc57add3227688ec242667df3ffe3the hits stable.
     nvidiaSettings = true;
     #package selection
-    package = let
-      # https://forums.developer.nvidia.com/t/linux-6-7-3-545-29-06-550-40-07-error-modpost-gpl-incompatible-module-nvidia-ko-uses-gpl-only-symbol-rcu-read-lock/280908/19
-      rcu_patch = pkgs.fetchpatch {
-        url = "https://github.com/gentoo/gentoo/raw/c64caf53/x11-drivers/nvidia-drivers/files/nvidia-drivers-470.223.02-gpl-pfn_valid.patch";
+    package = let #config.boot.kernelPackages.nvidiaPackages.latest; #let
+
+    
+    # https://forums.developer.nvidia.com/t/linux-6-7-3-545-29-06-550-40-07-error-modpost-gpl-incompatible-module-nvidia-ko-uses-gpl-only-symbol-rcu-read-lock/280908/19
+     rcu_patch = pkgs.fetchpatch {
+       url = "https://github.com/gentoo/gentoo/raw/c64caf53/x11-drivers/nvidia-drivers/files/nvidia-drivers-470.223.02-gpl-pfn_valid.patch";
         hash = "sha256-eZiQQp2S/asE7MfGvfe6dA/kdCvek9SYa/FFGp24dVg=";
       };
       # Fixes framebuffer with linux 6.11
@@ -69,7 +78,7 @@
         #persistencedSha256 = "sha256-11tLSY8uUIl4X/roNnxf5yS2PQvHvoNjnd2CB67e870=";
         #patches = [ rcu_patch ];
 
-        #from nix forum
+        #from nix forum (builds but fails to load)
         version = "555.58.02";
         sha256_64bit = "sha256-xctt4TPRlOJ6r5S54h5W6PT6/3Zy2R4ASNFPu8TSHKM=";
         sha256_aarch64 = "sha256-wb20isMrRg8PeQBU96lWJzBMkjfySAUaqt4EgZnhyF8=";
@@ -98,13 +107,13 @@
 
   # nvidia prime (hybrid offload to nvidia only if needed)
   hardware.nvidia.prime = {
-    offload = {
-      enable = true;
-      enableOffloadCmd = true;
-    };
-    amdgpuBusId = "PCI:65:0:0";
-    nvidiaBusId = "PCI:64:0:0";
-  };
+  offload = {
+     enable = true;
+     enableOffloadCmd = true;
+   };
+   amdgpuBusId = "PCI:101:0:0";
+   nvidiaBusId = "PCI:100:0:0";
+ };
 
   # Bluetooth
   #hardware.bluetooth = {
