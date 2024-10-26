@@ -14,6 +14,39 @@
   #latest kernel
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
+  # opengl
+  hardware.opengl = {
+    enable = true;
+  };
+
+  #Load nvidia driver for xorg and waylands
+  services.xserver.videoDrivers = ["nvidia"];
+
+  hardware.nvidia = {
+    #modesetting is required
+    modesetting.enable = true;
+    #nvidia power management. enable this if having issues with nvidia coming from sleep
+    powerManagement.enable = false;
+    #experimental fine grained power management. only works on newer nvidia cards
+    powerManagement.finegrained = false;
+    #buggy open source kernel module (do not mix up with nouveau third party
+    open = false;
+    #enable nvidia settings menu
+    nvidiaSettings = true;
+    #package selection
+    package = config.boot.kernelPackages.nvidiaPackages.beta;
+  };
+
+  # nvidia prime (hybrid offload to nvidia only if needed)
+  hardware.nvidia.prime = {
+    offload = {
+      enable = true;
+      enableOffloadCmd = true;
+    };
+    amdgpuBusId = "PCI:65:0:0";
+    nvidiaBusId = "PCI:64:0:0";
+  };
+
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -117,6 +150,7 @@
     libnotify
     pciutils
     inxi
+    lshw
   ];
 
   # Some programs need SUID wrappers, can be configured further or are

@@ -1,0 +1,1208 @@
+building Nix...
+building the system configuration...
+these 29 derivations will be built:
+  /nix/store/w9h0yn8aa8sg6wbrrfxh04d9gwya937i-nvidia-x11-550.78-6.11.2.drv
+  /nix/store/qwyx5bdfmxrm5zp8qi953vsj05wags7a-nvidia-settings-550.78.drv
+  /nix/store/hvqj9rbfj0ibx5qb9l5hzd2pgck7qbbz-system-path.drv
+  /nix/store/xwqw4ky5dxwgkn1vgs838sc35wsgmafj-dbus-1.drv
+  /nix/store/9j6kzc21ys2jfs8w1674kc845y34j4pb-X-Restart-Triggers-dbus.drv
+  /nix/store/2jshijbzgk27hfwxbg4wral2ibnycz6p-unit-dbus.service.drv
+  /nix/store/xsglwb6jc6lw19jpladr4qiplvbs4l4a-opengl-drivers.drv
+  /nix/store/d10abvnq8xy2id9fqwb049sj6pcdf6j4-nixos-tmpfiles.d.drv
+  /nix/store/vvgxsxij2c7m9rx97d0k0npiw5bcijvp-tmpfiles.d.drv
+  /nix/store/wi4acg73i7y1wfibn9wdj9808fql0fmr-X-Restart-Triggers-systemd-tmpfiles-resetup.drv
+  /nix/store/jh8c5a5qzb5mc6cw9pa67gji689lj5h5-unit-systemd-tmpfiles-resetup.service.drv
+  /nix/store/q7pq2w9b7329cilb5bryws5s12qy8gqj-X-Restart-Triggers-polkit.drv
+  /nix/store/lg5yb33hs8k56wfq1n154y61sa512v3b-unit-polkit.service.drv
+  /nix/store/rhxdyr7xp2bivbl748bar05bws1wgapc-unit-accounts-daemon.service.drv
+  /nix/store/mqkh7vq3jj0xnmg6wr0is0balb5xz5pv-xserver.conf.drv
+  /nix/store/yba3d73y1pkac32n4yd1nq9qw3jmmc9j-unit-display-manager.service.drv
+  /nix/store/03jd0bnivcs4g5x7a1hj20wmjkqkydpd-system-units.drv
+  /nix/store/al215lq38f7yagifyiivbnsvccc9fx7w-linux-6.11.2-modules.drv
+  /nix/store/rvhi28474yin23lpc8k9a82ffmwinxmx-set-environment.drv
+  /nix/store/f79zi6bhvmdrqzdhxd3j7hagc1w19lka-etc-profile.drv
+  /nix/store/ib6bkkwvhvcs7fx9k2hmqv5abp4bfxp4-etc-zshenv.drv
+  /nix/store/md94xx7lpg9zccnkk4vqlphq4dp9xj0z-linux-6.11.2-modules-shrunk.drv
+  /nix/store/v6gcmkaq6pj2cwixv0i4gmnyyzmmf8vv-etc-pam-environment.drv
+  /nix/store/mrpklgyfgnfm8crqfv31vgv3ijmx82lg-unit-dbus.service.drv
+  /nix/store/xqwaaxi9845b48ifwihnxbsk5pl59cji-user-units.drv
+  /nix/store/mj30wdkhi5ka6v1pihdv83rdbvii4s4a-etc.drv
+  /nix/store/n00fjgcqq5dm6szf5b9sw3in9j29hn88-initrd-linux-6.11.2.drv
+  /nix/store/zjaf0k75ipr8z5wdv6zk2kxnnhlnpqma-boot.json.drv
+  /nix/store/mh2dzq6byiksxprih8lvql05pp17sc9k-nixos-system-nixos-24.05.5518.ecbc1ca8ffd6.drv
+building '/nix/store/w9h0yn8aa8sg6wbrrfxh04d9gwya937i-nvidia-x11-550.78-6.11.2.drv'...
+Running phase: unpackPhase
+Creating directory NVIDIA-Linux-x86_64-550.78
+Verifying archive integrity... OK
+Uncompressing NVIDIA Accelerated Graphics Driver for Linux-x86_64 550.78........................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................
+source root is NVIDIA-Linux-x86_64-550.78
+setting SOURCE_DATE_EPOCH to timestamp 1713080919 of file NVIDIA-Linux-x86_64-550.78/nvidia-bug-report.sh
+Running phase: patchPhase
+Running phase: updateAutotoolsGnuConfigScriptsPhase
+Running phase: configurePhase
+no configure script, doing nothing
+Running phase: buildPhase
+Building linux driver against kernel: /nix/store/g1r2qziac1lvkb5d98dk6r5qx99c0klb-linux-6.11.2-dev
+make[1]: Entering directory '/nix/store/g1r2qziac1lvkb5d98dk6r5qx99c0klb-linux-6.11.2-dev/lib/modules/6.11.2/source'
+make[2]: Entering directory '/nix/store/g1r2qziac1lvkb5d98dk6r5qx99c0klb-linux-6.11.2-dev/lib/modules/6.11.2/build'
+  SYMLINK /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-kernel.o
+  SYMLINK /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia-modeset/nv-modeset-kernel.o
+ CONFTEST: hash__remap_4k_pfn
+ CONFTEST: set_pages_uc
+ CONFTEST: list_is_first
+ CONFTEST: set_memory_uc
+ CONFTEST: set_memory_array_uc
+ CONFTEST: set_pages_array_uc
+ CONFTEST: ioremap_cache
+ CONFTEST: ioremap_wc
+ CONFTEST: ioremap_driver_hardened
+ CONFTEST: ioremap_driver_hardened_wc
+ CONFTEST: ioremap_cache_shared
+ CONFTEST: pci_get_domain_bus_and_slot
+ CONFTEST: get_num_physpages
+ CONFTEST: pde_data
+ CONFTEST: xen_ioemu_inject_msi
+ CONFTEST: phys_to_dma
+ CONFTEST: get_dma_ops
+ CONFTEST: dma_attr_macros
+ CONFTEST: dma_map_page_attrs
+ CONFTEST: write_cr4
+ CONFTEST: of_find_node_by_phandle
+ CONFTEST: of_node_to_nid
+ CONFTEST: pnv_pci_get_npu_dev
+ CONFTEST: of_get_ibm_chip_id
+ CONFTEST: pci_bus_address
+ CONFTEST: pci_stop_and_remove_bus_device
+ CONFTEST: pci_rebar_get_possible_sizes
+ CONFTEST: wait_for_random_bytes
+ CONFTEST: register_cpu_notifier
+ CONFTEST: cpuhp_setup_state
+ CONFTEST: dma_map_resource
+ CONFTEST: get_backlight_device_by_name
+ CONFTEST: timer_setup
+ CONFTEST: pci_enable_msix_range
+ CONFTEST: kernel_read_has_pointer_pos_arg
+ CONFTEST: kernel_write_has_pointer_pos_arg
+ CONFTEST: dma_direct_map_resource
+ CONFTEST: tegra_get_platform
+ CONFTEST: tegra_bpmp_send_receive
+ CONFTEST: flush_cache_all
+ CONFTEST: vmf_insert_pfn
+ CONFTEST: jiffies_to_timespec
+ CONFTEST: ktime_get_raw_ts64
+ CONFTEST: ktime_get_real_ts64
+ CONFTEST: full_name_hash
+ CONFTEST: pci_enable_atomic_ops_to_root
+ CONFTEST: vga_tryget
+ CONFTEST: cc_platform_has
+ CONFTEST: seq_read_iter
+ CONFTEST: unsafe_follow_pfn
+ CONFTEST: drm_gem_object_get
+ CONFTEST: drm_gem_object_put_unlocked
+ CONFTEST: add_memory_driver_managed
+ CONFTEST: device_property_read_u64
+ CONFTEST: devm_of_platform_populate
+ CONFTEST: of_dma_configure
+ CONFTEST: of_property_count_elems_of_size
+ CONFTEST: of_property_read_variable_u8_array
+ CONFTEST: of_property_read_variable_u32_array
+ CONFTEST: i2c_new_client_device
+ CONFTEST: i2c_unregister_device
+ CONFTEST: of_get_named_gpio
+ CONFTEST: devm_gpio_request_one
+ CONFTEST: gpio_direction_input
+ CONFTEST: gpio_direction_output
+ CONFTEST: gpio_get_value
+ CONFTEST: gpio_set_value
+ CONFTEST: gpio_to_irq
+ CONFTEST: icc_get
+ CONFTEST: icc_put
+ CONFTEST: icc_set_bw
+ CONFTEST: dma_buf_export_args
+ CONFTEST: dma_buf_ops_has_kmap
+ CONFTEST: dma_buf_ops_has_kmap_atomic
+ CONFTEST: dma_buf_ops_has_map
+ CONFTEST: dma_buf_ops_has_map_atomic
+ CONFTEST: dma_buf_has_dynamic_attachment
+ CONFTEST: dma_buf_attachment_has_peer2peer
+ CONFTEST: dma_set_mask_and_coherent
+ CONFTEST: devm_clk_bulk_get_all
+ CONFTEST: get_task_ioprio
+ CONFTEST: mdev_set_iommu_device
+ CONFTEST: offline_and_remove_memory
+ CONFTEST: crypto_tfm_ctx_aligned
+ CONFTEST: wait_on_bit_lock_argument_count
+ CONFTEST: radix_tree_empty
+ CONFTEST: radix_tree_replace_slot
+ CONFTEST: pnv_npu2_init_context
+ CONFTEST: cpumask_of_node
+ CONFTEST: ioasid_get
+ CONFTEST: mm_pasid_drop
+ CONFTEST: mmget_not_zero
+ CONFTEST: mmgrab
+ CONFTEST: iommu_sva_bind_device_has_drvdata_arg
+ CONFTEST: vm_fault_to_errno
+ CONFTEST: find_next_bit_wrap
+ CONFTEST: iommu_is_dma_domain
+ CONFTEST: acpi_video_backlight_use_native
+ CONFTEST: drm_dev_unref
+ CONFTEST: drm_reinit_primary_mode_group
+ CONFTEST: get_user_pages_remote
+ CONFTEST: get_user_pages
+ CONFTEST: pin_user_pages_remote
+ CONFTEST: pin_user_pages
+ CONFTEST: drm_gem_object_lookup
+ CONFTEST: drm_atomic_state_ref_counting
+ CONFTEST: drm_driver_has_gem_prime_res_obj
+ CONFTEST: drm_atomic_helper_connector_dpms
+ CONFTEST: drm_connector_funcs_have_mode_in_name
+ CONFTEST: drm_connector_has_vrr_capable_property
+ CONFTEST: drm_framebuffer_get
+ CONFTEST: drm_dev_put
+ CONFTEST: drm_format_num_planes
+ CONFTEST: drm_connector_for_each_possible_encoder
+ CONFTEST: drm_rotation_available
+ CONFTEST: drm_vma_offset_exact_lookup_locked
+ CONFTEST: nvhost_dma_fence_unpack
+ CONFTEST: dma_fence_set_error
+ CONFTEST: fence_set_error
+ CONFTEST: sync_file_get_fence
+ CONFTEST: drm_aperture_remove_conflicting_pci_framebuffers
+ CONFTEST: drm_fbdev_generic_setup
+ CONFTEST: drm_connector_attach_hdr_output_metadata_property
+ CONFTEST: drm_helper_crtc_enable_color_mgmt
+ CONFTEST: drm_crtc_enable_color_mgmt
+ CONFTEST: drm_atomic_helper_legacy_gamma_set
+ CONFTEST: is_export_symbol_gpl_of_node_to_nid
+ CONFTEST: is_export_symbol_gpl_sme_active
+ CONFTEST: is_export_symbol_present_swiotlb_map_sg_attrs
+ CONFTEST: is_export_symbol_present_swiotlb_dma_ops
+ CONFTEST: is_export_symbol_present___close_fd
+ CONFTEST: is_export_symbol_present_close_fd
+ CONFTEST: is_export_symbol_present_get_unused_fd
+ CONFTEST: is_export_symbol_present_get_unused_fd_flags
+ CONFTEST: is_export_symbol_present_nvhost_get_default_device
+ CONFTEST: is_export_symbol_present_nvhost_syncpt_unit_interface_get_byte_offset
+ CONFTEST: is_export_symbol_present_nvhost_syncpt_unit_interface_get_aperture
+ CONFTEST: is_export_symbol_present_tegra_dce_register_ipc_client
+ CONFTEST: is_export_symbol_present_tegra_dce_unregister_ipc_client
+ CONFTEST: is_export_symbol_present_tegra_dce_client_ipc_send_recv
+ CONFTEST: is_export_symbol_present_dram_clk_to_mc_clk
+ CONFTEST: is_export_symbol_present_get_dram_num_channels
+ CONFTEST: is_export_symbol_present_tegra_dram_types
+ CONFTEST: is_export_symbol_present_pxm_to_node
+ CONFTEST: is_export_symbol_present_screen_info
+ CONFTEST: is_export_symbol_gpl_screen_info
+ CONFTEST: is_export_symbol_present_i2c_bus_status
+ CONFTEST: is_export_symbol_present_tegra_fuse_control_read
+ CONFTEST: is_export_symbol_present_tegra_get_platform
+ CONFTEST: is_export_symbol_present_pci_find_host_bridge
+ CONFTEST: is_export_symbol_present_tsec_comms_send_cmd
+ CONFTEST: is_export_symbol_present_tsec_comms_set_init_cb
+ CONFTEST: is_export_symbol_present_tsec_comms_clear_init_cb
+ CONFTEST: is_export_symbol_present_tsec_comms_alloc_mem_from_gscco
+ CONFTEST: is_export_symbol_present_tsec_comms_free_gscco_mem
+ CONFTEST: is_export_symbol_present_memory_block_size_bytes
+ CONFTEST: crypto
+ CONFTEST: is_export_symbol_present_int_active_memcg
+ CONFTEST: is_export_symbol_present_migrate_vma_setup
+ CONFTEST: dma_ops
+ CONFTEST: swiotlb_dma_ops
+ CONFTEST: noncoherent_swiotlb_dma_ops
+ CONFTEST: vm_fault_has_address
+ CONFTEST: vm_insert_pfn_prot
+ CONFTEST: vmf_insert_pfn_prot
+ CONFTEST: vm_ops_fault_removed_vma_arg
+ CONFTEST: kmem_cache_has_kobj_remove_work
+ CONFTEST: sysfs_slab_unlink
+ CONFTEST: proc_ops
+ CONFTEST: timespec64
+ CONFTEST: vmalloc_has_pgprot_t_arg
+ CONFTEST: mm_has_mmap_lock
+ CONFTEST: pci_channel_state
+ CONFTEST: pci_dev_has_ats_enabled
+ CONFTEST: remove_memory_has_nid_arg
+ CONFTEST: add_memory_driver_managed_has_mhp_flags_arg
+ CONFTEST: num_registered_fb
+ CONFTEST: pci_driver_has_driver_managed_dma
+ CONFTEST: vm_area_struct_has_const_vm_flags
+ CONFTEST: memory_failure_has_trapno_arg
+ CONFTEST: foll_longterm_present
+ CONFTEST: backing_dev_info
+ CONFTEST: mm_context_t
+ CONFTEST: vm_fault_t
+ CONFTEST: mmu_notifier_ops_invalidate_range
+ CONFTEST: mmu_notifier_ops_arch_invalidate_secondary_tlbs
+ CONFTEST: migrate_vma_added_flags
+ CONFTEST: migrate_device_range
+ CONFTEST: handle_mm_fault_has_mm_arg
+ CONFTEST: handle_mm_fault_has_pt_regs_arg
+ CONFTEST: mempolicy_has_unified_nodes
+ CONFTEST: mempolicy_has_home_node
+ CONFTEST: mpol_preferred_many_present
+ CONFTEST: mmu_interval_notifier
+ CONFTEST: drm_bus_present
+ CONFTEST: drm_bus_has_bus_type
+ CONFTEST: drm_bus_has_get_irq
+ CONFTEST: drm_bus_has_get_name
+ CONFTEST: drm_driver_has_device_list
+ CONFTEST: drm_driver_has_legacy_dev_list
+ CONFTEST: drm_driver_has_set_busid
+ CONFTEST: drm_crtc_state_has_connectors_changed
+ CONFTEST: drm_init_function_args
+ CONFTEST: drm_helper_mode_fill_fb_struct
+ CONFTEST: drm_master_drop_has_from_release_arg
+ CONFTEST: drm_driver_unload_has_int_return_type
+ CONFTEST: drm_atomic_helper_crtc_destroy_state_has_crtc_arg
+ CONFTEST: drm_atomic_helper_plane_destroy_state_has_plane_arg
+ CONFTEST: drm_mode_object_find_has_file_priv_arg
+ CONFTEST: dma_buf_owner
+ CONFTEST: drm_connector_list_iter
+ CONFTEST: drm_atomic_helper_swap_state_has_stall_arg
+ CONFTEST: drm_driver_prime_flag_present
+ CONFTEST: drm_gem_object_has_resv
+ CONFTEST: drm_crtc_state_has_async_flip
+ CONFTEST: drm_crtc_state_has_pageflip_flags
+ CONFTEST: drm_crtc_state_has_vrr_enabled
+ CONFTEST: drm_format_modifiers_present
+ CONFTEST: drm_vma_node_is_allowed_has_tag_arg
+ CONFTEST: drm_vma_offset_node_has_readonly
+ CONFTEST: drm_display_mode_has_vrefresh
+ CONFTEST: drm_driver_master_set_has_int_return_type
+ CONFTEST: drm_driver_has_gem_free_object
+ CONFTEST: drm_prime_pages_to_sg_has_drm_device_arg
+ CONFTEST: drm_driver_has_gem_prime_callbacks
+ CONFTEST: drm_crtc_atomic_check_has_atomic_state_arg
+ CONFTEST: drm_gem_object_vmap_has_map_arg
+ CONFTEST: drm_plane_atomic_check_has_atomic_state_arg
+ CONFTEST: drm_device_has_pdev
+ CONFTEST: drm_crtc_state_has_no_vblank
+ CONFTEST: drm_mode_config_has_allow_fb_modifiers
+ CONFTEST: drm_has_hdr_output_metadata
+ CONFTEST: dma_resv_add_fence
+ CONFTEST: dma_resv_reserve_fences
+ CONFTEST: reservation_object_reserve_shared_has_num_fences_arg
+ CONFTEST: drm_connector_has_override_edid
+ CONFTEST: drm_master_has_leases
+ CONFTEST: drm_file_get_master
+ CONFTEST: drm_modeset_lock_all_end
+ CONFTEST: drm_connector_lookup
+ CONFTEST: drm_connector_put
+ CONFTEST: drm_driver_has_dumb_destroy
+ CONFTEST: fence_ops_use_64bit_seqno
+ CONFTEST: drm_aperture_remove_conflicting_pci_framebuffers_has_driver_arg
+ CONFTEST: drm_mode_create_dp_colorspace_property_has_supported_colorspaces_arg
+ CONFTEST: drm_unlocked_ioctl_flag_present
+ CONFTEST: dom0_kernel_present
+ CONFTEST: nvidia_vgpu_kvm_build
+ CONFTEST: nvidia_grid_build
+ CONFTEST: nvidia_grid_csp_build
+ CONFTEST: pm_runtime_available
+ CONFTEST: pci_class_multimedia_hd_audio
+ CONFTEST: drm_available
+ CONFTEST: vfio_pci_core_available
+ CONFTEST: mdev_available
+ CONFTEST: cmd_uphy_display_port_init
+ CONFTEST: cmd_uphy_display_port_off
+ CONFTEST: memory_failure_mf_sw_simulated_defined
+ CONFTEST: drm_atomic_available
+ CONFTEST: is_export_symbol_gpl_refcount_inc
+ CONFTEST: is_export_symbol_gpl_refcount_dec_and_test
+ CONFTEST: drm_alpha_blending_available
+ CONFTEST: is_export_symbol_present_drm_gem_prime_fd_to_handle
+ CONFTEST: is_export_symbol_present_drm_gem_prime_handle_to_fd
+ CONFTEST: ib_peer_memory_symbols
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv.o
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-pci.o
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-dmabuf.o
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-nano-timer.o
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-acpi.o
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-cray.o
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-dma.o
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-i2c.o
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-mmap.o
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-p2p.o
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-pat.o
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-procfs.o
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-usermap.o
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-vm.o
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-vtophys.o
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/os-interface.o
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/os-mlock.o
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/os-pci.o
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/os-registry.o
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/os-usermap.o
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-modeset-interface.o
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-pci-table.o
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-kthread-q.o
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-memdbg.o
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-kthread-q.c: In function 'thread_create_on_node':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-kthread-q.c:179:5: warning: 'static' is not at beginning of declaration [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wold-style-declaration-Wold-style-declaration8;;]
+  179 |     const static unsigned attempts = 3;
+      |     ^~~~~
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-ibmnpu.o
+In file included from /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-usermap.c:27:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmalloc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:477:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  477 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:495:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  495 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+In file included from /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-nano-timer.c:31:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmalloc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:477:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  477 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_cache':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:531:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  531 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:495:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  495 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_wc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_cache':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:531:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  531 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:548:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  548 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_wc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:548:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  548 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:674:51: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  674 |         NV_MEMDBG_ADD(ptr, page_count * PAGE_SIZE);
+      |                                                   ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:674:51: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  674 |         NV_MEMDBG_ADD(ptr, page_count * PAGE_SIZE);
+      |                                                   ^
+In file included from /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-procfs.c:27:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmalloc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:477:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  477 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:495:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  495 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_cache':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:531:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  531 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_wc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:548:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  548 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:674:51: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  674 |         NV_MEMDBG_ADD(ptr, page_count * PAGE_SIZE);
+      |                                                   ^
+In file included from /build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-pci.h:28,
+                 from /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-pci.c:26:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmalloc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:477:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  477 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:495:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  495 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_cache':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:531:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  531 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_wc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:548:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  548 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:674:51: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  674 |         NV_MEMDBG_ADD(ptr, page_count * PAGE_SIZE);
+      |                                                   ^
+In file included from /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-vm.c:26:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmalloc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:477:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  477 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:495:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  495 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_cache':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:531:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  531 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_wc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:548:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  548 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:674:51: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  674 |         NV_MEMDBG_ADD(ptr, page_count * PAGE_SIZE);
+      |                                                   ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-nano-timer.c: In function 'nv_alloc_nano_timer':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:570:37: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  570 |             NV_MEMDBG_ADD(ptr, size); \
+      |                                     ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-nano-timer.c:86:5: note: in expansion of macro 'NV_KMALLOC'
+   86 |     NV_KMALLOC(nv_nstimer, sizeof(nv_nano_timer_t));
+      |     ^~~~~~~~~~
+In file included from /build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-dmabuf.h:27,
+                 from /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-dmabuf.c:24:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmalloc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:477:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  477 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:495:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  495 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_cache':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:531:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  531 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_wc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:548:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  548 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:674:51: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  674 |         NV_MEMDBG_ADD(ptr, page_count * PAGE_SIZE);
+      |                                                   ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-procfs.c: In function 'nv_procfs_open_file':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:577:37: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  577 |             NV_MEMDBG_ADD(ptr, size); \
+      |                                     ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-procfs.c:276:5: note: in expansion of macro 'NV_KZALLOC'
+  276 |     NV_KZALLOC(nvpp, sizeof(nv_procfs_private_t));
+      |     ^~~~~~~~~~
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-procfs.c: At top level:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-procfs.c:698:1: warning: no previous prototype for 'exercise_error_forwarding_va' [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wmissing-prototypes-Wmissing-prototypes8;;]
+  698 | exercise_error_forwarding_va(
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-pci.c: In function 'nv_pci_probe':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:577:37: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  577 |             NV_MEMDBG_ADD(ptr, size); \
+      |                                     ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-pci.c:407:5: note: in expansion of macro 'NV_KZALLOC'
+  407 |     NV_KZALLOC(nvl, sizeof(nv_linux_state_t));
+      |     ^~~~~~~~~~
+In file included from /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-dma.c:27:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmalloc':
+In file included from /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv.c:34:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmalloc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:477:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  477 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:477:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  477 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:495:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  495 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:495:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  495 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_cache':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:531:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  531 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_cache':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:531:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  531 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_wc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_wc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:548:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  548 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:548:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  548 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:674:51: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  674 |         NV_MEMDBG_ADD(ptr, page_count * PAGE_SIZE);
+      |                                                   ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:674:51: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  674 |         NV_MEMDBG_ADD(ptr, page_count * PAGE_SIZE);
+      |                                                   ^
+In file included from /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-mmap.c:27:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmalloc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:477:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  477 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:495:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  495 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_cache':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:531:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  531 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_wc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:548:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  548 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:674:51: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  674 |         NV_MEMDBG_ADD(ptr, page_count * PAGE_SIZE);
+      |                                                   ^
+In file included from /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-acpi.c:27:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmalloc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:477:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  477 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:495:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  495 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_cache':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:531:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  531 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_wc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:548:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  548 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:674:51: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  674 |         NV_MEMDBG_ADD(ptr, page_count * PAGE_SIZE);
+      |                                                   ^
+In file included from /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/os-registry.c:27:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmalloc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:477:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  477 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:495:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  495 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_cache':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:531:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  531 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_wc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:548:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  548 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+In file included from /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-i2c.c:29:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmalloc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:477:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  477 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:495:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  495 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_cache':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:531:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  531 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_wc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:674:51: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  674 |         NV_MEMDBG_ADD(ptr, page_count * PAGE_SIZE);
+      |                                                   ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:548:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  548 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:674:51: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  674 |         NV_MEMDBG_ADD(ptr, page_count * PAGE_SIZE);
+      |                                                   ^
+In file included from /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-modeset-interface.c:27:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmalloc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:477:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  477 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:495:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  495 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_cache':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:531:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  531 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_wc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:548:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  548 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:674:51: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  674 |         NV_MEMDBG_ADD(ptr, page_count * PAGE_SIZE);
+      |                                                   ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-dma.c: At top level:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-dma.c:293:6: warning: no previous prototype for 'nv_load_dma_map_scatterlist' [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wmissing-prototypes-Wmissing-prototypes8;;]
+  293 | void nv_load_dma_map_scatterlist(
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-dma.c:489:23: warning: no previous prototype for 'nv_dma_unmap_sgt' [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wmissing-prototypes-Wmissing-prototypes8;;]
+  489 | NV_STATUS NV_API_CALL nv_dma_unmap_sgt(
+      |                       ^~~~~~~~~~~~~~~~
+In file included from /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-pat.c:27:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmalloc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:477:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  477 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:495:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  495 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_cache':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:531:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  531 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_wc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:548:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  548 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:674:51: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  674 |         NV_MEMDBG_ADD(ptr, page_count * PAGE_SIZE);
+      |                                                   ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-mmap.c: At top level:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-mmap.c:303:5: warning: conflicting types for 'nv_encode_caching' due to enum/integer mismatch; have 'int(pgprot_t *, NvU32,  nv_memory_type_t)' {aka 'int(struct pgprot *, unsigned int,  nv_memory_type_t)'} [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wenum-int-mismatch-Wenum-int-mismatch8;;]
+  303 | int nv_encode_caching(
+      |     ^~~~~~~~~~~~~~~~~
+In file included from /build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:1762:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-proto.h:44:13: note: previous declaration of 'nv_encode_caching' with type 'int(pgprot_t *, NvU32,  NvU32)' {aka 'int(struct pgprot *, unsigned int,  unsigned int)'}
+   44 | int         nv_encode_caching           (pgprot_t *, NvU32, NvU32);
+      |             ^~~~~~~~~~~~~~~~~
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-mmap.c:371:1: warning: 'static' is not at beginning of declaration [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wold-style-declaration-Wold-style-declaration8;;]
+  371 | int static nvidia_mmap_peer_io(
+      | ^~~
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-mmap.c:392:1: warning: 'static' is not at beginning of declaration [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wold-style-declaration-Wold-style-declaration8;;]
+  392 | int static nvidia_mmap_sysmem(
+      | ^~~
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-report-err.o
+In file included from /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/os-interface.c:27:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmalloc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:477:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  477 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:495:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  495 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_cache':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:531:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  531 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_wc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:548:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  548 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:674:51: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  674 |         NV_MEMDBG_ADD(ptr, page_count * PAGE_SIZE);
+      |                                                   ^
+In file included from /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-cray.c:27:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmalloc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:477:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  477 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:495:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  495 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_cache':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:531:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  531 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+In file included from /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-memdbg.c:25:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmalloc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_wc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:548:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  548 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:477:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  477 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+In file included from /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-vtophys.c:27:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmalloc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:477:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  477 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:495:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  495 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:495:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  495 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_cache':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:531:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  531 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_wc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:548:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  548 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_cache':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:531:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  531 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_wc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:548:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  548 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:674:51: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  674 |         NV_MEMDBG_ADD(ptr, page_count * PAGE_SIZE);
+      |                                                   ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:674:51: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  674 |         NV_MEMDBG_ADD(ptr, page_count * PAGE_SIZE);
+      |                                                   ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:674:51: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  674 |         NV_MEMDBG_ADD(ptr, page_count * PAGE_SIZE);
+      |                                                   ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv.c: In function 'nvos_create_alloc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:577:37: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  577 |             NV_MEMDBG_ADD(ptr, size); \
+      |                                     ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv.c:292:5: note: in expansion of macro 'NV_KZALLOC'
+  292 |     NV_KZALLOC(at, sizeof(nv_alloc_t));
+      |     ^~~~~~~~~~
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv.c: In function 'nv_alloc_file_private':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:577:37: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  577 |             NV_MEMDBG_ADD(ptr, size); \
+      |                                     ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv.c:980:5: note: in expansion of macro 'NV_KZALLOC'
+  980 |     NV_KZALLOC(nvlfp, sizeof(nv_linux_file_private_t));
+      |     ^~~~~~~~~~
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv.c: At top level:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv.c:1236:23: warning: no previous prototype for 'nv_get_num_dpaux_instances' [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wmissing-prototypes-Wmissing-prototypes8;;]
+ 1236 | NV_STATUS NV_API_CALL nv_get_num_dpaux_instances(nv_state_t *nv, NvU32 *num_instances)
+      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-p2p.c:27:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmalloc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:477:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  477 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:495:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  495 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_cache':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:531:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  531 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_wc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:548:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  548 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:674:51: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  674 |         NV_MEMDBG_ADD(ptr, page_count * PAGE_SIZE);
+      |                                                   ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv.c: In function 'nvidia_ioctl':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:570:37: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  570 |             NV_MEMDBG_ADD(ptr, size); \
+      |                                     ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv.c:2377:5: note: in expansion of macro 'NV_KMALLOC'
+ 2377 |     NV_KMALLOC(arg_copy, arg_size);
+      |     ^~~~~~~~~~
+In file included from /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/os-mlock.c:27:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmalloc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:477:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  477 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:495:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  495 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_cache':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:531:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  531 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_wc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:548:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  548 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:570:37: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  570 |             NV_MEMDBG_ADD(ptr, size); \
+      |                                     ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv.c:2480:13: note: in expansion of macro 'NV_KMALLOC'
+ 2480 |             NV_KMALLOC(nvlfp->attached_gpus, arg_size);
+      |             ^~~~~~~~~~
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:674:51: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  674 |         NV_MEMDBG_ADD(ptr, page_count * PAGE_SIZE);
+      |                                                   ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv.c: In function 'nv_map_guest_pages':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:570:37: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  570 |             NV_MEMDBG_ADD(ptr, size); \
+      |                                     ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv.c:3117:5: note: in expansion of macro 'NV_KMALLOC'
+ 3117 |     NV_KMALLOC(pages, sizeof(struct page *) * page_count);
+      |     ^~~~~~~~~~
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv.c: In function 'nv_alloc_kernel_mapping':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:570:37: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  570 |             NV_MEMDBG_ADD(ptr, size); \
+      |                                     ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv.c:3604:13: note: in expansion of macro 'NV_KMALLOC'
+ 3604 |             NV_KMALLOC(pages, sizeof(struct page *) * page_count);
+      |             ^~~~~~~~~~
+In file included from /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/os-usermap.c:27:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmalloc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:477:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  477 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:495:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  495 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_cache':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:531:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  531 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_wc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:548:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  548 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv.c: In function 'nv_post_event':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:674:51: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  674 |         NV_MEMDBG_ADD(ptr, page_count * PAGE_SIZE);
+      |                                                   ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:584:37: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  584 |             NV_MEMDBG_ADD(ptr, size); \
+      |                                     ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv.c:3888:9: note: in expansion of macro 'NV_KMALLOC_ATOMIC'
+ 3888 |         NV_KMALLOC_ATOMIC(nvet, sizeof(nvidia_event_t));
+      |         ^~~~~~~~~~~~~~~~~
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-rsync.o
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/os-mlock.c: In function 'nv_follow_pfn':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/os-mlock.c:42:12: error: implicit declaration of function 'follow_pfn'; did you mean 'follow_pte'? [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wimplicit-function-declaration-Werror=implicit-function-declaration8;;]
+   42 |     return follow_pfn(vma, address, pfn);
+      |            ^~~~~~~~~~
+      |            follow_pte
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-msi.o
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/os-interface.c: At top level:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/os-interface.c:374:7: warning: no previous prototype for 'os_mem_copy_custom' [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wmissing-prototypes-Wmissing-prototypes8;;]
+  374 | void *os_mem_copy_custom(
+      |       ^~~~~~~~~~~~~~~~~~
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/os-interface.c: In function 'os_alloc_mem':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:584:37: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  584 |             NV_MEMDBG_ADD(ptr, size); \
+      |                                     ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/os-interface.c:588:13: note: in expansion of macro 'NV_KMALLOC_ATOMIC'
+  588 |             NV_KMALLOC_ATOMIC(*address, alloc_size);
+      |             ^~~~~~~~~~~~~~~~~
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:599:37: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  599 |             NV_MEMDBG_ADD(ptr, size); \
+      |                                     ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/os-interface.c:594:13: note: in expansion of macro 'NV_KMALLOC_NO_OOM'
+  594 |             NV_KMALLOC_NO_OOM(*address, alloc_size);
+      |             ^~~~~~~~~~~~~~~~~
+In file included from /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/os-pci.c:27:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmalloc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:477:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  477 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:495:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  495 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/os-interface.c: In function 'os_queue_work_item':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_cache':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:531:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  531 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-caps.o
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_wc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:548:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  548 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:584:37: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  584 |             NV_MEMDBG_ADD(ptr, size); \
+      |                                     ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/os-interface.c:1135:5: note: in expansion of macro 'NV_KMALLOC_ATOMIC'
+ 1135 |     NV_KMALLOC_ATOMIC(oqd, sizeof(os_queue_data_t));
+      |     ^~~~~~~~~~~~~~~~~
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:674:51: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  674 |         NV_MEMDBG_ADD(ptr, page_count * PAGE_SIZE);
+      |                                                   ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/os-interface.c: In function 'os_alloc_wait_queue':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:570:37: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  570 |             NV_MEMDBG_ADD(ptr, size); \
+      |                                     ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/os-interface.c:1985:5: note: in expansion of macro 'NV_KMALLOC'
+ 1985 |     NV_KMALLOC(*wq, sizeof(os_wait_queue));
+      |     ^~~~~~~~~~
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-caps-imex.o
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv_uvm_interface.o
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/libspdm_aead.o
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/libspdm_ecc.o
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/libspdm_hkdf.o
+  CC [M]  /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/libspdm_rand.o
+cc1: some warnings being treated as errors
+make[4]: *** [/nix/store/g1r2qziac1lvkb5d98dk6r5qx99c0klb-linux-6.11.2-dev/lib/modules/6.11.2/source/scripts/Makefile.build:244: /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/os-mlock.o] Error 1
+make[4]: *** Waiting for unfinished jobs....
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/libspdm_aead.c:41:5: warning: no previous prototype for 'libspdm_aead_prealloc' [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wmissing-prototypes-Wmissing-prototypes8;;]
+   41 | int libspdm_aead_prealloc(void **context, char const *alg)
+      |     ^~~~~~~~~~~~~~~~~~~~~
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/libspdm_aead.c:178:5: warning: no previous prototype for 'libspdm_aead_prealloced' [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wmissing-prototypes-Wmissing-prototypes8;;]
+  178 | int libspdm_aead_prealloced(void *context,
+      |     ^~~~~~~~~~~~~~~~~~~~~~~
+In file included from /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-ibmnpu.c:27:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmalloc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:477:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  477 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:495:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  495 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_cache':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:531:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  531 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_wc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:548:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  548 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:674:51: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  674 |         NV_MEMDBG_ADD(ptr, page_count * PAGE_SIZE);
+      |                                                   ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-ibmnpu.c: At top level:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-ibmnpu.c:395:6: warning: no previous prototype for 'nv_init_ibmnpu_info' [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wmissing-prototypes-Wmissing-prototypes8;;]
+  395 | void nv_init_ibmnpu_info(nv_state_t *nv)
+      |      ^~~~~~~~~~~~~~~~~~~
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-ibmnpu.c:399:6: warning: no previous prototype for 'nv_destroy_ibmnpu_info' [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wmissing-prototypes-Wmissing-prototypes8;;]
+  399 | void nv_destroy_ibmnpu_info(nv_state_t *nv)
+      |      ^~~~~~~~~~~~~~~~~~~~~~
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-ibmnpu.c:403:5: warning: no previous prototype for 'nv_init_ibmnpu_devices' [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wmissing-prototypes-Wmissing-prototypes8;;]
+  403 | int nv_init_ibmnpu_devices(nv_state_t *nv)
+      |     ^~~~~~~~~~~~~~~~~~~~~~
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-ibmnpu.c:408:6: warning: no previous prototype for 'nv_unregister_ibmnpu_devices' [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wmissing-prototypes-Wmissing-prototypes8;;]
+  408 | void nv_unregister_ibmnpu_devices(nv_state_t *nv)
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-ibmnpu.c:428:5: warning: no previous prototype for 'nv_get_ibmnpu_chip_id' [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wmissing-prototypes-Wmissing-prototypes8;;]
+  428 | int nv_get_ibmnpu_chip_id(nv_state_t *nv)
+      |     ^~~~~~~~~~~~~~~~~~~~~
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-ibmnpu.c:437:6: warning: no previous prototype for 'nv_ibmnpu_cache_flush_numa_region' [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wmissing-prototypes-Wmissing-prototypes8;;]
+  437 | void nv_ibmnpu_cache_flush_numa_region(nv_state_t *nv)
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-report-err.c:25:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmalloc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:477:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  477 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:495:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  495 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_cache':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:531:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  531 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_wc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:548:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  548 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:674:51: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  674 |         NV_MEMDBG_ADD(ptr, page_count * PAGE_SIZE);
+      |                                                   ^
+In file included from /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-caps-imex.c:24:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmalloc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:477:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  477 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:495:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  495 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_cache':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:531:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  531 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_wc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:548:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  548 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:674:51: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  674 |         NV_MEMDBG_ADD(ptr, page_count * PAGE_SIZE);
+      |                                                   ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-caps-imex.c: At top level:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-caps-imex.c:52:17: warning: no previous prototype for 'nv_caps_imex_channel_get' [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wmissing-prototypes-Wmissing-prototypes8;;]
+   52 | int NV_API_CALL nv_caps_imex_channel_get(int fd)
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-caps-imex.c:89:17: warning: no previous prototype for 'nv_caps_imex_channel_count' [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wmissing-prototypes-Wmissing-prototypes8;;]
+   89 | int NV_API_CALL nv_caps_imex_channel_count(void)
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-caps-imex.c:94:17: warning: no previous prototype for 'nv_caps_imex_init' [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wmissing-prototypes-Wmissing-prototypes8;;]
+   94 | int NV_API_CALL nv_caps_imex_init(void)
+      |                 ^~~~~~~~~~~~~~~~~
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-caps-imex.c:141:18: warning: no previous prototype for 'nv_caps_imex_exit' [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wmissing-prototypes-Wmissing-prototypes8;;]
+  141 | void NV_API_CALL nv_caps_imex_exit(void)
+      |                  ^~~~~~~~~~~~~~~~~
+In file included from /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-rsync.c:24:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmalloc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:477:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  477 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:495:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  495 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_cache':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:531:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  531 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_wc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:548:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  548 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:674:51: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  674 |         NV_MEMDBG_ADD(ptr, page_count * PAGE_SIZE);
+      |                                                   ^
+In file included from /build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-msi.h:27,
+                 from /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-msi.c:24:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmalloc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:477:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  477 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:495:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  495 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_cache':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:531:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  531 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+In file included from /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv_uvm_interface.c:33:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmalloc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_wc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:548:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  548 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:477:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  477 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:495:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  495 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_cache':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:531:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  531 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_wc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:548:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  548 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:674:51: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  674 |         NV_MEMDBG_ADD(ptr, page_count * PAGE_SIZE);
+      |                                                   ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:674:51: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  674 |         NV_MEMDBG_ADD(ptr, page_count * PAGE_SIZE);
+      |                                                   ^
+In file included from /build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-caps.c:24:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmalloc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:477:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  477 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:495:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  495 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_cache':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:531:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  531 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_ioremap_wc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:548:33: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  548 |         NV_MEMDBG_ADD(ptr, size);
+      |                                 ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h: In function 'nv_vmap':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:674:51: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  674 |         NV_MEMDBG_ADD(ptr, page_count * PAGE_SIZE);
+      |                                                   ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-msi.c: In function 'nv_init_msi':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:577:37: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  577 |             NV_MEMDBG_ADD(ptr, size); \
+      |                                     ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-msi.c:39:9: note: in expansion of macro 'NV_KZALLOC'
+   39 |         NV_KZALLOC(nvl->irq_count, sizeof(nv_irq_count_info_t) * nvl->num_intr);
+      |         ^~~~~~~~~~
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-msi.c: In function 'nv_init_msix':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:570:37: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  570 |             NV_MEMDBG_ADD(ptr, size); \
+      |                                     ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-msi.c:90:5: note: in expansion of macro 'NV_KMALLOC'
+   90 |     NV_KMALLOC(nvl->msix_entries, sizeof(struct msix_entry) * num_intr);
+      |     ^~~~~~~~~~
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:577:37: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  577 |             NV_MEMDBG_ADD(ptr, size); \
+      |                                     ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-msi.c:102:5: note: in expansion of macro 'NV_KZALLOC'
+  102 |     NV_KZALLOC(nvl->irq_count, sizeof(nv_irq_count_info_t) * num_intr);
+      |     ^~~~~~~~~~
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-caps.c: At top level:
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-caps.c:270:5: warning: no previous prototype for 'nv_cap_procfs_init' [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wmissing-prototypes-Wmissing-prototypes8;;]
+  270 | int nv_cap_procfs_init(void)
+      |     ^~~~~~~~~~~~~~~~~~
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-caps.c: In function 'nv_cap_procfs_open':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:570:37: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  570 |             NV_MEMDBG_ADD(ptr, size); \
+      |                                     ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-caps.c:411:5: note: in expansion of macro 'NV_KMALLOC'
+  411 |     NV_KMALLOC(private, sizeof(nv_cap_file_private_t));
+      |     ^~~~~~~~~~
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-caps.c: In function 'nv_cap_alloc':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:570:37: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  570 |             NV_MEMDBG_ADD(ptr, size); \
+      |                                     ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-caps.c:621:5: note: in expansion of macro 'NV_KMALLOC'
+  621 |     NV_KMALLOC(cap, sizeof(nv_cap_t));
+      |     ^~~~~~~~~~
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:570:37: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  570 |             NV_MEMDBG_ADD(ptr, size); \
+      |                                     ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-caps.c:628:5: note: in expansion of macro 'NV_KMALLOC'
+  628 |     NV_KMALLOC(cap->path, len);
+      |     ^~~~~~~~~~
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:570:37: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  570 |             NV_MEMDBG_ADD(ptr, size); \
+      |                                     ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-caps.c:640:5: note: in expansion of macro 'NV_KMALLOC'
+  640 |     NV_KMALLOC(cap->name, len);
+      |     ^~~~~~~~~~
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-caps.c: In function 'nv_cap_init':
+/build/NVIDIA-Linux-x86_64-550.78/kernel/common/inc/nv-linux.h:570:37: warning: suggest braces around empty body in an 'if' statement [8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wempty-body-Wempty-body8;;]
+  570 |             NV_MEMDBG_ADD(ptr, size); \
+      |                                     ^
+/build/NVIDIA-Linux-x86_64-550.78/kernel/nvidia/nv-caps.c:745:5: note: in expansion of macro 'NV_KMALLOC'
+  745 |     NV_KMALLOC(name, (strlen(path) + strlen(dir)) + 1);
+      |     ^~~~~~~~~~
+make[3]: *** [/nix/store/g1r2qziac1lvkb5d98dk6r5qx99c0klb-linux-6.11.2-dev/lib/modules/6.11.2/source/Makefile:1926: /build/NVIDIA-Linux-x86_64-550.78/kernel] Error 2
+make[2]: *** [/nix/store/g1r2qziac1lvkb5d98dk6r5qx99c0klb-linux-6.11.2-dev/lib/modules/6.11.2/source/Makefile:224: __sub-make] Error 2
+make[2]: Leaving directory '/nix/store/g1r2qziac1lvkb5d98dk6r5qx99c0klb-linux-6.11.2-dev/lib/modules/6.11.2/build'
+make[1]: *** [Makefile:224: __sub-make] Error 2
+make[1]: Leaving directory '/nix/store/g1r2qziac1lvkb5d98dk6r5qx99c0klb-linux-6.11.2-dev/lib/modules/6.11.2/source'
+make: *** [Makefile:85: modules] Error 2
+error: builder for '/nix/store/w9h0yn8aa8sg6wbrrfxh04d9gwya937i-nvidia-x11-550.78-6.11.2.drv' failed with exit code 2
+error: 1 dependencies of derivation '/nix/store/mj30wdkhi5ka6v1pihdv83rdbvii4s4a-etc.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/al215lq38f7yagifyiivbnsvccc9fx7w-linux-6.11.2-modules.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/hvqj9rbfj0ibx5qb9l5hzd2pgck7qbbz-system-path.drv' failed to build
+error: 1 dependencies of derivation '/nix/store/mh2dzq6byiksxprih8lvql05pp17sc9k-nixos-system-nixos-24.05.5518.ecbc1ca8ffd6.drv' failed to build
