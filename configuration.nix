@@ -3,6 +3,7 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 {
   config,
+  lib,
   pkgs,
   ...
 }: {
@@ -101,7 +102,6 @@
   #  powerOnBoot = true;
   #};
 
-
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -196,26 +196,25 @@
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  environment.systemPackages =
-  let
+  environment.systemPackages = let
     nvidiaEnabled = lib.elem "nvidia" config.services.xserver.videoDrivers;
   in
-  (with pkgs; [
-    #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    #  wget
-    git
-    alejandra
-    vscode
-    libnotify
-    pciutils
-    inxi
-    lshw
-  ])
-  ++ lib.optionals nvidiaEnabled [
-    (config.hardware.nvidia.package.settings.overrideAttrs (oldAttrs: {
-      buildInputs = oldAttrs.buildInputs ++ [ pkgs.vulkan-headers ];
-    }))
-  ];
+    (with pkgs; [
+      #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+      #  wget
+      git
+      alejandra
+      vscode
+      libnotify
+      pciutils
+      inxi
+      lshw
+    ])
+    ++ lib.optionals nvidiaEnabled [
+      (config.hardware.nvidia.package.settings.overrideAttrs (oldAttrs: {
+        buildInputs = oldAttrs.buildInputs ++ [pkgs.vulkan-headers];
+      }))
+    ];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
