@@ -114,6 +114,8 @@
     extraGroups = ["networkmanager" "wheel"];
     packages = with pkgs; [
       #  thunderbird
+      opera
+      telegram-desktop
     ];
   };
 
