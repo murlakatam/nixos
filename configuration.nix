@@ -144,6 +144,7 @@
     pciutils
     inxi
     bitwarden-desktop
+    gparted
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
