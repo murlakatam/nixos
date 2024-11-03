@@ -116,6 +116,7 @@
       #  thunderbird
       opera
       telegram-desktop
+      teams-for-linux
     ];
   };
 
