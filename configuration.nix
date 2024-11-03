@@ -117,6 +117,8 @@
       opera
       telegram-desktop
       teams-for-linux
+      jetbrains.rider
+      jetbrains.webstorm
     ];
   };
 
@@ -144,6 +146,7 @@
     pciutils
     inxi
     bitwarden-desktop
+    ntfs3g
     gparted
   ];
 
