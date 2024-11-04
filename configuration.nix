@@ -154,6 +154,8 @@
     #cd alias
     zoxide
     fzf
+    podman-tui
+    podman-desktop
   ];
 
   #docker
