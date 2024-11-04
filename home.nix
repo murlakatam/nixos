@@ -34,6 +34,7 @@
     jetbrains.rider
     jetbrains.webstorm
     tmux
+    azure-cli
   ];
 
   systemd.user = {
