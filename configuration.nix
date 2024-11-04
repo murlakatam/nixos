@@ -4,12 +4,14 @@
 {
   config,
   pkgs,
+  inputs,
   ...
 }: {
-  imports = [
+  imports = with inputs; [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
-    <home-manager/nixos>
+    home-manager.nixosModules.default
+    #hyprland.nixosModules.default
   ];
 
   #latest kernel
@@ -149,7 +151,6 @@
     bitwarden-desktop
     ntfs3g
     gparted
-    home-manager
   ];
 
   nix.settings.experimental-features = ["nix-command" "flakes"];
