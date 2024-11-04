@@ -58,7 +58,7 @@
   time.timeZone = "Pacific/Auckland";
 
   # Select internationalisation properties.
-  i18n.defaultLocale = "be_BY.UTF-8";
+  i18n.defaultLocale = "en_NZ.UTF-8";
 
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "en_NZ.UTF-8";
