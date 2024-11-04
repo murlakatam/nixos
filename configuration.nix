@@ -151,7 +151,9 @@
     bitwarden-desktop
     ntfs3g
     gparted
+    #cd alias
     zoxide
+    fzf
   ];
 
   nix.settings.experimental-features = ["nix-command" "flakes"];
