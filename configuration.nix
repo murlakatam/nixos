@@ -150,6 +150,8 @@
     podman-compose
     #dotnet
     dotnetCorePackages.sdk_8_0_3xx
+    #node
+    nodejs_20
   ];
 
   #docker replacement
