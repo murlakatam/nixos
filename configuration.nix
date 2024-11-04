@@ -117,22 +117,12 @@
     extraGroups = ["networkmanager" "wheel"];
     packages = with pkgs; [
       #  thunderbird
-      opera
-      telegram-desktop
-      teams-for-linux
-      jetbrains.rider
-      jetbrains.webstorm
     ];
   };
 
   # zsh
   programs.zsh.enable = true;
   users.defaultUserShell = pkgs.zsh;
-
-  # Install firefox.
-  programs.firefox.enable = true;
-  # Install direnv
-  programs.direnv.enable = true;
 
   # allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -145,21 +135,24 @@
     git
     alejandra
     vscode
+    # notification manager
     libnotify
     pciutils
     inxi
+    # passwork manager
     bitwarden-desktop
+    # file system
     ntfs3g
     gparted
-    #cd alias
-    zoxide
-    fzf
+    #docker alternative
     podman-tui
     podman-desktop
+    podman-compose
   ];
 
-  #docker
-  virtualisation.docker.enable = true;
+  #docker replacement
+  virtualisation.podman.enable = true;
+  virtualisation.podman.dockerSocket.enable = true;
 
   nix.settings.experimental-features = ["nix-command" "flakes"];
 
