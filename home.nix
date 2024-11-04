@@ -24,6 +24,15 @@
     ];
   };
 
+  programs.git = {
+    enable = true;
+    userName = "Eugene Baranovsky";
+    userEmail = "baranovsky.e@gmail.com";
+    aliases = {
+      pushup = "!git push --set-upstream origin `git symbolic-ref --short HEAD`";
+    };
+  };
+
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage
   # when a new Home Manager release introduces backwards
