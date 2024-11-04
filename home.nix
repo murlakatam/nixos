@@ -33,6 +33,7 @@
     teams-for-linux
     jetbrains.rider
     jetbrains.webstorm
+    tmux
   ];
 
   systemd.user = {
