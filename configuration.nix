@@ -151,6 +151,7 @@
     bitwarden-desktop
     ntfs3g
     gparted
+    zoxide
   ];
 
   nix.settings.experimental-features = ["nix-command" "flakes"];
