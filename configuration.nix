@@ -9,6 +9,7 @@
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
+    <home-manager/nixos>
   ];
 
   #latest kernel
@@ -148,6 +149,7 @@
     bitwarden-desktop
     ntfs3g
     gparted
+    home-manager
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
