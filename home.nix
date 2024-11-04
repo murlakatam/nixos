@@ -178,10 +178,6 @@
         hm = "home-manager";
         # DOCKER
         docker = "podman";
-        # CHEZMOI
-        cz = "chezmoi";
-        cza = "chezmoi apply";
-        czu = "chezmoi update";
         # SHELL TOOLS
         # eza is a maintained fork of exa
         exa = "eza";
@@ -209,7 +205,7 @@
         unsetopt beep
         # init zinit
         source "${pkgs.zinit}/share/zinit/zinit.zsh"
-        source $HOME/.plugins.zsh
+        source ${./plugins.zsh}
       '';
       completionInit = ''
         autoload -Uz compinit
