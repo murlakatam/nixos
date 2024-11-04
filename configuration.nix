@@ -148,6 +148,8 @@
     podman-tui
     podman-desktop
     podman-compose
+    #dotnet
+    dotnetCorePackages.dotnet_8.sdk
   ];
 
   #docker replacement

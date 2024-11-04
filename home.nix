@@ -193,7 +193,7 @@
         lg = "lazygit";
         # just
         j = "just";
-        rebuild = "~/.rebuild.sh";
+        rebuild = "~/rebuild.sh";
       };
 
       # set some zsh options
