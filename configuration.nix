@@ -156,6 +156,8 @@
     nodejs_20
     #cypress
     cypress
+    #chrome
+    google-chrome
   ];
 
   #docker replacement
