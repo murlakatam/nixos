@@ -159,6 +159,7 @@
     #chrome
     google-chrome
     fastfetch
+    azuredatastudio
   ];
 
   #docker replacement
