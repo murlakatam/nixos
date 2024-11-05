@@ -152,6 +152,8 @@
     dotnetCorePackages.sdk_8_0_3xx
     #node
     nodejs_20
+    #cypress
+    cypress
   ];
 
   #docker replacement
