@@ -229,7 +229,6 @@
         eval "$(${pkgs.oh-my-posh}/bin/oh-my-posh init zsh --config ${./catppuccin.omp.json})"
         export CYPRESS_INSTALL_BINARY=0
         export CYPRESS_RUN_BINARY=${pkgs.cypress}/bin/Cypress
-        echo $CYPRESS_RUN_BINARY
       '';
     };
     zoxide = {
