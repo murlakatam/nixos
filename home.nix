@@ -10,6 +10,8 @@
 
   # allow unfree packages
   nixpkgs.config.allowUnfree = true;
+  #override cypress version
+  nixpkgs.overlays = [(import ./cypress-overlay.nix)];
 
   home.username = "eugene";
   home.homeDirectory = "/home/eugene";

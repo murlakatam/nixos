@@ -126,6 +126,8 @@
 
   # allow unfree packages
   nixpkgs.config.allowUnfree = true;
+  #override cypress version
+  nixpkgs.overlays = [(import ./cypress-overlay.nix)];
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
