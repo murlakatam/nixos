@@ -158,6 +158,7 @@
     cypress
     #chrome
     google-chrome
+    fastfetch
   ];
 
   #docker replacement
