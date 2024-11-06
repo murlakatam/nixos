@@ -160,6 +160,8 @@
     google-chrome
     fastfetch
     azuredatastudio
+    #node
+    nodePackages.prettier
   ];
 
   #docker replacement
