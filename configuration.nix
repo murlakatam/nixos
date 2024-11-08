@@ -162,6 +162,7 @@
     azuredatastudio
     #node
     nodePackages.prettier
+    jq
   ];
 
   #docker replacement
