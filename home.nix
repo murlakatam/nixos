@@ -1,8 +1,11 @@
 {
+  config,
   pkgs,
   inputs,
   ...
-}: {
+}: let
+  globalEnvVars = import ./global-env-vars.nix {inherit pkgs;};
+in {
   imports = with inputs; [
     # Whatever home manager modules go here
     #./hyprland.nix
@@ -11,7 +14,7 @@
   # allow unfree packages
   nixpkgs.config.allowUnfree = true;
   #override cypress version
-  nixpkgs.overlays = [(import ./cypress-overlay.nix)];
+  nixpkgs.overlays = [(import ./overlays/cypress-overlay.nix)];
 
   home.username = "eugene";
   home.homeDirectory = "/home/eugene";
@@ -229,6 +232,8 @@
         eval "$(${pkgs.oh-my-posh}/bin/oh-my-posh init zsh --config ${./catppuccin.omp.json})"
         export CYPRESS_INSTALL_BINARY=0
         export CYPRESS_RUN_BINARY=${pkgs.cypress}/bin/Cypress
+        export NIX_LD_LIBRARY_PATH="${globalEnvVars.NIX_LD_LIBRARY_PATH}"
+        export NIX_LD="${globalEnvVars.NIX_LD}"
       '';
     };
     zoxide = {
@@ -236,6 +241,9 @@
       enableZshIntegration = true;
     };
   };
+
+  # Set environment variables globally in Home Manager
+  home.sessionVariables = globalEnvVars;
 
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage

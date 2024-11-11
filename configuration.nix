@@ -3,10 +3,13 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 {
   config,
+  lib,
   pkgs,
   inputs,
   ...
-}: {
+}: let
+  globalEnvVars = import ./global-env-vars.nix {inherit pkgs;};
+in {
   imports = with inputs; [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
@@ -127,7 +130,7 @@
   # allow unfree packages
   nixpkgs.config.allowUnfree = true;
   #override cypress version
-  nixpkgs.overlays = [(import ./cypress-overlay.nix)];
+  nixpkgs.overlays = [(import ./overlays/cypress-overlay.nix)];
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -164,6 +167,8 @@
     nodePackages.prettier
     jq
   ];
+
+  environment.variables = lib.mkDefault globalEnvVars;
 
   #docker replacement
   virtualisation.podman.enable = true;
