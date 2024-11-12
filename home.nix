@@ -197,6 +197,7 @@ in {
         # just
         j = "just";
         rebuild = "~/rebuild.sh";
+        upgrade = "~/upgrade.sh";
       };
 
       # set some zsh options
