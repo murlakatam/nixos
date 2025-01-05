@@ -40,6 +40,7 @@ in {
     jetbrains.webstorm
     tmux
     azure-cli
+    krusader
   ];
 
   systemd.user = {
