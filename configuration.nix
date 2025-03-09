@@ -161,7 +161,7 @@ in {
     #dotnet
     dotnetCorePackages.sdk_8_0_3xx
     #node
-    nodejs_20
+    nodejs_22
     #cypress
     cypress
     #chrome
