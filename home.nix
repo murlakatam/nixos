@@ -18,7 +18,7 @@ in {
 
   home.username = "eugene";
   home.homeDirectory = "/home/eugene";
-  # comment
+
   programs.home-manager.enable = true;
 
   home.packages = with pkgs; [
@@ -27,7 +27,7 @@ in {
     tree # pretty print directories
     fastfetch # flexx your OS : alternative to freshly deceased neofetch
     #silver-searcher # ag
-    (nerdfonts.override {fonts = ["JetBrainsMono"];})
+    nerd-fonts.jetbrains-mono
     meld # gui differ
     banner # print big banners
     figlet # better banners
