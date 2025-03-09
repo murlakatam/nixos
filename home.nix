@@ -18,6 +18,7 @@ in {
 
   home.username = "eugene";
   home.homeDirectory = "/home/eugene";
+  # comment
   programs.home-manager.enable = true;
 
   home.packages = with pkgs; [
