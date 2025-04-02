@@ -16,7 +16,7 @@ in {
     #systemd.tmpfiles.rules = ["L+    /opt/rocm/hip   -    -    -     -    ${pkgs.rocmPackages.clr}"];
 
     # Video drivers configuration for X server
-    services.xserver.videoDrivers = ["amdgpu"];
+    # services.xserver.videoDrivers = ["amdgpu"];
 
     hardware = {
       #  graphics = {
