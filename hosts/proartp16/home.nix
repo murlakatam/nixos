@@ -57,5 +57,11 @@ in {
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
       ];
     };
+    # wallpaper
+    "org/gnome/desktop/background" = {
+      picture-uri = "file:///home/${username}/Pictures/Wallpapers/nix.png";
+      picture-uri-dark = "file:///home/${username}/Pictures/Wallpapers/Crimson-Shadows-4k.jpg";
+      picture-options = "zoom";
+    };
   };
 }
