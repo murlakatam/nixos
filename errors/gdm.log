@@ -96,3 +96,30 @@ Apr 02 18:22:59 proartp16 login[1886]: gkr-pam: gnome-keyring-daemon started pro
 (standard input):Apr 02 18:22:50 proartp16 gdm[2375]: Gdm: Child process -2510 was already dead.
 (standard input):Apr 02 18:22:50 proartp16 systemd-logind[1323]: New session c2 of user gdm.
 (standard input):Apr 02 18:22:51 proartp16 systemd[1]: Started Session c2 of User gdm.
+Apr 02 18:55:47 proartp16 systemd-logind[1304]: New session c1 of user gdm.
+Apr 02 18:55:47 proartp16 (systemd)[2522]: pam_unix(systemd-user:session): session opened for user gdm(uid=132) by (uid=0)
+Apr 02 18:55:47 proartp16 systemd-logind[1304]: New session 1 of user gdm.
+Apr 02 18:55:47 proartp16 systemd[2522]: GNOME Initial Setup Copy Worker was skipped because of an unmet condition check (ConditionPathExists=!/run/gdm/.config/gnome-initial-setup-done).
+Apr 02 18:55:47 proartp16 systemd[1]: Started Session c1 of User gdm.
+Apr 02 18:55:47 proartp16 profile-sync-daemon[2538]:  First time running psd so please edit /run/gdm/.config/psd/psd.conf to your liking and run again.
+Apr 02 18:55:47 proartp16 /nix/store/l0vz0rv0zslpjqj8a3gz9y8nm5k79vn6-gdm-47.0/libexec/gdm-wayland-session[2549]: dbus-daemon[2549]: [session uid=132 pid=2549] Activating service name='org.freedesktop.systemd1' requested by ':1.2' (uid=132 pid=2550 comm="/nix/store/aqrxc7dzdjwkglzibc5jj915awz2cccm-gnome-" label="kernel")
+Apr 02 18:55:47 proartp16 /nix/store/l0vz0rv0zslpjqj8a3gz9y8nm5k79vn6-gdm-47.0/libexec/gdm-wayland-session[2549]: dbus-daemon[2549]: [session uid=132 pid=2549] Activated service 'org.freedesktop.systemd1' failed: Process org.freedesktop.systemd1 exited with status 1
+Apr 02 18:55:47 proartp16 gnome-session[2550]: gnome-session-binary[2550]: WARNING: Could not check if unit gnome-session-wayland@gnome-login.target is active: Error calling StartServiceByName for org.freedesktop.systemd1: Process org.freedesktop.systemd1 exited with status 1
+Apr 02 18:55:47 proartp16 gnome-session-binary[2550]: WARNING: Could not check if unit gnome-session-wayland@gnome-login.target is active: Error calling StartServiceByName for org.freedesktop.systemd1: Process org.freedesktop.systemd1 exited with status 1
+Apr 02 18:55:47 proartp16 gnome-session[2550]: gnome-session-binary[2550]: WARNING: Desktop file /nix/store/l0vz0rv0zslpjqj8a3gz9y8nm5k79vn6-gdm-47.0/share/gdm/greeter/autostart/orca-autostart.desktop for application orca-autostart.desktop could not be parsed or references a missing TryExec binary
+Apr 02 18:55:47 proartp16 gnome-session-binary[2550]: WARNING: Desktop file /nix/store/l0vz0rv0zslpjqj8a3gz9y8nm5k79vn6-gdm-47.0/share/gdm/greeter/autostart/orca-autostart.desktop for application orca-autostart.desktop could not be parsed or references a missing TryExec binary
+Apr 02 18:55:47 proartp16 .gnome-shell-wr[2608]: Running GNOME Shell (using mutter 47.5) as a Wayland display server
+Apr 02 18:55:47 proartp16 dbus-daemon[1250]: [system] Activating via systemd: service name='org.freedesktop.RealtimeKit1' unit='rtkit-daemon.service' requested by ':1.21' (uid=132 pid=2608 comm="/nix/store/mdh892yri03gfhj5vk9vdix1lwfi6hik-gnome-" label="kernel")
+Apr 02 18:55:47 proartp16 .gnome-shell-wr[2608]: Failed to open gpu '/dev/dri/card1': GDBus.Error:System.Error.EBUSY: Device or resource busy
+Apr 02 18:55:47 proartp16 .gnome-shell-wr[2608]: Thread 'KMS thread' will be using high priority scheduling
+Apr 02 18:55:47 proartp16 org.gnome.Shell.desktop[2608]: Failed to setup: No GPUs found
+Apr 02 18:55:47 proartp16 gnome-session[2550]: gnome-session-binary[2550]: WARNING: App 'org.gnome.Shell.desktop' exited with code 1
+Apr 02 18:55:47 proartp16 gnome-session-binary[2550]: WARNING: App 'org.gnome.Shell.desktop' exited with code 1
+Apr 02 18:55:47 proartp16 /nix/store/l0vz0rv0zslpjqj8a3gz9y8nm5k79vn6-gdm-47.0/libexec/gdm-wayland-session[2549]: dbus-daemon[2549]: [session uid=132 pid=2549] Activating service name='ca.desrt.dconf' requested by ':1.2' (uid=132 pid=2550 comm="/nix/store/aqrxc7dzdjwkglzibc5jj915awz2cccm-gnome-" label="kernel")
+Apr 02 18:55:47 proartp16 gnome-session-binary[2550]: Unrecoverable failure in required component org.gnome.Shell.desktop
+Apr 02 18:55:47 proartp16 gdm[2348]: Gdm: GdmDisplay: Session never registered, failing
+Apr 02 18:55:47 proartp16 gdm[2348]: Gdm: GdmDisplay: Session never registered, failing
+Apr 02 18:55:47 proartp16 systemd-logind[1304]: New session c2 of user gdm.
+Apr 02 18:55:48 proartp16 systemd[1]: Started Session c2 of User gdm.
+Apr 02 18:55:59 proartp16 systemd[2912]: GNOME Initial Setup Copy Worker was skipped because of an unmet condition check (ConditionPathExists=!/home/eugene/.config/gnome-initial-setup-done).
+Apr 02 18:55:59 proartp16 login[1926]: gkr-pam: gnome-keyring-daemon started properly and unlocked keyring
