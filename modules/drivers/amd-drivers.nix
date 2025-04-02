@@ -37,20 +37,20 @@ in {
 
     # Boot configuration for AMD GPU support
     boot = {
-      initrd.kernelModules = ["amdgpu"];
-      # kernelModules = ["kvm-amd" "amdgpu"]; # "v4l2loopback"];
-      kernelParams = [
-        "amd_pstate=active"
-        #"tsc=unstable"
-        "radeon.si_support=0"
-        "amdgpu.si_support=1"
-        "amdgpu.dcdebugmask=0x10" #try 0x12 if doesn't work, and then 0x412
-        "amdgpu.lockup_timeout=100000"
-        # For your external DisplayPort monitor
-        #"video=DP-2:3840x2560@60"
-        # For your built-in laptop display
-        #"video=eDP-1:3840x2400@60"
-      ];
+      initrd.kernelModules = [];
+      kernelModules = ["kvm-amd"]; # "v4l2loopback"];
+      #kernelParams = [
+      #"amd_pstate=active"
+      #"tsc=unstable"
+      #"radeon.si_support=0"
+      #"amdgpu.si_support=1"
+      #"amdgpu.dcdebugmask=0x10" #try 0x12 if doesn't work, and then 0x412
+      #"amdgpu.lockup_timeout=100000"
+      # For your external DisplayPort monitor
+      #"video=DP-2:3840x2560@60"
+      # For your built-in laptop display
+      #"video=eDP-1:3840x2400@60"
+      #];
       #extraModulePackages = [config.boot.kernelPackages.v4l2loopback];
       #blacklistedKernelModules = ["radeon"];
     };
