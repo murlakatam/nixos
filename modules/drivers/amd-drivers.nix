@@ -16,20 +16,20 @@ in {
     #systemd.tmpfiles.rules = ["L+    /opt/rocm/hip   -    -    -     -    ${pkgs.rocmPackages.clr}"];
 
     # Video drivers configuration for X server
-    services.xserver.videoDrivers = ["amdgpu"];
+    #services.xserver.videoDrivers = ["amdgpu"];
 
     hardware = {
-      graphics = {
-        enable = true;
-        enable32Bit = true;
-        extraPackages = with pkgs; [
-          amdvlk
-        ];
-        # For 32 bit applications
-        extraPackages32 = with pkgs; [
-          driversi686Linux.amdvlk
-        ];
-      };
+      #  graphics = {
+      #    enable = true;
+      #enable32Bit = true;
+      #extraPackages = with pkgs; [
+      #  amdvlk
+      #];
+      # For 32 bit applications
+      #extraPackages32 = with pkgs; [
+      #  driversi686Linux.amdvlk
+      #];
+      #  };
 
       # CPU microcode updates
       cpu.amd.updateMicrocode = true;
@@ -37,7 +37,7 @@ in {
 
     # Boot configuration for AMD GPU support
     boot = {
-      kernelModules = ["kvm-amd" "amdgpu" "v4l2loopback"];
+      kernelModules = ["kvm-amd"]; #"amdgpu" "v4l2loopback"];
       kernelParams = [
         "amd_pstate=active"
         #"tsc=unstable"
@@ -50,8 +50,8 @@ in {
         # For your built-in laptop display
         #"video=eDP-1:3840x2400@60"
       ];
-      extraModulePackages = [config.boot.kernelPackages.v4l2loopback];
-      blacklistedKernelModules = ["radeon"];
+      #extraModulePackages = [config.boot.kernelPackages.v4l2loopback];
+      #blacklistedKernelModules = ["radeon"];
     };
 
     environment.systemPackages = with pkgs; [lact];
