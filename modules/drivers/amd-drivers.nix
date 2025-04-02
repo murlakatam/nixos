@@ -16,7 +16,7 @@ in {
     #systemd.tmpfiles.rules = ["L+    /opt/rocm/hip   -    -    -     -    ${pkgs.rocmPackages.clr}"];
 
     # Video drivers configuration for X server
-    #services.xserver.videoDrivers = ["amdgpu"];
+    services.xserver.videoDrivers = ["amdgpu"];
 
     hardware = {
       #  graphics = {
@@ -37,7 +37,7 @@ in {
 
     # Boot configuration for AMD GPU support
     boot = {
-      kernelModules = ["kvm-amd"]; #"amdgpu" "v4l2loopback"];
+      kernelModules = ["kvm-amd" "amdgpu"]; # "v4l2loopback"];
       kernelParams = [
         "amd_pstate=active"
         #"tsc=unstable"
