@@ -44,6 +44,7 @@ in {
   system.autoUpgrade = {
     enable = true;
     allowReboot = true;
+    flake = "home/${username}/dotfiles/nixos/flake.nix";
   };
 
   security.rtkit.enable = true;

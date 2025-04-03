@@ -28,11 +28,30 @@ in {
   home.username = "${username}";
   home.homeDirectory = "/home/${username}";
   home.stateVersion = "24.05";
-  # Set environment variables globally in Home Manager
-  home.sessionVariables = globalEnvVars;
   # Set avatar
   home.file.".face".source = ../../modules/avatars/Profile.png;
   nixpkgs.config.allowUnfree = true;
+
+  # Home Manager locale settings
+  home.language = {
+    base = "en_NZ.UTF-8";
+    address = "en_NZ.UTF-8";
+    monetary = "en_NZ.UTF-8";
+    paper = "en_NZ.UTF-8";
+    time = "en_NZ.UTF-8";
+    numeric = "en_NZ.UTF-8"; # This is particularly important for number formatting
+  };
+
+  # Set environment variables globally in Home Manager
+  # If you need to set environment variables explicitly
+  home.sessionVariables =
+    globalEnvVars
+    // {
+      LANG = "en_NZ.UTF-8";
+      LC_ALL = "en_NZ.UTF-8";
+      LC_NUMERIC = "en_NZ.UTF-8";
+    };
+
   # Import Program Configurations
   imports = [
     ../../modules/shells
