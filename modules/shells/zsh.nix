@@ -35,8 +35,6 @@
     shellAliases = {
       # HOME MANAGER
       hm = "home-manager";
-      # DOCKER
-      docker = "podman";
       # SHELL TOOLS
       # eza is a maintained fork of exa
       exa = "eza";
