@@ -14,6 +14,7 @@
     bat # Cat clone with syntax highlighting
     bitwarden-desktop # password manager
     cypress #cypress
+    docker
     dotnetCorePackages.sdk_8_0-bin #dotnet
     git
     google-chrome #chrome
@@ -29,7 +30,7 @@
     nodePackages.prettier #node d
     ntfs3g # file system
     pciutils
-    docker
+    pgadmin4
     poppler # pdf redneding lib
     vscode
     usbutils # lsusb
