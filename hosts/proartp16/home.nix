@@ -30,6 +30,8 @@ in {
   home.stateVersion = "24.05";
   # Set environment variables globally in Home Manager
   home.sessionVariables = globalEnvVars;
+  # Set avatar
+  home.file.".face".source = ../../modules/avatars/Profile.png;
   nixpkgs.config.allowUnfree = true;
   # Import Program Configurations
   imports = [
