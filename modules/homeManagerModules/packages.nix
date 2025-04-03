@@ -6,12 +6,15 @@
   ...
 }: {
   home.packages = with pkgs; [
+    azure-cli
     #diff-so-fancy
     cod # turn any --help into completion
     tree # pretty print directories
     fastfetch # flexx your OS : alternative to freshly deceased neofetch
     #silver-searcher # ag
     nerd-fonts.jetbrains-mono
+    kubelogin # azure kube login
+    k9s # k8s management
     meld # gui differ
     banner # print big banners
     figlet # better banners
@@ -23,6 +26,5 @@
     teams-for-linux
     jetbrains.rider
     jetbrains.webstorm
-    azure-cli
   ];
 }
