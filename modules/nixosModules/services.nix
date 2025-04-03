@@ -21,7 +21,7 @@ in {
       variant = "";
     };
     # Enables libinput, a library for handling input devices
-    #libinput.enable = true;
+    libinput.enable = true;
     # Enables periodic TRIM commands for SSD maintenance (Essential for systems with SSDs)
     fstrim.enable = true;
 
@@ -48,6 +48,6 @@ in {
 
     #Firmware update daemon
     # Allows updating device firmware using the LVFS (Linux Vendor Firmware Service)
-    #fwupd.enable = true;
+    fwupd.enable = true;
   };
 }
