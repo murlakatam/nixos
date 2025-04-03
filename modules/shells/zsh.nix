@@ -99,6 +99,9 @@
       export CYPRESS_RUN_BINARY=${pkgs.cypress}/bin/Cypress
       export NIX_LD_LIBRARY_PATH="${globalEnvVars.NIX_LD_LIBRARY_PATH}"
       export NIX_LD="${globalEnvVars.NIX_LD}"
+      # Set DOTNET_ROOT to the location of your dotnet installation
+      export DOTNET_ROOT="$(dirname $(readlink -f $(which dotnet)))"
+      # Add .NET tools to PATH
       export PATH="$PATH:/home/eugene/.dotnet/tools"
     '';
 
