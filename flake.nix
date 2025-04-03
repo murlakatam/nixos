@@ -33,7 +33,7 @@
     username = "eugene";
     forAllSystems = nixpkgs.lib.genAttrs systems;
 
-    # Import overlays explicitly a
+    # Import overlays explicitly
     overlays = import ./overlays {inherit inputs;};
 
     # Function to create globalEnvVars with the correct pkgs for NIX_LD
