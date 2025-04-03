@@ -18,6 +18,7 @@
     k9s # k8s management
     lazydocker
     lazygit
+    mc
     meld # gui differ
     banner # print big banners
     figlet # better banners
