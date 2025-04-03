@@ -14,6 +14,7 @@
     #silver-searcher # ag
     nerd-fonts.jetbrains-mono
     kubelogin # azure kube login
+    krusader # total commander alternative
     k9s # k8s management
     lazydocker
     lazygit
