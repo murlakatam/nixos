@@ -1,5 +1,6 @@
 #!/run/current-system/sw/bin/zsh
 # reloads wifi module when it is buggy.
+nmcli d disconnect lo
 echo 'Removing  module'
 sudo modprobe -r mt7925e 
 sleep 2

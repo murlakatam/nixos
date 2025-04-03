@@ -32,7 +32,7 @@
       ];
       font-size = lib.mkForce 12;
       font-family = "JetBrains Mono";
-      window-decoration = false;
+      window-decoration = true;
       confirm-close-surface = false;
       cursor-style = "block";
       cursor-style-blink = false;
