@@ -38,30 +38,30 @@ in {
     ../../modules/homeManagerModules
   ];
 
-  # Configure GNOME settings via Home Manager
-  # dconf.settings = {
-  #   "org/gnome/desktop/applications/terminal" = {
-  #     exec = "${terminalExe}";
-  #   };
+  #Configure GNOME settings via Home Manager
+  dconf.settings = {
+    "org/gnome/desktop/applications/terminal" = {
+      exec = "${terminalExe}";
+    };
 
-  #   # Set keyboard shortcut for terminal
-  #   "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
-  #     binding = "<Primary><Alt>t";
-  #     command = "${terminalExe}";
-  #     name = "Launch Terminal";
-  #   };
+    # Set keyboard shortcut for terminal
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
+      binding = "<Primary><Alt>t";
+      command = "${terminalExe}";
+      name = "Launch Terminal";
+    };
 
-  #   # Enable custom keybindings
-  #   "org/gnome/settings-daemon/plugins/media-keys" = {
-  #     custom-keybindings = [
-  #       "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
-  #     ];
-  #   };
-  #   # wallpaper
-  #   "org/gnome/desktop/background" = {
-  #     picture-uri = "file:///home/${username}/Pictures/Wallpapers/nix.png";
-  #     picture-uri-dark = "file:///home/${username}/Pictures/Wallpapers/Crimson-Shadows-4k.jpg";
-  #     picture-options = "zoom";
-  #   };
-  # };
+    # Enable custom keybindings
+    "org/gnome/settings-daemon/plugins/media-keys" = {
+      custom-keybindings = [
+        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
+      ];
+    };
+    # wallpaper
+    "org/gnome/desktop/background" = {
+      picture-uri = "file:///home/${username}/Pictures/Wallpapers/nix.png";
+      picture-uri-dark = "file:///home/${username}/Pictures/Wallpapers/Crimson-Shadows-4k.jpg";
+      picture-options = "zoom";
+    };
+  };
 }

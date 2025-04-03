@@ -5,6 +5,6 @@
 
   # Program Options
   browser = "firefox"; # Set Default Browser (google-chrome-stable for google-chrome, zen for zen)
-  terminal = "ghosty"; # Set Default System Terminal
+  terminal = "ghostty"; # Set Default System Terminal
   keyboardLayout = "by";
 }
