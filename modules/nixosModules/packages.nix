@@ -4,6 +4,7 @@
   ...
 }: {
   environment.systemPackages = with pkgs; [
+    inputs.yazi.packages.${system}.default
     #inputs.nix-inspect.packages.${pkgs.system}.default
 
     #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
@@ -18,6 +19,7 @@
     google-chrome #chrome
     gparted
     eza # Modern replacement for ls
+    ffmpeg_6-full
     iftop # network monitoring
     inxi #system information tool designed for both hardware and system reporting.
     iotop # io monitoring
@@ -30,6 +32,7 @@
     podman-tui #docker alternative
     podman-desktop #docker alternative
     podman-compose #docker alternative
+    poppler # pdf redneding lib
     vscode
     usbutils # lsusb
     wget # Network downloader

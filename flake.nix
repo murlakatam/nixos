@@ -15,6 +15,7 @@
       url = "github:Mic92/nix-ld";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    yazi.url = "github:sxyazi/yazi";
   };
   outputs = {
     self,
@@ -22,6 +23,7 @@
     home-manager,
     nix-ld,
     nix-index-database,
+    yazi,
     ...
   } @ inputs: let
     inherit (self) outputs;
