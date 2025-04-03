@@ -16,6 +16,7 @@
     bitwarden-desktop # password manager
     cypress #cypress
     docker
+    dotnet-runtime # .net 8 runtime atm
     dotnetCorePackages.sdk_8_0-bin #dotnet
     git
     google-chrome #chrome
