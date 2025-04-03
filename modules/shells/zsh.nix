@@ -99,6 +99,7 @@
       export CYPRESS_RUN_BINARY=${pkgs.cypress}/bin/Cypress
       export NIX_LD_LIBRARY_PATH="${globalEnvVars.NIX_LD_LIBRARY_PATH}"
       export NIX_LD="${globalEnvVars.NIX_LD}"
+      export PATH="$PATH:/home/eugene/.dotnet/tools"
     '';
 
     syntaxHighlighting.enable = true;
