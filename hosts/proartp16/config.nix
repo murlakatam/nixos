@@ -16,10 +16,12 @@ in {
     home-manager.nixosModules.default
     ./users.nix
     ../../modules/nixosModules
+    ../../modules/drivers/amd-drivers.nix
     ../../modules/drivers/nvidia-drivers.nix
   ];
 
   # Drivers Options
+  drivers.amdgpu.enable = true;
   drivers.nvidia.enable = false;
 
   # Enable networking
