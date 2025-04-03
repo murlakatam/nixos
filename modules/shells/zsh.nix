@@ -86,6 +86,12 @@
         fi
         rm -f -- "$tmp"
       }
+
+      #moe get azure token
+      get-azure-token() {
+        #az login --scope https://ossrdbms-aad.database.windows.net/.default --tenant e6d2d4cc-b762-486e-8894-4f5f440d5f31
+        az account get-access-token --resource-type oss-rdbms | jq -r '.accessToken'
+      }
     '';
     initExtraFirst = ''
       eval "$(${pkgs.oh-my-posh}/bin/oh-my-posh init zsh --config ${./catppuccin.omp.json})"
