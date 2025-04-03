@@ -7,6 +7,10 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nix-ld = {
       url = "github:Mic92/nix-ld";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -17,6 +21,7 @@
     nixpkgs,
     home-manager,
     nix-ld,
+    nix-index-database,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -69,6 +74,7 @@
           nix-ld.nixosModules.nix-ld
           ./hosts/${host}/config.nix
           home-manager.nixosModules.home-manager
+          nix-index-database.nixosModules.nix-index
           {
             home-manager.extraSpecialArgs = {
               inherit username;
