@@ -30,7 +30,7 @@
     nodePackages.prettier #node d
     ntfs3g # file system
     pciutils
-    pgadmin4
+    pgadmin4-desktopmode
     poppler # pdf redneding lib
     vscode
     usbutils # lsusb
