@@ -8,18 +8,20 @@
 in {
   services = {
     #Configures the X Window System (X11 or Wayland)
-    xserver = {
-      enable = true;
-      # Enable the GNOME Desktop Environment.
-      displayManager.gdm.enable = true;
-      desktopManager.gnome.enable = true;
-      xkb = {
-        layout = "${keyboardLayout}";
-        variant = "";
-      };
+     # Enable the X11 windowing system.
+    xserver.enable = true;
+
+    # Enable the GNOME Desktop Environment.
+    xserver.displayManager.gdm.enable = true;
+    xserver.desktopManager.gnome.enable = true;
+
+  # Configure keymap in X11
+    xserver.xkb = { 
+      layout = "by";
+      variant = "";
     };
     # Enables libinput, a library for handling input devices
-    libinput.enable = true;
+    #libinput.enable = true;
     # Enables periodic TRIM commands for SSD maintenance (Essential for systems with SSDs)
     fstrim.enable = true;
 
@@ -46,6 +48,6 @@ in {
 
     #Firmware update daemon
     # Allows updating device firmware using the LVFS (Linux Vendor Firmware Service)
-    fwupd.enable = true;
+    #fwupd.enable = true;
   };
 }
