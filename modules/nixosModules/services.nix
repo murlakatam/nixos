@@ -8,15 +8,15 @@
 in {
   services = {
     #Configures the X Window System (X11 or Wayland)
-     # Enable the X11 windowing system.
+    # Enable the X11 windowing system.
     xserver.enable = true;
 
     # Enable the GNOME Desktop Environment.
     xserver.displayManager.gdm.enable = true;
     xserver.desktopManager.gnome.enable = true;
 
-  # Configure keymap in X11
-    xserver.xkb = { 
+    # Configure keymap in X11
+    xserver.xkb = {
       layout = "by";
       variant = "";
     };
