@@ -12,6 +12,7 @@
     # });
   };
 
+  azure-creds = import ./azure-creds-overlay.nix;
   # Helix nightly overlay
   # helix-nightly = final: prev: {
   #   helix-nightly = prev.helix.overrideAttrs (oldAttrs: {
