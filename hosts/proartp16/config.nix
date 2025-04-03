@@ -38,9 +38,8 @@ in {
   nixpkgs.config.allowUnfree = true;
   environment.variables = lib.mkDefault globalEnvVars;
 
-  #docker replacement
-  virtualisation.podman.enable = true;
-  virtualisation.podman.dockerSocket.enable = true;
+  #docker
+  virtualisation.docker.enable = true;
 
   system.autoUpgrade = {
     enable = true;
