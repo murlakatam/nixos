@@ -29,9 +29,7 @@
     nodePackages.prettier #node d
     ntfs3g # file system
     pciutils
-    podman-tui #docker alternative
-    podman-desktop #docker alternative
-    podman-compose #docker alternative
+    docker
     poppler # pdf redneding lib
     vscode
     usbutils # lsusb

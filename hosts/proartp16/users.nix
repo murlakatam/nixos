@@ -16,6 +16,7 @@ in {
         #"libvirtd" manage virutal maching
         # "scanner" scanning
         #"lp" printing
+        "docker" # for dorker
       ];
       shell = pkgs.zsh;
       ignoreShellProgramCheck = true;
