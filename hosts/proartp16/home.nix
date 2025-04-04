@@ -39,7 +39,7 @@ in {
     monetary = "en_NZ.UTF-8";
     paper = "en_NZ.UTF-8";
     time = "en_NZ.UTF-8";
-    numeric = "en_NZ.UTF-8"; # This is particularly important for number formatting
+    numeric = "en_NZ.UTF-8";
   };
 
   # Set environment variables globally in Home Manager
