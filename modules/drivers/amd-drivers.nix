@@ -38,7 +38,7 @@ in {
     # Boot configuration for AMD GPU support
     boot = {
       initrd.kernelModules = [];
-      kernelModules = ["kvm-amd" "amdgpu" "v4l2loopback"];
+      kernelModules = ["kvm-amd" "amdgpu" "v4l2loopback" "amd_pstate"];
       kernelParams = [
         "amd_pstate=active"
         "tsc=unstable"
