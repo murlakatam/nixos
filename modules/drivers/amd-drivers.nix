@@ -41,10 +41,14 @@ in {
       kernelModules = ["kvm-amd" "amdgpu" "v4l2loopback" "amd_pstate"];
       kernelParams = [
         "amd_pstate=active"
+        "processor.max_cstate=1"
+        "amdgpu.aspm=0"
+        "amdgpu.runpm=0"
+        "amdgpu.bapm=0"
         "tsc=unstable"
         "radeon.si_support=0"
         "amdgpu.si_support=1"
-        "amdgpu.dcdebugmask=0x12" #try 0x12 if doesn't work, and then 0x412
+        "amdgpu.dcdebugmask=0x412" #try 0x12 if doesn't work, and then 0x412
         "amdgpu.lockup_timeout=100000"
         #For your external DisplayPort monitor
         #"video=DP-2:3840x2560@60"
