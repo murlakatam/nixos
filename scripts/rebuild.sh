@@ -9,22 +9,27 @@
 #    4. If you uses a flake as your primary config, you can specify a path to `configuration.nix` in it and then `nixos-rebuild switch —flake` path/to/directory
 # As I hope was clear from the video, I am new to nixos, and there may be other, better, options, in which case I'd love to know them! (I'll update the gist if so)
 
-# A rebuild script that commits on a successful build
+# A rebuild script that commits on a successful build           
 set -e
 
-# Initialize update_flake flag to false
+# Initialize default flags
 update_flake=false
+repair=false
 
 # Parse command line arguments
-
 while [[ $# -gt 0 ]]; do
   case $1 in
     --update-flake)
       update_flake=true
       shift
       ;;
+    --repair)
+      repair=true
+      shift
+      ;;
     *)
       # Unknown option
+      echo "Unknown option: $1"
       shift
       ;;
   esac
@@ -60,9 +65,15 @@ if $update_flake; then
     sudo nix flake update
 fi
 
-# Rebuild, output simplified errors, log trackebacks
-#sudo nixos-rebuild switch -I nixos-config=/home/eugene/dotfiles/nixos/configuration.nix #&>nixos-switch.log || (cat nixos-switch.log | grep --color error && exit 1)
-sudo nixos-rebuild switch --flake /home/eugene/dotfiles/nixos#proartp16 --show-trace #&>nixos-switch.log || (cat nixos-switch.log | grep --color error && exit 1)
+
+if [ "$repair" = true ]; then
+  echo "Repairing botched upgrade..."
+  sudo nixos-rebuild switch --flake /home/eugene/dotfiles/nixos#proartp16 --show-trace --repair
+else
+  # Default rebuild, output simplified errors, log trackebacks
+  #sudo nixos-rebuild switch -I nixos-config=/home/eugene/dotfiles/nixos/configuration.nix #&>nixos-switch.log || (cat nixos-switch.log | grep --color error && exit 1)
+  sudo nixos-rebuild switch --flake /home/eugene/dotfiles/nixos#proartp16 --show-trace #&>nixos-switch.log || (cat nixos-switch.log | grep --color error && exit 1)
+fi
 
 #homemanager change
 #if ! git diff --quiet -- 'home.nix'; then

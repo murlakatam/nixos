@@ -36,7 +36,7 @@
     vscode
     usbutils # lsusb
     wget # Network downloader
-
+    transmission-remote-gtk #transmission remote UI
     # # vim                                               # Text editor (commented out)
 
     # taplo                                               # TOML formatter and language server
