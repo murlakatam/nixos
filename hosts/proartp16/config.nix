@@ -17,11 +17,16 @@ in {
     ./users.nix
     ../../modules/nixosModules
     ../../modules/drivers/amd-drivers.nix
+    ../../modules/drivers/amdgpu-stability.nix
     ../../modules/drivers/nvidia-drivers.nix
   ];
 
   # Drivers Options
-  drivers.amdgpu.enable = true;
+  # Enable AMD GPU drivers with stability patches
+  drivers.amdgpu = {
+    enable = true;
+    stability.enablePatches = true; # Set to false to disable the patches
+  };
   drivers.nvidia.enable = false;
 
   # Enable networking
