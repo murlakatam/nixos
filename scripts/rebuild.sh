@@ -12,7 +12,7 @@
 # A rebuild script that commits on a successful build           
 set -e
 
-# Initialize default flags
+# Initialize default flags 
 update_flake=false
 repair=false
 
@@ -36,7 +36,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Edit your config
-#$EDITOR configuration.nix 
+#$EDITOR configuration.nix  
 
 # cd to your config dir
 pushd ~/dotfiles/nixos/
@@ -44,7 +44,7 @@ pushd ~/dotfiles/nixos/
 code --wait .
 
 # Early return if no changes were detected (thanks @singiamtel!)
-if git diff --quiet '*.nix' '*.lock' '*.zsh' '*.json'; then
+if [[ "$update_flake" != "true" ]] && git diff --quiet '*.nix' '*.lock' '*.zsh' '*.json' '*.sh'; then
     echo "No changes detected, exiting."
     popd
     exit 0
