@@ -4,6 +4,7 @@
   username,
   inputs,
   globalEnvVars,
+  lib,
   ...
 }: {
   home.packages = with pkgs; [
@@ -56,53 +57,57 @@
     # unset beep = disable the bell sound
     # then
     # init zinit and load plugins
-    initExtraBeforeCompInit = ''
-      setopt extendedglob nomatch notify
-      unsetopt beep
-      # init zinit
-      source "${pkgs.zinit}/share/zinit/zinit.zsh"
-      source ${./plugins.zsh}
-    '';
+
+    initContent = lib.mkMerge [
+      (lib.mkBefore ''
+        eval "$(${pkgs.oh-my-posh}/bin/oh-my-posh init zsh --config ${./catppuccin.omp.json})"
+        export CYPRESS_INSTALL_BINARY=0
+        export CYPRESS_RUN_BINARY=${pkgs.cypress}/bin/Cypress
+        export NIX_LD_LIBRARY_PATH="${globalEnvVars.NIX_LD_LIBRARY_PATH}"
+        export NIX_LD="${globalEnvVars.NIX_LD}"
+        # Set DOTNET_ROOT to the location of your dotnet installation
+        export DOTNET_ROOT="$(dirname $(readlink -f $(which dotnet)))"
+        # Add .NET tools to PATH
+        export PATH="$PATH:/home/eugene/.dotnet/tools"
+      '')
+      (lib.mkOrder 550 ''
+        setopt extendedglob nomatch notify
+        unsetopt beep
+        # init zinit
+        source "${pkgs.zinit}/share/zinit/zinit.zsh"
+        source ${./plugins.zsh}
+      '')
+      ''
+        if [[ -f ~/.secrets ]]; then
+          source ~/.secrets
+        fi
+        # can go in profileExtra
+        if [[ -f ~/.profile ]]; then
+          source ~/.profile
+        fi
+
+        # Yazi file manager function
+        y() {
+          local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+          yazi "$@" --cwd-file="$tmp"
+          if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+            builtin cd -- "$cwd"
+          fi
+          rm -f -- "$tmp"
+        }
+
+        #moe get azure token
+        azuretoken() {
+          #az login --scope https://ossrdbms-aad.database.windows.net/.default --tenant e6d2d4cc-b762-486e-8894-4f5f440d5f31
+          az account get-access-token --resource-type oss-rdbms | jq -r '.accessToken'
+        }
+      ''
+    ];
+
     completionInit = ''
       autoload -Uz compinit
       compinit
       zinit cdreplay -q
-    '';
-    initExtra = ''
-      if [[ -f ~/.secrets ]]; then
-        source ~/.secrets
-      fi
-      # can go in profileExtra
-      if [[ -f ~/.profile ]]; then
-        source ~/.profile
-      fi
-
-      # Yazi file manager function
-      y() {
-        local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
-        yazi "$@" --cwd-file="$tmp"
-        if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-          builtin cd -- "$cwd"
-        fi
-        rm -f -- "$tmp"
-      }
-
-      #moe get azure token
-      azuretoken() {
-        #az login --scope https://ossrdbms-aad.database.windows.net/.default --tenant e6d2d4cc-b762-486e-8894-4f5f440d5f31
-        az account get-access-token --resource-type oss-rdbms | jq -r '.accessToken'
-      }
-    '';
-    initExtraFirst = ''
-      eval "$(${pkgs.oh-my-posh}/bin/oh-my-posh init zsh --config ${./catppuccin.omp.json})"
-      export CYPRESS_INSTALL_BINARY=0
-      export CYPRESS_RUN_BINARY=${pkgs.cypress}/bin/Cypress
-      export NIX_LD_LIBRARY_PATH="${globalEnvVars.NIX_LD_LIBRARY_PATH}"
-      export NIX_LD="${globalEnvVars.NIX_LD}"
-      # Set DOTNET_ROOT to the location of your dotnet installation
-      export DOTNET_ROOT="$(dirname $(readlink -f $(which dotnet)))"
-      # Add .NET tools to PATH
-      export PATH="$PATH:/home/eugene/.dotnet/tools"
     '';
 
     syntaxHighlighting.enable = true;
