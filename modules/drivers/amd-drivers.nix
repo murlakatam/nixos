@@ -9,11 +9,17 @@ with lib; let
 in {
   options.drivers.amdgpu = {
     enable = mkEnableOption "Enable AMD Drivers (GPU and CPU)";
+    stability = {
+      enablePatches = mkEnableOption "Enable stability patches for AMD GPU VCN reset issues";
+    };
   };
 
   config = mkIf cfg.enable {
     # Systemd tmpfiles rules for ROCm HIP (ollama shite)
     #systemd.tmpfiles.rules = ["L+    /opt/rocm/hip   -    -    -     -    ${pkgs.rocmPackages.clr}"];
+
+    # Enable the stability patches if requested
+    hardware.amdgpu.stability.enable = cfg.stability.enablePatches;
 
     # Video drivers configuration for X server
     services.xserver.videoDrivers = ["amdgpu"];
