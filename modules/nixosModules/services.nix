@@ -30,6 +30,9 @@ in {
       # drivers = [pkgs.hplipWithPlugin];
     };
 
+    # Enable flatpak https://github.com/gmodena/nix-flatpak
+    flatpak.enable = true;
+
     # Enable sound with pipewire.
     pulseaudio.enable = false;
     pipewire = {

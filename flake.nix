@@ -15,6 +15,7 @@
       url = "github:Mic92/nix-ld";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=latest";
     yazi.url = "github:sxyazi/yazi";
   };
   outputs = {
@@ -23,6 +24,7 @@
     home-manager,
     nix-ld,
     nix-index-database,
+    nix-flatpak,
     yazi,
     ...
   } @ inputs: let
@@ -74,6 +76,7 @@
             _module.args.globalEnvVars = mkGlobalEnvVars pkgs;
           })
           nix-ld.nixosModules.nix-ld
+          nix-flatpak.nixosModules.nix-flatpak
           ./hosts/${host}/config.nix
           home-manager.nixosModules.home-manager
           nix-index-database.nixosModules.nix-index
@@ -90,7 +93,10 @@
             home-manager.users.${username} = {pkgs, ...}: {
               # Define globalEnvVars inside the Home Manager configuration
               _module.args.globalEnvVars = mkGlobalEnvVars pkgs;
-              imports = [./hosts/${host}/home.nix];
+              imports = [
+                nix-flatpak.homeManagerModules.nix-flatpak
+                ./hosts/${host}/home.nix
+              ];
             };
             nixpkgs.config.allowUnfree = true;
             programs.nix-ld.dev.enable = true;
