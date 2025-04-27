@@ -19,10 +19,16 @@
   mt5Launcher = writeShellScriptBin "metatrader5" ''
     #!/bin/bash
     export WINEPREFIX="$HOME/.wine-metatrader5"
-    # Changed to 32-bit architecture
-    export WINEARCH=win32
+    # Keep the original 64-bit architecture
+    export WINEARCH=win64
     export WINEDLLOVERRIDES="mscoree=d"
     export WINEDEBUG="-all"
+
+    # Check if we need to clean up a broken or mismatched prefix
+    if [ "$1" == "--reinstall" ] || [ "$1" == "--clean" ]; then
+      echo "Removing existing Wine prefix..."
+      rm -rf "$WINEPREFIX"
+    fi
 
     if [ ! -d "$WINEPREFIX" ]; then
       echo "Setting up Wine prefix for MetaTrader 5..."
@@ -61,15 +67,12 @@
       # Launch MetaTrader 5
       PROGRAM_FILES="$WINEPREFIX/drive_c/Program Files/MetaTrader 5"
       if [ -d "$PROGRAM_FILES" ]; then
-        # Changed to use terminal.exe (32-bit) instead of terminal64.exe
-        wine "$PROGRAM_FILES/terminal.exe"
+        # Use terminal64.exe for 64-bit
+        wine "$PROGRAM_FILES/terminal64.exe"
       else
         echo "MetaTrader 5 installation not found. Reinstalling..."
-        # If can't find installation, try to install again
-        TMP_DIR=$(mktemp -d)
-        ${wget}/bin/wget -q -O "$TMP_DIR/mt5setup.exe" "https://download.mql5.com/cdn/web/metaquotes.software.corp/mt5/mt5setup.exe"
-        wine "$TMP_DIR/mt5setup.exe"
-        rm -rf "$TMP_DIR"
+        # If can't find installation, force a reinstall
+        $0 --reinstall
       fi
     fi
   '';
