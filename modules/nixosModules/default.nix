@@ -14,6 +14,5 @@
     ./users.nix
     ./i18n.nix
     ./fonts.nix
-    ./wine.nix
   ];
 }

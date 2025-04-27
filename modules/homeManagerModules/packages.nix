@@ -31,7 +31,6 @@
     teams-for-linux
     jetbrains.rider
     jetbrains.webstorm
-    metatrader5
     zenity # For winetricks dialogs
   ];
 }
