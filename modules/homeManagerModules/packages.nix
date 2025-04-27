@@ -30,5 +30,6 @@
     teams-for-linux
     jetbrains.rider
     jetbrains.webstorm
+    metatrader5
   ];
 }

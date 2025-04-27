@@ -13,6 +13,7 @@
   };
 
   azure-creds = import ./azure-creds-overlay.nix;
+  metatrader5 = import ./metatrader5.nix;
   # Helix nightly overlay
   # helix-nightly = final: prev: {
   #   helix-nightly = prev.helix.overrideAttrs (oldAttrs: {

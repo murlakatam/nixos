@@ -5,6 +5,7 @@
     ./packages.nix
     ./custom-scripts.nix
     ./git.nix
+    ./flatpak.nix
     ./tmux.nix
     ./emoji.nix
   ];

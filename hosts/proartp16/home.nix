@@ -5,6 +5,7 @@
   host,
   system,
   inputs,
+  outputs,
   globalEnvVars,
   ...
 }: let
@@ -31,6 +32,9 @@ in {
   # Set avatar
   home.file.".face".source = ../../modules/avatars/Profile.png;
   nixpkgs.config.allowUnfree = true;
+
+  # Important: Apply the same overlays to Home Manager's nixpkgs
+  nixpkgs.overlays = builtins.attrValues outputs.overlays;
 
   # Home Manager locale settings
   home.language = {
