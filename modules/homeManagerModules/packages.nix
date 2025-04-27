@@ -11,6 +11,7 @@
     cod # turn any --help into completion
     tree # pretty print directories
     fastfetch # flexx your OS : alternative to freshly deceased neofetch
+    gnome-calculator
     #silver-searcher # ag
     nerd-fonts.jetbrains-mono
     kubelogin # azure kube login
@@ -31,5 +32,6 @@
     jetbrains.rider
     jetbrains.webstorm
     metatrader5
+    zenity # For winetricks dialogs
   ];
 }
