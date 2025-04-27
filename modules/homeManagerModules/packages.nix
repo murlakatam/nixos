@@ -31,6 +31,7 @@
     teams-for-linux
     jetbrains.rider
     jetbrains.webstorm
+    whatsapp-for-linux
     zenity # For winetricks dialogs
   ];
 }
