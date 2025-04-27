@@ -14,6 +14,7 @@
     azuredatastudio
     bat # Cat clone with syntax highlighting
     bitwarden-desktop # password manager
+    cabextract # needed by winetricks
     cypress #cypress
     docker
     dotnetCorePackages.sdk_8_0-bin #dotnet
@@ -31,11 +32,13 @@
     nodejs_22 #node
     nodePackages.prettier #node d
     ntfs3g # file system
+    p7zip
     pciutils
     pgadmin4-desktopmode
     poppler # pdf redneding lib
     vscode
     usbutils # lsusb
+    unzip
     wget # Network downloader
     transmission-remote-gtk #transmission remote UI
     # # vim                                               # Text editor (commented out)

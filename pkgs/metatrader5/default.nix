@@ -16,15 +16,11 @@
   # Use winetricks to get gecko/mono if the packages aren't available
   useWinetricksForDeps = wine-gecko == null || wine-mono == null;
 
-  mt5Icon = fetchurl {
-    url = "https://c.mql5.com/s1/icons/mt5.png";
-    sha256 = "1vkhjsy5mzayhbid0gc6m9zz8wlspl5y6j3bxzwgk2r24qasfj1s";
-  };
-
   mt5Launcher = writeShellScriptBin "metatrader5" ''
     #!/bin/bash
     export WINEPREFIX="$HOME/.wine-metatrader5"
-    export WINEARCH=win64
+    # Changed to 32-bit architecture
+    export WINEARCH=win32
     export WINEDLLOVERRIDES="mscoree=d"
     export WINEDEBUG="-all"
 
@@ -65,7 +61,8 @@
       # Launch MetaTrader 5
       PROGRAM_FILES="$WINEPREFIX/drive_c/Program Files/MetaTrader 5"
       if [ -d "$PROGRAM_FILES" ]; then
-        wine "$PROGRAM_FILES/terminal64.exe"
+        # Changed to use terminal.exe (32-bit) instead of terminal64.exe
+        wine "$PROGRAM_FILES/terminal.exe"
       else
         echo "MetaTrader 5 installation not found. Reinstalling..."
         # If can't find installation, try to install again
@@ -108,7 +105,6 @@ in
       mkdir -p $out/share/icons/hicolor/256x256/apps
 
       ln -s ${mt5Launcher}/bin/metatrader5 $out/bin/metatrader5
-
       # Copy the local icon file
       cp ${./mt5.png} $out/share/icons/hicolor/256x256/apps/metatrader5.png
     '';
