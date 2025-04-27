@@ -49,7 +49,7 @@ in {
   system.autoUpgrade = {
     enable = true;
     allowReboot = true;
-    flake = "home/${username}/dotfiles/nixos/flake.nix";
+    flake = "path:home/${username}/dotfiles/nixos";
   };
 
   security.rtkit.enable = true;
