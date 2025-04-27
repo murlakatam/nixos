@@ -18,60 +18,77 @@
 
   mt5Launcher = writeShellScriptBin "metatrader5" ''
     #!/bin/bash
-    export WINEPREFIX="$HOME/.wine-metatrader5"
-    # Keep the original 64-bit architecture
-    export WINEARCH=win64
-    export WINEDLLOVERRIDES="mscoree=d"
-    export WINEDEBUG="-all"
 
-    # Check if we need to clean up a broken or mismatched prefix
-    if [ "$1" == "--reinstall" ] || [ "$1" == "--clean" ]; then
+    # Use absolute paths to wine binaries
+    WINE="${wine64}/bin/wine64"
+    WINEBOOT="${wine64}/bin/wineboot"
+    WINECFG="${wine64}/bin/winecfg"
+    WINETRICKS="${winetricks}/bin/winetricks"
+
+    # Setup wine environment
+    export WINEPREFIX="$HOME/.wine-metatrader5"
+    export WINEARCH=win64
+    export WINEDEBUG="+err"
+
+    # For wine 10.0 compatibility
+    export WINEESYNC=0
+    export WINEFSYNC=0
+
+    # Helper function for error handling
+    handle_error() {
+      echo "Error occurred. Please check your Wine installation."
+      exit 1
+    }
+
+    # Clean up if requested
+    if [ "$1" == "--clean" ] || [ "$1" == "--reinstall" ]; then
       echo "Removing existing Wine prefix..."
       rm -rf "$WINEPREFIX"
     fi
 
+    # Test if wine is working before we do anything
+    echo "Testing Wine installation..."
+    $WINE --version || handle_error
+
+    # Check for existing prefix or create new one
     if [ ! -d "$WINEPREFIX" ]; then
       echo "Setting up Wine prefix for MetaTrader 5..."
-      wineboot -i
-      winecfg -v=win10
 
-      # Install required components
-      ${
-      if useWinetricksForDeps
-      then ''
-        # Install gecko and mono via winetricks if packages aren't available
-        winetricks -q gecko mono
-      ''
-      else ""
-    }
-      winetricks -q msxml6 dotnet48 corefonts ddr=gdi
+      # Initialize with minimal configuration first
+      echo "Creating basic Wine prefix..."
+      $WINEBOOT -i || handle_error
 
-      # Download installers
-      TMP_DIR=$(mktemp -d)
-      echo "Downloading WebView2 Runtime..."
-      ${wget}/bin/wget -q -O "$TMP_DIR/webview.exe" "https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/c1336fd6-a2eb-4669-9b03-949fc70ace0e/MicrosoftEdgeWebview2Setup.exe"
-      echo "Downloading MetaTrader 5 installer..."
-      ${wget}/bin/wget -q -O "$TMP_DIR/mt5setup.exe" "https://download.mql5.com/cdn/web/metaquotes.software.corp/mt5/mt5setup.exe"
+      echo "Waiting for Wine initialization..."
+      sleep 5
 
-      # Install WebView2 Runtime
-      echo "Installing WebView2 Runtime..."
-      wine "$TMP_DIR/webview.exe" /silent /install
+      echo "Setting Windows version..."
+      $WINECFG -v=win7 || handle_error
 
-      # Install MetaTrader 5
-      echo "Installing MetaTrader 5..."
-      wine "$TMP_DIR/mt5setup.exe"
+      # Basic setup completed, check if we have a functional prefix
+      if [ -f "$WINEPREFIX/system.reg" ]; then
+        echo "Wine prefix created successfully!"
 
-      # Clean up
-      rm -rf "$TMP_DIR"
+        # Install MetaTrader 5
+        TMP_DIR=$(mktemp -d)
+        echo "Downloading MetaTrader 5 installer..."
+        ${wget}/bin/wget -q -O "$TMP_DIR/mt5setup.exe" "https://download.mql5.com/cdn/web/metaquotes.software.corp/mt5/mt5setup.exe"
+
+        echo "Installing MetaTrader 5..."
+        $WINE "$TMP_DIR/mt5setup.exe"
+
+        rm -rf "$TMP_DIR"
+      else
+        echo "Failed to create Wine prefix. Please check your Wine installation."
+        exit 1
+      fi
     else
       # Launch MetaTrader 5
       PROGRAM_FILES="$WINEPREFIX/drive_c/Program Files/MetaTrader 5"
       if [ -d "$PROGRAM_FILES" ]; then
-        # Use terminal64.exe for 64-bit
-        wine "$PROGRAM_FILES/terminal64.exe"
+        echo "Launching MetaTrader 5..."
+        $WINE "$PROGRAM_FILES/terminal64.exe"
       else
         echo "MetaTrader 5 installation not found. Reinstalling..."
-        # If can't find installation, force a reinstall
         $0 --reinstall
       fi
     fi
