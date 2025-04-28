@@ -15,4 +15,10 @@
     source = ../../scripts/reload-wifi.zsh;
     executable = true;
   };
+
+  # allow me to azure postgres
+  home.file.".config/zsh/functions/allow-me-2-postgres.zsh" = {
+    source = ../../scripts/allow-me-2-postgres.zsh;
+    executable = true;
+  };
 }
