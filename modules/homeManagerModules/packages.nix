@@ -6,6 +6,7 @@
   ...
 }: {
   home.packages = with pkgs; [
+    avalonia-ilspy #dotpeek alternative
     azure-cli
     #diff-so-fancy
     cod # turn any --help into completion
