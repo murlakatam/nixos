@@ -11,6 +11,7 @@
     cod # turn any --help into completion
     tree # pretty print directories
     fastfetch # flexx your OS : alternative to freshly deceased neofetch
+    gimp-with-plugins
     gnome-calculator
     #silver-searcher # ag
     nerd-fonts.jetbrains-mono
