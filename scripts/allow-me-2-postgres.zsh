@@ -4,10 +4,8 @@ allow-me-2-postgres() {
     
     # Get public IP address
     get_public_ip() {
-        echo "Detecting current public IP address..."
-        local public_ip=$(curl -s https://api.ipify.org)
-        echo "Detected public IP: $public_ip"
-        echo "$public_ip"
+        # Just get the IP without any extra text
+        curl -s https://api.ipify.org
     }
     
     # Get full subnet range from IP address
@@ -18,11 +16,11 @@ allow-me-2-postgres() {
         
         # Validate IP address format
         if [[ ! $ip_address =~ ^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$ ]]; then
-            echo "Invalid IPv4 address format. Please provide a valid IPv4 address." >&2
+            echo "Invalid IPv4 address format: '$ip_address'. Please provide a valid IPv4 address." >&2
             return 1
         fi
         
-        # Manual parsing of IP address to avoid zsh-specific syntax issues
+        # Manual parsing of IP address
         local first=$(echo "$ip_address" | cut -d. -f1)
         local second=$(echo "$ip_address" | cut -d. -f2)
         local third=$(echo "$ip_address" | cut -d. -f3)
@@ -33,8 +31,6 @@ allow-me-2-postgres() {
         local start_ip="${first_three_octets}.0"
         local end_ip="${first_three_octets}.255"
         local subnet="${first_three_octets}.0/24"
-        
-        echo "Calculated subnet: $start_ip to $end_ip"
         
         # Return the values directly
         echo "start_ip=$start_ip"
@@ -101,22 +97,20 @@ allow-me-2-postgres() {
     
     # Main function execution flow
     {
+        # Get the public IP address
+        echo "Detecting current public IP address..."
         local public_ip=$(get_public_ip)
-        echo "Working with public IP: $public_ip"
+        echo "Detected public IP: $public_ip"
         
         # Get subnet information
         local subnet_info=$(get_full_subnet_range "$public_ip")
-        echo "Subnet info: $subnet_info"
         
-        # Parse the returned values directly
+        # Parse the returned values
         local start_ip=$(echo "$subnet_info" | grep "start_ip=" | cut -d= -f2)
         local end_ip=$(echo "$subnet_info" | grep "end_ip=" | cut -d= -f2)
         local subnet=$(echo "$subnet_info" | grep "subnet=" | cut -d= -f2)
         
-        echo "Parsed values:"
-        echo "  Start IP: $start_ip"
-        echo "  End IP: $end_ip"
-        echo "  Subnet: $subnet"
+        echo "Using subnet range: $start_ip to $end_ip ($subnet)"
         
         perform_az_login
         update_postgres_networking "$RESOURCE_GROUP_NAME" "$SERVER_NAME" "$start_ip" "$end_ip" "$subnet"
