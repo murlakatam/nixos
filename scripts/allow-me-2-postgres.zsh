@@ -1,6 +1,3 @@
-
-#!/run/current-system/sw/bin/zsh
-
 allow-me-2-postgres() {
     local RESOURCE_GROUP_NAME="MATA-ERS-DEVTEST-PSQL-DATABASES"
     local SERVER_NAME="mataersdevtestfpsqlserver"
@@ -58,13 +55,19 @@ allow-me-2-postgres() {
         echo "Updating PostgreSQL flexible server firewall rules..."
         
         # Check if the rule already exists and delete it if it does
-        if az postgres flexible-server firewall-rule show --resource-group $resource_group --name $server_name --rule-name "Eugene_WFH" &>/dev/null; then
+        if az postgres flexible-server firewall-rule show --resource-group "$resource_group" --name "$server_name" --rule-name "Eugene_WFH" &>/dev/null; then
             echo "Existing 'Eugene_WFH' rule found. Deleting it first..."
-            az postgres flexible-server firewall-rule delete --resource-group $resource_group --name $server_name --rule-name "Eugene_WFH" --yes
+            az postgres flexible-server firewall-rule delete --resource-group "$resource_group" --name "$server_name" --rule-name "Eugene_WFH" --yes
         fi
         
-        # Create new firewall rule with full subnet range
-        az postgres flexible-server firewall-rule create --resource-group $resource_group --name $server_name --rule-name "Eugene_WFH" --start-ip-address $start_ip --end-ip-address $end_ip
+        # Create new firewall rule with full subnet range - fix the command syntax
+        echo "Creating firewall rule with start IP: $start_ip and end IP: $end_ip"
+        az postgres flexible-server firewall-rule create \
+          --resource-group "$resource_group" \
+          --name "$server_name" \
+          --rule-name "Eugene_WFH" \
+          --start-ip-address "$start_ip" \
+          --end-ip-address "$end_ip"
         
         if [[ $? -ne 0 ]]; then
             echo "Failed to update PostgreSQL flexible server firewall rules." >&2
@@ -77,7 +80,7 @@ allow-me-2-postgres() {
     # Main function execution flow
     {
         local public_ip=$(get_public_ip)
-        local ip_range_str=$(get_full_subnet_range $public_ip)
+        local ip_range_str=$(get_full_subnet_range "$public_ip")
         
         # Parse the returned string into variables
         local original_ip start_ip end_ip subnet
@@ -86,7 +89,7 @@ allow-me-2-postgres() {
         echo "Using full subnet range: $start_ip to $end_ip ($subnet)"
         
         perform_az_login
-        update_postgres_networking $RESOURCE_GROUP_NAME $SERVER_NAME $start_ip $end_ip $subnet
+        update_postgres_networking "$RESOURCE_GROUP_NAME" "$SERVER_NAME" "$start_ip" "$end_ip" "$subnet"
         
         echo "Operation completed successfully."
     } || {
