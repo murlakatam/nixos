@@ -21,4 +21,10 @@
     source = ../../scripts/allow-me-2-postgres.zsh;
     executable = true;
   };
+
+  # opens ide with nohop
+  home.file.".config/zsh/functions/open-ide-here.zsh" = {
+    source = ../../scripts/open-ide-here.zsh;
+    executable = true;
+  };
 }
