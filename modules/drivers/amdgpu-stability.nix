@@ -15,12 +15,8 @@ in {
     # Apply the hardcoded patches from local files
     # boot.kernelPatches = [
     #   {
-    #     name = "amdgpu-vcn-reset-fix-1";
-    #     patch = ./amdgpu-vcn-reset-fix-1.patch;
-    #   }
-    #   {
-    #     name = "amdgpu-vcn-reset-fix-2";
-    #     patch = ./amdgpu-vcn-reset-fix-2.patch;
+    #     name = "amdgpu-vrr-fix";
+    #     patch = ./amdgpu-vrr-fix.patch;
     #   }
     # ];
   };
