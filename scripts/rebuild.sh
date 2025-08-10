@@ -79,10 +79,10 @@ fi
 #if ! git diff --quiet -- 'home.nix'; then
 #echo "Homemanager change detected..."
 #journalctl -xe --unit home-manager-eugene.service
-#fi
+#fi 
 
 # Get current generation metadata
-current=$(nixos-rebuild list-generations | grep current)
+current=$(nixos-rebuild list-generations | awk '$NF == "True" && NR>1 { $NF=""; print $0 }')
 
 # Commit all changes witih the generation metadata
 git commit -am "$current"

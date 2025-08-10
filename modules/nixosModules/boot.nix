@@ -6,6 +6,7 @@
   boot = {
     #linuxPackages_latest
     #linuxPackages_xanmod_latest
+    #linuxPackages_zen
     kernelPackages = pkgs.linuxPackages_zen;
     loader = {
       efi.canTouchEfiVariables = true;

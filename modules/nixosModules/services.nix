@@ -7,12 +7,12 @@
   inherit (import ../../hosts/${host}/variables.nix) keyboardLayout;
 in {
   services = {
+    # Enable the GNOME Desktop Environment.
+    displayManager.gdm.enable = true;
+    desktopManager.gnome.enable = true;
     #Configures the X Window System (X11 or Wayland)
     xserver = {
       enable = true;
-      # Enable the GNOME Desktop Environment.
-      displayManager.gdm.enable = true;
-      desktopManager.gnome.enable = true;
       xkb = {
         layout = "${keyboardLayout}";
         variant = "";
