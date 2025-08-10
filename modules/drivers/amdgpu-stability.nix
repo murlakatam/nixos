@@ -12,7 +12,7 @@ in {
   };
 
   config = mkIf cfg.enable {
-    # Apply the hardcoded patches from local files
+    # Apply the hardcoded patch from local files
     # boot.kernelPatches = [
     #   {
     #     name = "amdgpu-vrr-fix";
