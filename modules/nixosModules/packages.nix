@@ -28,6 +28,7 @@
     inxi #system information tool designed for both hardware and system reporting.
     iotop # io monitoring
     jq
+    kubectl
     lshw # details hardware configuration info
     libnotify # notification manager
     nodejs_22 #node
