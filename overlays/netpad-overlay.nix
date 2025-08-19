@@ -1,3 +1,4 @@
+# overlays/netpad-overlay.nix
 final: prev: {
   netpad = prev.buildDotnetModule rec {
     pname = "netpad";
@@ -6,25 +7,31 @@ final: prev: {
     src = prev.fetchFromGitHub {
       owner = "tareqimbasher";
       repo = "NetPad";
-      rev = "v0.10.0";
-      sha256 = "sha256-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"; # update after `nix-prefetch`
+      rev = "v${version}";
+      # IMPORTANT: Replace this with the real sha256 you calculate!
+      sha256 = "sha256-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX=";
     };
 
-    projectFile = "NetPad.sln"; # or the correct *.csproj for entrypoint
+    # Point to the specific project file for the Electron app
+    projectFile = "src/Apps/NetPad.Electron/NetPad.Electron.csproj";
 
-    # You must generate this file with `nix-build -A netpad.fetch-deps`.
-    nugetDeps = ./deps.nix;
+    # Use vendorHash instead of nugetDeps.
+    # First, leave it empty (""). Nix will fail and tell you the correct hash.
+    # Then, copy the correct hash here.
+    vendorHash = "sha256-YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY=";
 
-    dotnet-sdk = prev.dotnetCorePackages.sdk_9_0; # adjust to match NetPad requirements
+    # NetPad v0.10.0 uses the .NET 8 SDK
+    dotnet-sdk = prev.dotnetCorePackages.sdk_8_0;
 
-    # Optional: add runtimeDeps for Tauri/Electron (like GTK, Webkit, etc.) depending on exact build
-    # runtimeDeps = [ prev.gtk3 prev.webkitgtk ];
+    # Add runtime dependencies needed for an Electron GUI application
+    runtimeDeps = with prev; [gtk3 webkitgtk_4_1];
 
     meta = with prev.lib; {
-      description = "Modern script-oriented .NET code runner with database support";
-      homepage = "https://github.com/tareqimbasher/NetPad";
+      description = "A cross-platform, modern, and powerful .NET script runner.";
+      homepage = "https://netpad.dev/";
       license = licenses.mit;
       platforms = platforms.linux;
+      maintainers = with maintainers; [your-github-username]; # Good practice to add yourself
     };
   };
 }
