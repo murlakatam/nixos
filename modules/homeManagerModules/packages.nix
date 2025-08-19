@@ -15,7 +15,7 @@
     gimp-with-plugins
     gnome-calculator
     #silver-searcher # ag
-    nerd-fonts.jetbrains-mono
+    kubectl # kubernetes cli
     kubelogin # azure kube login
     krusader # total commander alternative
     k9s # k8s management
