@@ -38,11 +38,12 @@
     pciutils
     pgadmin4-desktopmode
     poppler # pdf redneding lib
+    nixfmt-rfc-style # nix formatter
+    transmission-remote-gtk #transmission remote UI
     vscode
     usbutils # lsusb
     unzip
     wget # Network downloader
-    transmission-remote-gtk #transmission remote UI
     # # vim                                               # Text editor (commented out)
 
     # taplo                                               # TOML formatter and language server

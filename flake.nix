@@ -17,6 +17,11 @@
     };
     nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=latest";
     yazi.url = "github:sxyazi/yazi";
+
+    opencodeSrc = {
+      url = "github:sst/opencode";
+      flake = false;
+    };
   };
   outputs = {
     self,
@@ -26,6 +31,7 @@
     nix-index-database,
     nix-flatpak,
     yazi,
+    opencodeSrc,
     ...
   } @ inputs: let
     inherit (self) outputs;

@@ -126,6 +126,22 @@
         "type": "github"
       }
     },
+    "opencodeSrc": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1755725863,
+        "narHash": "sha256-Ssiwgn7ue5mxFcaXco81Zik10/KFyrEfi1pf8jvjfBU=",
+        "owner": "sst",
+        "repo": "opencode",
+        "rev": "34c6c8494a85cc3043aa8c1616ddd162e3699aa4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "sst",
+        "repo": "opencode",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "home-manager": "home-manager",
@@ -133,6 +149,7 @@
         "nix-index-database": "nix-index-database",
         "nix-ld": "nix-ld",
         "nixpkgs": "nixpkgs",
+        "opencodeSrc": "opencodeSrc",
         "yazi": "yazi"
       }
     },

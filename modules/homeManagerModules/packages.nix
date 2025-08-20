@@ -22,7 +22,9 @@
     lazydocker
     lazygit
     mc
+    mono # .net dev framework
     meld # gui differ
+    opencode #tui ai agent runner
     banner # print big banners
     figlet # better banners
     toilet # even better banners
