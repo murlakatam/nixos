@@ -46,6 +46,8 @@
         pkgs.stdenv.cc.cc
         pkgs.libunwind
         pkgs.libuuid
+        pkgs.glibc
+        pkgs.gmp
         pkgs.icu
         pkgs.openssl
         pkgs.zlib

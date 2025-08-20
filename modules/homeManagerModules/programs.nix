@@ -104,6 +104,16 @@ in {
       enable = true;
       enableZshIntegration = true;
     };
+    # nix-ld = {
+    #   enable = true;
+    #   libraries = with pkgs; [
+    #     icu
+    #     gmp
+    #     glibc
+    #     openssl
+    #     stdenv.cc.cc
+    #   ];
+    # };
     ripgrep = {
       enable = true;
       arguments = [
