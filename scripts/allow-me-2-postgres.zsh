@@ -41,7 +41,7 @@ allow-me-2-postgres() {
         old_rules=$(az postgres flexible-server firewall-rule list \
             --resource-group "$resource_group" \
             --name "$server_name" \
-            --query "[?starts_with(name, 'Eugene_WFH_')].name" \
+            --query "[?starts_with(name, 'Eugene_WFH')].name" \
             --output tsv)
 
         if [[ -n "$old_rules" ]]; then
