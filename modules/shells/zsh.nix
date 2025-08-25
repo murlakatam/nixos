@@ -69,6 +69,7 @@
         export DOTNET_ROOT="$(dirname $(readlink -f $(which dotnet)))"
         # Add .NET tools to PATH
         export PATH="$PATH:/home/eugene/.dotnet/tools"
+        export PYTHONWARNINGS="ignore::FutureWarning"
       '')
       (lib.mkOrder 550 ''
         setopt extendedglob nomatch notify

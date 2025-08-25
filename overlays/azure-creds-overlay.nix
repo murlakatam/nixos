@@ -33,6 +33,7 @@ final: prev: {
       export NUGET_CREDENTIALPROVIDER_PATH="$out/plugins"
       export NUGET_CREDENTIALPROVIDER_SESSIONTOKENCACHE_ENABLED=true
       export DOTNET_SYSTEM_NET_HTTP_USESOCKETSHTTPHANDLER=0
+      export PYTHONWARNINGS="ignore::FutureWarning"
 
       echo "Azure Artifacts Credential Provider configured"
       EOF
