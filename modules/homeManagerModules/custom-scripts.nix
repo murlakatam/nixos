@@ -22,6 +22,12 @@
     executable = true;
   };
 
+  # get azure token
+  home.file.".config/zsh/functions/get-azure-token.zsh" = {
+    source = ../../scripts/get-azure-token.zsh;
+    executable = true;
+  };
+
   # opens ide with nohop
   home.file.".config/zsh/functions/open-ide-here.zsh" = {
     source = ../../scripts/open-ide-here.zsh;
