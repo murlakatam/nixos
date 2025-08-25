@@ -69,12 +69,7 @@ allow-me-2-postgres() {
           --end-ip-address "$ip_address"
         
         if [[ $? -ne 0 ]]; then
-            echo "Failed to create PostgreSQL flexible server firewall rule with az postgres flexible-server firewall-rule create \
-          --resource-group "$resource_group" \
-          --name "$server_name" \
-          --rule-name "$rule_name_today" \
-          --start-ip-address "$ip_address" \
-          --end-ip-address "$ip_address"." >&2
+            echo "Failed to create PostgreSQL flexible server firewall rule with az postgres flexible-server firewall-rule create --resource-group "$resource_group" --name "$server_name" --rule-name "$rule_name_today" --start-ip-address "$ip_address" --end-ip-address "$ip_address""
             return 1
         fi
         
