@@ -14,7 +14,7 @@ allow-me-2-postgres() {
     perform_az_login() {
         echo "Logging in to Azure..."
         
-        az login --use-device-code
+        az login
         if [[ $? -ne 0 ]]; then
             echo "Azure login failed. Please check your credentials and try again." >&2
             return 1
