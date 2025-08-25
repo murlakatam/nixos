@@ -13,12 +13,14 @@ allow-me-2-postgres() {
     # Login to Azure
     perform_az_login() {
         echo "Logging in to Azure..."
+        
         az login --use-device-code
         if [[ $? -ne 0 ]]; then
             echo "Azure login failed. Please check your credentials and try again." >&2
             return 1
         fi
         echo "Azure login successful."
+        az account set --subscription "487387bd-b94b-45e0-a0a8-7ada86aa52e1"
     }
     
     # Update PostgreSQL networking rules
