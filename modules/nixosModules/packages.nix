@@ -30,6 +30,7 @@
     jq
     lshw # details hardware configuration info
     libnotify # notification manager
+    mosh # remote ssh
     nerd-fonts.jetbrains-mono
     nodejs_22 #node
     nodePackages.prettier #node d
