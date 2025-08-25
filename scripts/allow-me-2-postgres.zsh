@@ -1,6 +1,12 @@
 # Allows your current public IP to access the Azure PostgreSQL Flexible Server.
 # It first cleans up ALL old rules starting with "Eugene_WFH_" before creating a new one.
 allow-me-2-postgres() {
+    # --- NEW: Check for the --skip-login argument ---
+    local skip_login=false
+    if [[ "$1" == "--skip-login" ]]; then
+        skip_login=true
+    fi
+
     local RESOURCE_GROUP_NAME="MATA-ERS-DEVTEST-PSQL-DATABASES"
     local SERVER_NAME="mataersdevtestfpsqlserver"
     
@@ -37,16 +43,15 @@ allow-me-2-postgres() {
         
         # --- NEW: Find and delete all old rules matching the pattern ---
         echo "🧹 Searching for and deleting any existing 'Eugene_WFH' rules..."
-        local old_rules
-        old_rules=$(az postgres flexible-server firewall-rule list \
+        local -a old_rules=("${(@f)$(az postgres flexible-server firewall-rule list \
             --resource-group "$resource_group" \
             --name "$server_name" \
             --query "[?starts_with(name, 'Eugene_WFH')].name" \
-            --output tsv)
+            --output tsv)}")
 
-        if [[ -n "$old_rules" ]]; then
-            # The word splitting is intentional here for the loop
-            for old_rule in $old_rules; do
+        # --- FIX: Loop through the array safely ---
+        if (( ${#old_rules[@]} > 0 )); then
+            for old_rule in "${old_rules[@]}"; do
                 echo "  -> Deleting old rule: $old_rule"
                 az postgres flexible-server firewall-rule delete \
                     --resource-group "$resource_group" \
@@ -90,7 +95,11 @@ allow-me-2-postgres() {
         
         local rule_name="Eugene_WFH_$(date +'%Y-%m-%d')"
         
-        perform_az_login
+        if [[ "$skip_login" == true ]]; then
+            echo "🔑 Skipping Azure login as requested. Assuming you are already authenticated."
+        else
+            perform_az_login || return 1
+        fi
         update_postgres_networking "$RESOURCE_GROUP_NAME" "$SERVER_NAME" "$public_ip" "$rule_name"
         
         echo "Operation completed successfully."
