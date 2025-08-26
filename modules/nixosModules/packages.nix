@@ -47,6 +47,7 @@
     wget # Network downloader
     wl-clipboard # wayland clipboard
     wl-clipboard-x11 # wayland clipboard for x11
+    yt-dlp # youtube downloader
     # # vim                                               # Text editor (commented out)
 
     # taplo                                               # TOML formatter and language server
