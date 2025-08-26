@@ -5,6 +5,7 @@
 }: {
   environment.systemPackages = with pkgs; [
     inputs.yazi.packages.${system}.default
+    yaziPlugins.wl-clipboard
     #inputs.nix-inspect.packages.${pkgs.system}.default
 
     #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
@@ -40,6 +41,7 @@
     pgadmin4-desktopmode
     poppler # pdf redneding lib
     nixfmt-rfc-style # nix formatter
+    sshfs # secure file system over SSH
     transmission-remote-gtk #transmission remote UI
     vscode
     usbutils # lsusb
