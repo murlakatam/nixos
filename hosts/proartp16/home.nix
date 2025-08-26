@@ -31,6 +31,16 @@ in {
   home.stateVersion = "24.05";
   # Set avatar
   home.file.".face".source = ../../modules/avatars/Profile.png;
+
+  # Set ssh config
+  home.file.".ssh/config" = {
+    # Use .text for inline content
+    text = ''
+      Host ssh.murfly.me
+        ProxyCommand ${pkgs.cloudflared}/bin/cloudflared access ssh --hostname %h
+    '';
+  };
+
   nixpkgs.config.allowUnfree = true;
 
   # Important: Apply the same overlays to Home Manager's nixpkgs

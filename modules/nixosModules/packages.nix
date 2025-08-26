@@ -16,6 +16,7 @@
     bat # Cat clone with syntax highlighting
     bitwarden-desktop # password manager
     cabextract # needed by winetricks
+    cloudflared # cloudflare client
     cypress #cypress
     docker
     dotnetCorePackages.sdk_8_0-bin #dotnet
