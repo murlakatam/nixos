@@ -36,6 +36,7 @@
     nodejs_22 #node
     nodePackages.prettier #node d
     ntfs3g # file system
+    omnisharp-roslyn
     p7zip
     pciutils
     pgadmin4-desktopmode
@@ -43,6 +44,17 @@
     nixfmt-rfc-style # nix formatter
     sshfs # secure file system over SSH
     transmission-remote-gtk #transmission remote UI
+    tree-sitter-grammars.tree-sitter-bash
+    tree-sitter-grammars.tree-sitter-yaml
+    tree-sitter-grammars.tree-sitter-go
+    tree-sitter-grammars.tree-sitter-make
+    tree-sitter-grammars.tree-sitter-markdown
+    tree-sitter-grammars.tree-sitter-lua
+    tree-sitter-grammars.tree-sitter-html
+    tree-sitter-grammars.tree-sitter-vim
+    tree-sitter-grammars.tree-sitter-nix
+    tree-sitter-grammars.tree-sitter-python
+    tree-sitter-grammars.tree-sitter-c-sharp
     vscode
     usbutils # lsusb
     unzip
