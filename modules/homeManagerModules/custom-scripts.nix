@@ -22,6 +22,12 @@
     executable = true;
   };
 
+  # allow me to azure mssql
+  home.file.".config/zsh/functions/allow-me-2-mssql.zsh" = {
+    source = ../../scripts/allow-me-2-mssql.zsh;
+    executable = true;
+  };
+
   # get azure token
   home.file.".config/zsh/functions/get-azure-token.zsh" = {
     source = ../../scripts/get-azure-token.zsh;
