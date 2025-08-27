@@ -9,6 +9,7 @@ in {
 
   # Configure Zed
   xdg.configFile."zed/settings.json".text = builtins.toJSON {
+    base_keymap = "JetBrains";
     lsp = {
       omnisharp = {
         binary = {
