@@ -34,6 +34,7 @@
     plex-desktop
     telegram-desktop
     teams-for-linux
+    jetbrains.datagrip
     jetbrains.rider
     jetbrains.webstorm
     whatsapp-for-linux
