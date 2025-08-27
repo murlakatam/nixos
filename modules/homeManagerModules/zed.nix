@@ -1,5 +1,5 @@
 {pkgs, ...}: let
-  omnisharp-path = "${pkgs.omnisharp-roslyn}/bin/omnisharp";
+  omnisharp-path = "${pkgs.omnisharp-roslyn}/bin/OmniSharp";
 in {
   # Ensure the necessary packages are installed
   home.packages = [
