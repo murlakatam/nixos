@@ -1,6 +1,5 @@
 {pkgs, ...}: let
-  omnisharp-path = "${pkgs.omnisharp-roslyn}/bin/OmniSharp.dll";
-  dotnet-sdk = pkgs.dotnetCorePackages.sdk_8_0-bin;
+  omnisharp-path = "${pkgs.omnisharp-roslyn}/bin/omnisharp";
 in {
   # Ensure the necessary packages are installed
   home.packages = [
@@ -13,9 +12,8 @@ in {
     lsp = {
       omnisharp = {
         binary = {
-          path = "${dotnet-sdk}/bin/dotnet";
+          path = "${omnisharp-path}";
           arguments = [
-            omnisharp-path
             "-lsp"
           ];
         };
