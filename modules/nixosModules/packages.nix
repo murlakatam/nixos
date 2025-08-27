@@ -23,6 +23,7 @@
     google-chrome #chrome
     gparted
     eza # Modern replacement for ls
+    file # program that shows the type of files
     flatpak-builder # flatpak builder
     ffmpeg_6-full
     iftop # network monitoring
