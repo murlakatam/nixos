@@ -8,5 +8,6 @@
     ./flatpak.nix
     ./tmux.nix
     ./emoji.nix
+    ./zed.nix
   ];
 }
