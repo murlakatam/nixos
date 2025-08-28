@@ -11,9 +11,10 @@ allow-me-2-mssql() {
         if [[ "$arg" == "--skip-login" ]]; then
             skip_login=true
         elif [[ "$arg" =~ ^--add-ip= ]]; then
-            # Use zsh's native parameter expansion to split the string into an array
-            # The 's:,' flag splits the string by commas.
-            additional_ips+=(${(s:,)arg#--add-ip=})
+            # FIX: Use a temporary array to split the string before adding to the main array.
+            # This avoids the "error in flags" zsh issue.
+            local -a temp_ips=(${(s:,)arg#--add-ip=})
+            additional_ips+=("${temp_ips[@]}")
         fi
     done
 
