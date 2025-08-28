@@ -11,10 +11,12 @@ allow-me-2-mssql() {
         if [[ "$arg" == "--skip-login" ]]; then
             skip_login=true
         elif [[ "$arg" =~ ^--add-ip= ]]; then
-            # FIX: Use a temporary array to split the string before adding to the main array.
-            # This avoids the "error in flags" zsh issue.
-            local -a temp_ips=(${(s:,)arg#--add-ip=})
-            additional_ips+=("${temp_ips[@]}")
+            # FIX: Use a robust IFS-based method to handle splitting the IPs.
+            # This avoids the "error in flags" issue with zsh parameter expansion.
+            local ips_string="${arg#--add-ip=}"
+            # Split the string by commas and add to the array
+            IFS=',' read -r -A new_ips <<< "$ips_string"
+            additional_ips+=("${new_ips[@]}")
         fi
     done
 
@@ -44,7 +46,6 @@ allow-me-2-mssql() {
     # --- Main Execution Flow ---
     {
         # Define an array of unique IPs to process
-        # The zsh method for handling duplicates is to use a unique array
         local -a ips_to_process
 
         echo "Detecting current public IP address..."
