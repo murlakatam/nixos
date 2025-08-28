@@ -74,20 +74,25 @@ allow-me-2-mssql() {
 
         # Clean up old rules once
         echo "🧹 Searching for and deleting any existing 'Eugene_WFH' rules..."
-        local -a old_rules=("${(@f)$(az sql server firewall-rule list \
+        # FIX: Replaced zsh specific syntax with a bash-compatible method
+        local old_rules_string
+        old_rules_string=$(az sql server firewall-rule list \
             --resource-group "$RESOURCE_GROUP_NAME" \
             --server "$SERVER_NAME" \
             --query "[?starts_with(name, 'Eugene_WFH')].name" \
-            --output tsv)}")
+            --output tsv)
+        
+        # Read the newline-separated string into a bash array
+        IFS=$'\n' read -r -a old_rules <<< "$old_rules_string"
 
         if (( ${#old_rules[@]} > 0 )); then
             for old_rule in "${old_rules[@]}"; do
                 echo "  -> Deleting old rule: $old_rule"
+                # FIX: Removed the unsupported --yes flag
                 az sql server firewall-rule delete \
                     --resource-group "$RESOURCE_GROUP_NAME" \
                     --server "$SERVER_NAME" \
-                    --name "$old_rule" \
-                    --yes > /dev/null
+                    --name "$old_rule" > /dev/null
             done
             echo "Cleanup complete."
         else
@@ -107,7 +112,6 @@ allow-me-2-mssql() {
             
             if [[ $? -ne 0 ]]; then
                 echo "Failed to create firewall rule for IP $ip."
-                # We continue to the next IP, so one failure doesn't stop the whole script.
                 continue
             fi
             echo "✅ Successfully created firewall rule '$rule_name' for IP address $ip"

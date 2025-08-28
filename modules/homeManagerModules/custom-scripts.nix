@@ -34,6 +34,12 @@
     executable = true;
   };
 
+  # mount local NUC
+  home.file.".config/zsh/functions/mount-NUC.zsh" = {
+    source = ../../scripts/mount-NUC.zsh;
+    executable = true;
+  };
+
   # opens ide with nohop
   home.file.".config/zsh/functions/open-ide-here.zsh" = {
     source = ../../scripts/open-ide-here.zsh;
