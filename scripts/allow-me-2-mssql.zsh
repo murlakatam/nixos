@@ -88,7 +88,7 @@ allow-me-2-mssql() {
                     --server "$SERVER_NAME" \
                     --name "$old_rule" > /dev/null
             done
-            echo "Cleanup complete."
+            echo "Cleanup complete." 
         else
             echo "No old 'Eugene_WFH' rules found to delete."
         fi
