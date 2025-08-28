@@ -1,18 +1,18 @@
+# This script is optimized for zsh.
 # Allows multiple public IPs to access the Azure SQL Server.
 # It first cleans up ALL old rules starting with "Eugene_WFH_" before creating new ones.
 allow-me-2-mssql() {
     # --- Check for the --skip-login and --add-ip arguments ---
     local skip_login=false
-    local additional_ips=()
+    local additional_ips_str=""
 
     # Parse arguments
     for arg in "$@"; do
         if [[ "$arg" == "--skip-login" ]]; then
             skip_login=true
         elif [[ "$arg" =~ ^--add-ip= ]]; then
-            # Split the argument by commas and add to the array
-            IFS=',' read -r -a new_ips <<< "${arg#--add-ip=}"
-            additional_ips+=("${new_ips[@]}")
+            # Append the comma-separated IPs to a string
+            additional_ips_str+=" ${arg#--add-ip=}"
         fi
     done
 
@@ -41,8 +41,9 @@ allow-me-2-mssql() {
 
     # --- Main Execution Flow ---
     {
-        # Define a set of IPs to process using a declare -A for unique keys
-        declare -A ips_to_process
+        # Define an array of unique IPs to process
+        # The zsh method for handling duplicates is to use a unique array
+        local -a ips_to_process
 
         echo "Detecting current public IP address..."
         local public_ip
@@ -53,17 +54,15 @@ allow-me-2-mssql() {
             return 1
         fi
         echo "Detected public IP: $public_ip"
-        ips_to_process["$public_ip"]=1
+        ips_to_process+=("$public_ip")
 
-        # Add the additional IPs if provided, avoiding duplicates
-        if (( ${#additional_ips[@]} > 0 )); then
-            for ip in "${additional_ips[@]}"; do
-                if [[ -n "$ip" ]]; then
-                    echo "Adding provided IP: $ip"
-                    ips_to_process["$ip"]=1
-                fi
-            done
-        fi
+        # Split the additional IPs string and add to the array, letting zsh handle uniqueness
+        local -a additional_ips
+        IFS=',' read -r -a additional_ips <<< "${additional_ips_str}"
+        ips_to_process+=("${additional_ips[@]}")
+        
+        # Remove duplicates from the array
+        ips_to_process=("${(u)ips_to_process[@]}")
 
         # Login once before processing all IPs
         if [[ "$skip_login" == true ]]; then
@@ -74,21 +73,16 @@ allow-me-2-mssql() {
 
         # Clean up old rules once
         echo "🧹 Searching for and deleting any existing 'Eugene_WFH' rules..."
-        # FIX: Replaced zsh specific syntax with a bash-compatible method
-        local old_rules_string
-        old_rules_string=$(az sql server firewall-rule list \
+        # Use zsh syntax for array splitting
+        local -a old_rules=("${(@f)$(az sql server firewall-rule list \
             --resource-group "$RESOURCE_GROUP_NAME" \
             --server "$SERVER_NAME" \
             --query "[?starts_with(name, 'Eugene_WFH')].name" \
-            --output tsv)
-        
-        # Read the newline-separated string into a bash array
-        IFS=$'\n' read -r -a old_rules <<< "$old_rules_string"
+            --output tsv)}")
 
         if (( ${#old_rules[@]} > 0 )); then
             for old_rule in "${old_rules[@]}"; do
                 echo "  -> Deleting old rule: $old_rule"
-                # FIX: Removed the unsupported --yes flag
                 az sql server firewall-rule delete \
                     --resource-group "$RESOURCE_GROUP_NAME" \
                     --server "$SERVER_NAME" \
@@ -100,7 +94,7 @@ allow-me-2-mssql() {
         fi
 
         # Create new rules for each unique IP
-        for ip in "${!ips_to_process[@]}"; do
+        for ip in "${ips_to_process[@]}"; do
             local rule_name="Eugene_WFH_$(date +'%Y-%m-%d')_$(echo "$ip" | tr '.' '-')"
             echo "✨ Creating new firewall rule: '$rule_name' for IP $ip"
             az sql server firewall-rule create \
