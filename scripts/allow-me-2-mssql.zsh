@@ -64,8 +64,7 @@ allow-me-2-mssql() {
                 az sql server firewall-rule delete \
                     --resource-group "$resource_group" \
                     --server "$server_name" \
-                    --name "$old_rule" \
-                    --yes > /dev/null
+                    --name "$old_rule" > /dev/null
             done
             echo "Cleanup complete."
         else
