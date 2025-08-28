@@ -4,15 +4,16 @@
 allow-me-2-mssql() {
     # --- Check for the --skip-login and --add-ip arguments ---
     local skip_login=false
-    local additional_ips_str=""
+    local -a additional_ips
 
     # Parse arguments
     for arg in "$@"; do
         if [[ "$arg" == "--skip-login" ]]; then
             skip_login=true
         elif [[ "$arg" =~ ^--add-ip= ]]; then
-            # Append the comma-separated IPs to a string
-            additional_ips_str+=" ${arg#--add-ip=}"
+            # Use zsh's native parameter expansion to split the string into an array
+            # The 's:,' flag splits the string by commas.
+            additional_ips+=(${(s:,)arg#--add-ip=})
         fi
     done
 
@@ -55,13 +56,11 @@ allow-me-2-mssql() {
         fi
         echo "Detected public IP: $public_ip"
         ips_to_process+=("$public_ip")
-
-        # Split the additional IPs string and add to the array, letting zsh handle uniqueness
-        local -a additional_ips
-        IFS=',' read -r -a additional_ips <<< "${additional_ips_str}"
+        
+        # Add the additional IPs
         ips_to_process+=("${additional_ips[@]}")
         
-        # Remove duplicates from the array
+        # Remove duplicates from the array using zsh's unique parameter expansion
         ips_to_process=("${(u)ips_to_process[@]}")
 
         # Login once before processing all IPs
@@ -88,7 +87,7 @@ allow-me-2-mssql() {
                     --server "$SERVER_NAME" \
                     --name "$old_rule" > /dev/null
             done
-            echo "Cleanup complete." 
+            echo "Cleanup complete."
         else
             echo "No old 'Eugene_WFH' rules found to delete."
         fi
