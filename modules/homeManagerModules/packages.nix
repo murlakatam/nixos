@@ -31,6 +31,7 @@
     dust # disk usage for humans
     #yazi # file explorer
     sd # sed for humans
+    tor-browser # tor browser
     plex-desktop
     telegram-desktop
     teams-for-linux
