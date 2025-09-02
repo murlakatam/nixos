@@ -32,7 +32,7 @@ allow-me-2-mssql() {
     # Get public IPv4 address(es)
     get_public_ips() {
         echo "Detecting public IPv4 address..."
-        local -a ip_sources=(https://api.ipify.org https://ifconfig.co/ip https://icanhazip.com https://ipinfo.io/ip)
+        local -a ip_sources=(https://api.ipify.org https://ifconfig.co/ip https://api.ipify.org https://ipinfo.io/ip)
         for source_url in "${ip_sources[@]}"; do
             local public_ip=$(curl -sS --fail "$source_url" || true)
             if [[ -n "$public_ip" ]]; then
