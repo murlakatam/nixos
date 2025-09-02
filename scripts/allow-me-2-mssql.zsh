@@ -36,8 +36,8 @@ allow-me-2-mssql() {
         for source_url in "${ip_sources[@]}"; do
             local public_ip=$(curl -sS --fail "$source_url" || true)
             if [[ -n "$public_ip" ]]; then
-                # The raw IP (even if it has quotes) is used as the key.
-                # We will clean it later at the single correct point.
+                # We store the raw IP (even if it has quotes) as the key.
+                # It will be cleaned later.
                 local clean_ip_for_check=$(sanitize_string "$public_ip")
                 if [[ "$clean_ip_for_check" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
                     detected_ips["$public_ip"]=1
@@ -87,8 +87,7 @@ allow-me-2-mssql() {
         # 1. Get current and additional IPs
         get_public_ips || return 1
 
-        # --- THE FIX: Sanitize the keys from the corrupted map ONCE ---
-        # This creates a clean array that all subsequent logic will use.
+        # Sanitize the keys from the detected_ips map to create a clean array
         for ip_key in "${(@k)detected_ips}"; do
             desired_ips_array+=("$(sanitize_string "$ip_key")")
         done
@@ -118,7 +117,6 @@ allow-me-2-mssql() {
             echo "$existing_rules_json" | jq -c '.[]' | while IFS= read -r rule_entry; do
                 local name=$(echo "$rule_entry" | jq -r '.name')
                 local ip=$(echo "$rule_entry" | jq -r '.ip')
-                # No extra sanitization needed, jq -r gives clean output.
                 if [[ "$ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
                     existing_rules_map["$ip"]="$name"
                 fi
@@ -138,10 +136,13 @@ allow-me-2-mssql() {
         if (( ${#ips_to_add[@]} > 0 )); then
             echo "✨ Creating new rules for missing IPs..."
             for ip in "${ips_to_add[@]}"; do
-                # The 'ip' variable is now guaranteed to be clean.
                 local rule_name="${desired_rules_map[$ip]}"
-                echo "  -> Adding rule: '$rule_name' for IP $ip"
-                az sql server firewall-rule create -g "$RESOURCE_GROUP_NAME" -s "$SERVER_NAME" -n "$rule_name" --start-ip-address "$ip" --end-ip-address "$ip" --only-show-errors > /dev/null
+
+                local clean_ip
+                clean_ip=$(sanitize_string "$ip")
+                
+                echo "  -> Adding rule: '$rule_name' for IP $clean_ip"
+                az sql server firewall-rule create -g "$RESOURCE_GROUP_NAME" -s "$SERVER_NAME" -n "$rule_name" --start-ip-address "$clean_ip" --end-ip-address "$clean_ip" --only-show-errors > /dev/null
             done
         else
             echo "🎉 No new rules to create."
@@ -151,7 +152,9 @@ allow-me-2-mssql() {
             echo "🧹 Deleting old rules for stale IPs..."
             for ip in "${ips_to_delete[@]}"; do
                 local rule_name="${existing_rules_map[$ip]}"
-                echo "  -> Deleting rule: '$rule_name' for IP $ip"
+                local clean_ip
+                clean_ip=$(sanitize_string "$ip")
+                echo "  -> Deleting rule: '$rule_name' for IP $clean_ip"
                 az sql server firewall-rule delete -g "$RESOURCE_GROUP_NAME" -s "$SERVER_NAME" -n "$rule_name" --only-show-errors > /dev/null
             done
         else
