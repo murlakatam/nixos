@@ -109,13 +109,13 @@ allow-me-2-postgres() {
             done <<< "$old_rules_str"
             echo "Cleanup complete."
         else
-            echo "No old 'Eugene_WFH' rules found to delete." 
+            echo "No old 'Eugene_WFH' rules found to delete."
         fi
 
         # Create the new firewall rule
         echo "✨ Creating new firewall rule: '$rule_name' for IP $public_ip"
         az postgres flexible-server firewall-rule create \
-          -g "$RESOURCE_GROUP_NAME" -n "$SERVER_NAME" \
+          --resource-group "$RESOURCE_GROUP_NAME" --name "$SERVER_NAME" \
           --rule-name "$rule_name" \
           --start-ip-address "$public_ip" \
           --end-ip-address "$public_ip" \
