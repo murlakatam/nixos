@@ -23,9 +23,9 @@ allow-me-2-mssql() {
     local SERVER_NAME="mataersdevtestsqlserver"
     local SUBSCRIPTION_ID="487387bd-b94b-45e0-a0a8-7ada86aa52e1"
     
-    # Get public IP address(es)
+    # Get public IPv4 address(es)
     get_public_ips() {
-        echo "Detecting public IP address..."
+        echo "Detecting public IPv4 address..."
         local -a ip_sources=(https://api.ipify.org https://ifconfig.co/ip https://icanhazip.com https://ipinfo.io/ip)
         for i in {1..4}; do
             local source_url="${ip_sources[$(( (i-1) % 4 + 1 ))]}"
@@ -34,14 +34,17 @@ allow-me-2-mssql() {
             public_ip=$(curl -sS --fail "$source_url" || true)
             if [[ -n "$public_ip" ]]; then
                 public_ip=$(echo "$public_ip" | tr -d '\n\r') # Remove newlines
-                detected_ips["$public_ip"]=1
-                echo "  -> Detected IP from $source_url: $public_ip"
+                # Only process IPv4 addresses
+                if [[ "$public_ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                    detected_ips["$public_ip"]=1
+                    echo "  -> Detected IPv4 from $source_url: $public_ip"
+                fi
             fi
             sleep 0.5 # Small delay
         done
 
         if [[ ${#detected_ips[@]} -eq 0 ]]; then
-            echo "Error: Could not determine any public IP address. Cannot proceed." >&2
+            echo "Error: Could not determine any public IPv4 address. Cannot proceed." >&2
             return 1
         fi
         
@@ -91,12 +94,20 @@ allow-me-2-mssql() {
         # 1. Get current and additional IPs
         get_public_ips || return 1
         desired_ips_array=("${(k)detected_ips[@]}")
-        desired_ips_array+=("${additional_ips[@]}")
+        
+        # Add additional IPv4 addresses and remove duplicates
+        for ip in "${additional_ips[@]}"; do
+            if [[ "$ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                desired_ips_array+=("$ip")
+            else
+                echo "Warning: Ignoring non-IPv4 address in --add-ip argument: $ip"
+            fi
+        done
         desired_ips_array=("${(u)desired_ips_array[@]}") # Remove duplicates
 
         # Generate a rule name for each desired IP
         for ip in "${desired_ips_array[@]}"; do
-            local rule_name="Eugene_WFH_$(echo "$ip" | tr '.' '-')"
+            local rule_name="Eugene_WFH_$(date +'%Y-%m-%d')_$(echo "$ip" | tr '.' '-')"
             desired_rules_map["$ip"]="$rule_name"
         done
 
@@ -105,19 +116,24 @@ allow-me-2-mssql() {
 
         # 3. Get existing firewall rules
         echo "🔍 Fetching existing 'Eugene_WFH' rules from Azure..."
-        local -a existing_rules_list
-        existing_rules_list=("${(@f)$(az sql server firewall-rule list \
+        local existing_rules_json
+        existing_rules_json=$(az sql server firewall-rule list \
             --resource-group "$RESOURCE_GROUP_NAME" \
             --server "$SERVER_NAME" \
-            --query "[?starts_with(name, 'Eugene_WFH')].{name:name, startIp:startIpAddress, endIp:endIpAddress}" \
-            --output json 2>/dev/null)}")
+            --query "[?starts_with(name, 'Eugene_WFH') && startIpAddress == endIpAddress].{name:name, ip:startIpAddress}" \
+            --output json 2>/dev/null)
 
-        if [[ -n "$existing_rules_list" ]]; then
-            for rule_json in "${existing_rules_list[@]}"; do
-                local name=$(echo "$rule_json" | jq -r '.name')
-                local ip_address=$(echo "$rule_json" | jq -r '.startIp')
-                existing_rules_map["$ip_address"]="$name"
-                existing_ips_array+=("$ip_address")
+        # Use `jq` to parse the JSON array and populate maps
+        if [[ -n "$existing_rules_json" ]]; then
+            # Use `jq` to iterate and process the JSON array
+            for rule_entry in $(echo "$existing_rules_json" | jq -c '.[]'); do
+                local name=$(echo "$rule_entry" | jq -r '.name')
+                local ip=$(echo "$rule_entry" | jq -r '.ip')
+                # Only add rules with valid IPv4
+                if [[ "$ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                    existing_rules_map["$ip"]="$name"
+                    existing_ips_array+=("$ip")
+                fi
             done
         fi
         
