@@ -21,11 +21,12 @@ allow-me-2-postgres() {
     local SERVER_NAME="mataersdevtestfpsqlserver"
     local SUBSCRIPTION_ID="487387bd-b94b-45e0-a0a8-7ada86aa52e1"
     
-    # Get public IPv4 address(es) and return a single, clean IP
+    # Get public IPv4 address and return a single, clean IP
     get_public_ip() {
+        # Progress messages are sent to stderr (>&2) so they don't corrupt the output
         echo "Detecting public IPv4 address..." >&2
         local -a clean_ips
-        local -a ip_sources=(https://api.ipify.org https://ifconfig.co/ip https://api.ipify.org https://ipinfo.io/ip)
+        local -a ip_sources=(https://api.ipify.org https://ifconfig.co/ip https://icanhazip.com https://ipinfo.io/ip)
         
         for source_url in "${ip_sources[@]}"; do
             local public_ip
@@ -47,7 +48,7 @@ allow-me-2-postgres() {
             return 1
         fi
         
-        # --- This is the ONLY thing sent to stdout ---
+        # This is the ONLY thing sent to stdout
         printf "%s\n" "${(u)clean_ips[@]}" | head -n 1
     }
 
@@ -101,7 +102,6 @@ allow-me-2-postgres() {
             while IFS= read -r old_rule; do
                 if [[ -n "$old_rule" ]]; then
                     echo "  -> Deleting old rule: $old_rule"
-                    # --- FIX: Use -n for server name in postgres commands ---
                     az postgres flexible-server firewall-rule delete \
                         -g "$RESOURCE_GROUP_NAME" -n "$SERVER_NAME" \
                         --rule-name "$old_rule" --yes --only-show-errors > /dev/null
