@@ -109,7 +109,7 @@ allow-me-2-postgres() {
             done <<< "$old_rules_str"
             echo "Cleanup complete."
         else
-            echo "No old 'Eugene_WFH' rules found to delete."
+            echo "No old 'Eugene_WFH' rules found to delete." 
         fi
 
         # Create the new firewall rule
