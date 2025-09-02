@@ -115,13 +115,18 @@ allow-me-2-postgres() {
             --query "[?starts_with(name, 'Eugene_WFH')].{name:name, ip:startIpAddress}" -o json 2>/dev/null)
         
         if [[ -n "$existing_rules_json" && "$existing_rules_json" != "[]" ]]; then
+            echo "  -> Found the following existing rules:"
             echo "$existing_rules_json" | jq -c '.[]' | while IFS= read -r rule_entry; do
                 local name=$(echo "$rule_entry" | jq -r '.name')
                 local ip=$(echo "$rule_entry" | jq -r '.ip')
                 if [[ "$ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                    # This is the new part that tells the caller about found rules
+                    echo "     - Rule: '$name' for IP: $ip"
                     existing_rules_map["$ip"]="$name"
                 fi
             done
+        else
+            echo "  -> No existing 'Eugene_WFH' rules found in Azure."
         fi
         
         # 4. Determine diff from the clean data structures
