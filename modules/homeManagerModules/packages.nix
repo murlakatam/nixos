@@ -21,6 +21,7 @@
     k9s # k8s management
     lazydocker
     lazygit
+    lazysql
     mc
     mono # .net dev framework
     meld # gui differ
