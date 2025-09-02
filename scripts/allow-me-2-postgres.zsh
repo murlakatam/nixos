@@ -2,11 +2,19 @@
 # Allows your current public IP to access the Azure PostgreSQL Flexible Server.
 # It first cleans up ALL old rules starting with "Eugene_WFH_" before creating a new one.
 allow-me-2-postgres() {
-    # --- Check for the --skip-login argument ---
+    # --- Check for the --skip-login and --add-ip arguments ---
     local skip_login=false
+    local -a additional_ips
+    local -A detected_ips # Using a hash to store unique IPs from multiple curl calls
+    
+    # Parse arguments
     for arg in "$@"; do
         if [[ "$arg" == "--skip-login" ]]; then
             skip_login=true
+        elif [[ "$arg" =~ ^--add-ip= ]]; then
+            local ips_string="${arg#--add-ip=}"
+            IFS=',' read -r -A new_ips <<< "$ips_string"
+            additional_ips+=("${new_ips[@]}")
         fi
     done
 
@@ -21,35 +29,31 @@ allow-me-2-postgres() {
     local SERVER_NAME="mataersdevtestfpsqlserver"
     local SUBSCRIPTION_ID="487387bd-b94b-45e0-a0a8-7ada86aa52e1"
     
-    # Get public IPv4 address and return a single, clean IP
-    get_public_ip() {
-        # Progress messages are sent to stderr (>&2) so they don't corrupt the output
-        echo "Detecting public IPv4 address..." >&2
-        local -a clean_ips
-        local -a ip_sources=(https://api.ipify.org https://ifconfig.co/ip https://icanhazip.com https://ipinfo.io/ip)
-        
+    # Get public IPv4 address(es)
+    get_public_ips() {
+        echo "Detecting public IPv4 address..."
+        local -a ip_sources=(https://api.ipify.org https://ifconfig.co/ip https://api.ipify.org https://ipinfo.io/ip)
         for source_url in "${ip_sources[@]}"; do
-            local public_ip
-            public_ip=$(curl -sS --fail "$source_url" || true)
-            
+            local public_ip=$(curl -sS --fail "$source_url" || true)
             if [[ -n "$public_ip" ]]; then
-                local clean_ip
-                clean_ip=$(sanitize_string "$public_ip")
-                
-                if [[ "$clean_ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-                    clean_ips+=("$clean_ip")
-                    echo "  -> Detected IPv4 from $source_url: $clean_ip" >&2
+                # We store the raw IP (even if it has quotes) as the key.
+                # It will be cleaned later.
+                local clean_ip_for_check=$(sanitize_string "$public_ip")
+                if [[ "$clean_ip_for_check" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                    detected_ips["$public_ip"]=1
+                    echo "  -> Detected IPv4 from $source_url: $clean_ip_for_check"
                 fi
             fi
             sleep 0.5
         done
 
-        if [[ ${#clean_ips[@]} -eq 0 ]]; then
+        if [[ ${#detected_ips[@]} -eq 0 ]]; then
+            echo "Error: Could not determine public IPv4 address." >&2
             return 1
         fi
         
-        # This is the ONLY thing sent to stdout
-        printf "%s\n" "${(u)clean_ips[@]}" | head -n 1
+        echo "Finished detecting IPs. Unique IPs found: ${(k)detected_ips}"
+        return 0
     }
 
     # Login to Azure
@@ -58,8 +62,7 @@ allow-me-2-postgres() {
         echo "Checking Azure login status..."
         az account show &> /dev/null
         if [[ $? -eq 0 ]]; then
-            local current_sub
-            current_sub=$(az account show --query id -o tsv)
+            local current_sub=$(az account show --query id -o tsv)
             if [[ "$current_sub" == "$SUBSCRIPTION_ID" ]]; then
                 echo "Already logged in and on the correct subscription."; return 0
             else
@@ -74,10 +77,103 @@ allow-me-2-postgres() {
         fi
         return 0
     }
+
+    # --- Main Execution Flow ---
+    {
+        local -a desired_ips_array
+        local -A desired_rules_map 
+        local -A existing_rules_map
+
+        # 1. Get current and additional IPs
+        get_public_ips || return 1
+
+        # Sanitize the keys from the detected_ips map to create a clean array
+        for ip_key in "${(@k)detected_ips}"; do
+            desired_ips_array+=("$(sanitize_string "$ip_key")")
+        done
+        
+        for ip in "${additional_ips[@]}"; do
+            local clean_ip=$(sanitize_string "$ip")
+            if [[ "$clean_ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                desired_ips_array+=("$clean_ip")
+            fi
+        done
+        desired_ips_array=("${(u)desired_ips_array[@]}") # Get unique IPs
+
+        # This map is now built using the guaranteed-clean array.
+        for ip in "${desired_ips_array[@]}"; do
+            local rule_name="Eugene_WFH_$(date +'%Y-%m-%d')_$(echo "$ip" | tr '.' '-')"
+            desired_rules_map["$ip"]="$rule_name"
+        done
+
+        # 2. Authenticate
+        perform_az_login || return 1
+
+        # 3. Get existing rules from Azure
+        # FIX THIS to get a list of ips from Azure existing rules
+        echo "🔍 Fetching existing 'Eugene_WFH' rules from Azure..."
+        local old_rules_str
+        old_rules_str=$(az postgres flexible-server firewall-rule list \
+            -g "$RESOURCE_GROUP_NAME" -n "$SERVER_NAME" \
+            --query "[?starts_with(name, 'Eugene_WFH')].name" -o tsv)
+        
+        # 4. Determine diff from the clean data structures
+        local -a ips_to_add ips_to_delete
+        for ip in "${(@k)desired_rules_map}"; do
+            if [[ -z "${existing_rules_map[$ip]}" ]]; then ips_to_add+=("$ip"); fi
+        done
+        for ip in "${(@k)existing_rules_map}"; do
+            if [[ -z "${desired_rules_map[$ip]}" ]]; then ips_to_delete+=("$ip"); fi
+        done
+
+        # 5. Execute changes
+        if (( ${#ips_to_add[@]} > 0 )); then
+            echo "✨ Creating new rules for missing IPs..."
+            for ip in "${ips_to_add[@]}"; do
+                local rule_name="${desired_rules_map[$ip]}"
+
+                local clean_ip
+                clean_ip=$(sanitize_string "$ip")
+                
+                echo "  -> Adding rule: '$rule_name' for IP $clean_ip"
+                az postgres flexible-server firewall-rule create \
+                    --resource-group "$RESOURCE_GROUP_NAME" \
+                    --name "$SERVER_NAME" \
+                    --rule-name "$rule_name" \
+                    --start-ip-address "$clean_ip" \
+                    --end-ip-address "$clean_ip"
+            done
+        else
+            echo "🎉 No new rules to create."
+        fi
+
+        if (( ${#ips_to_delete[@]} > 0 )); then
+            echo "🧹 Deleting old rules for stale IPs..."
+            for ip in "${ips_to_delete[@]}"; do
+                local rule_name="${existing_rules_map[$ip]}"
+                local clean_ip
+                clean_ip=$(sanitize_string "$ip")
+                echo "  -> Deleting rule: '$rule_name' for IP $clean_ip"
+                az postgres flexible-server firewall-rule delete \
+                    --resource-group "$RESOURCE_GROUP_NAME" \
+                    --name "$SERVER_NAME" \
+                    --rule-name "$rule_name" \
+                    --yes > /dev/null
+            done
+        else
+            echo "🧹 No stale rules to delete."
+        fi
+
+        echo "✅ Operation completed successfully."
+    } || {
+        echo "❌ An error occurred during execution." >&2
+        return 1
+    }
     
     # --- Main Execution Flow ---
     {
         local public_ip
+        # This new method isolates the function's true output from any debug messages
         public_ip=$(get_public_ip)
         
         if [[ -z "$public_ip" ]]; then
@@ -86,17 +182,13 @@ allow-me-2-postgres() {
         fi
         echo "✅ Detected public IP: $public_ip"
         
-        # Create a unique rule name that includes the IP address
         local rule_name="Eugene_WFH_$(date +'%Y-%m-%d')_$(echo "$public_ip" | tr '.' '-')"
         
         perform_az_login || return 1
 
         echo "🧹 Searching for and deleting any existing 'Eugene_WFH' rules..."
         
-        local old_rules_str
-        old_rules_str=$(az postgres flexible-server firewall-rule list \
-            -g "$RESOURCE_GROUP_NAME" -n "$SERVER_NAME" \
-            --query "[?starts_with(name, 'Eugene_WFH')].name" -o tsv)
+        
 
         if [[ -n "$old_rules_str" ]]; then
             while IFS= read -r old_rule; do
@@ -115,7 +207,7 @@ allow-me-2-postgres() {
         # Create the new firewall rule
         echo "✨ Creating new firewall rule: '$rule_name' for IP $public_ip"
         az postgres flexible-server firewall-rule create \
-          --resource-group "$RESOURCE_GROUP_NAME" --name "$SERVER_NAME" \
+          -g "$RESOURCE_GROUP_NAME" -n "$SERVER_NAME" \
           --rule-name "$rule_name" \
           --start-ip-address "$public_ip" \
           --end-ip-address "$public_ip" \
