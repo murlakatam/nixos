@@ -23,7 +23,7 @@ allow-me-2-postgres() {
     
     # Get public IPv4 address(es) and return a single, clean IP
     get_public_ip() {
-        echo "Detecting public IPv4 address..."
+        echo "Detecting public IPv4 address..." >&2
         local -a clean_ips
         local -a ip_sources=(https://api.ipify.org https://ifconfig.co/ip https://icanhazip.com https://ipinfo.io/ip)
         
@@ -32,13 +32,12 @@ allow-me-2-postgres() {
             public_ip=$(curl -sS --fail "$source_url" || true)
             
             if [[ -n "$public_ip" ]]; then
-                # Sanitize the IP at the source, ONCE.
                 local clean_ip
                 clean_ip=$(sanitize_string "$public_ip")
                 
                 if [[ "$clean_ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
                     clean_ips+=("$clean_ip")
-                    echo "  -> Detected IPv4 from $source_url: $clean_ip"
+                    echo "  -> Detected IPv4 from $source_url: $clean_ip" >&2
                 fi
             fi
             sleep 0.5
@@ -48,7 +47,7 @@ allow-me-2-postgres() {
             return 1
         fi
         
-        # Return only the first unique, clean IP found
+        # --- This is the ONLY thing sent to stdout ---
         printf "%s\n" "${(u)clean_ips[@]}" | head -n 1
     }
 
@@ -93,19 +92,19 @@ allow-me-2-postgres() {
 
         echo "🧹 Searching for and deleting any existing 'Eugene_WFH' rules..."
         
-        # Get a list of old rule names
         local old_rules_str
+        # --- FIX: Use -n for server name in postgres commands ---
         old_rules_str=$(az postgres flexible-server firewall-rule list \
-            -g "$RESOURCE_GROUP_NAME" -s "$SERVER_NAME" \
+            -g "$RESOURCE_GROUP_NAME" -n "$SERVER_NAME" \
             --query "[?starts_with(name, 'Eugene_WFH')].name" -o tsv)
 
         if [[ -n "$old_rules_str" ]]; then
-            # Loop through each rule name found and delete it
             while IFS= read -r old_rule; do
                 if [[ -n "$old_rule" ]]; then
                     echo "  -> Deleting old rule: $old_rule"
+                    # --- FIX: Use -n for server name in postgres commands ---
                     az postgres flexible-server firewall-rule delete \
-                        -g "$RESOURCE_GROUP_NAME" -s "$SERVER_NAME" \
+                        -g "$RESOURCE_GROUP_NAME" -n "$SERVER_NAME" \
                         --rule-name "$old_rule" --yes --only-show-errors > /dev/null
                 fi
             done <<< "$old_rules_str"
@@ -117,8 +116,8 @@ allow-me-2-postgres() {
         # Create the new firewall rule
         echo "✨ Creating new firewall rule: '$rule_name' for IP $public_ip"
         az postgres flexible-server firewall-rule create \
-          -g "$RESOURCE_GROUP_NAME" -s "$SERVER_NAME" \
-          -n "$rule_name" \
+          -g "$RESOURCE_GROUP_NAME" -n "$SERVER_NAME" \
+          --rule-name "$rule_name" \
           --start-ip-address "$public_ip" \
           --end-ip-address "$public_ip" \
           --only-show-errors > /dev/null
