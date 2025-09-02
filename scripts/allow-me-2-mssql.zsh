@@ -163,8 +163,8 @@ allow-me-2-mssql() {
                     --resource-group "$RESOURCE_GROUP_NAME" \
                     --server "$SERVER_NAME" \
                     --name "$rule_name" \
-                    --start-ip-address "$ip" \
-                    --end-ip-address "$ip" \
+                    --start-ip-address $ip \
+                    --end-ip-address $ip \
                     --only-show-errors > /dev/null
             done
         else
