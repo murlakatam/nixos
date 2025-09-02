@@ -5,22 +5,23 @@
   ...
 }: let
   # Define your connection details here for clarity
-  dbUsername = "AL%20PSQL%20ERS%20DEVTEST%20READER"; # Note: Spaces must be URL-encoded (%20)
-  dbServer = "mataersdevtestfpsqlserver.postgres.database.azure.com";
+  dbHost = "mataersdevtestfpsqlserver.postgres.database.azure.com";
   dbName = "postgres";
+  # ❗ In the key-value format, enclose the username in single quotes to protect the spaces.
+  dbUsername = "'AL PSQL ERS DEVTEST READER'";
 
-  # ❗ IMPORTANT: Set the correct path to the file containing your Zsh functions.
-  # This might be .zshrc, .zprofile, or another file.
+  # Set the correct path to the file containing your Zsh functions.
   zshFunctionsFile = "${config.home.homeDirectory}/.zshrc";
 in {
-  # This option creates the lazysql config file and writes the content.
   xdg.configFile."lazysql/config.toml".text = ''
     # Database connection block for your Azure DB
     [[database]]
-    Name = "Reader ${dbServer}"
+    Name = "Azure DevTest DB"
     Provider = "postgres"
     DBName = "${dbName}"
-    URL = "postgres://${dbUsername}@${dbServer}/${dbName}"
+    # Use the key-value DSN format instead of a URL
+    URL = "host=${dbHost} dbname=${dbName} user=${dbUsername}"
+    #
     # Commands to run BEFORE connecting
     Commands = [
       { Command = "zsh -c 'source ${zshFunctionsFile}; allow-me-2-postgres'" },
