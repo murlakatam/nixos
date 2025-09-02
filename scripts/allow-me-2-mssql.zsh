@@ -1,20 +1,18 @@
 # This script is optimized for zsh.
 # Allows multiple public IPs to access the Azure SQL Server.
-# It first cleans up ALL old rules starting with "Eugene_WFH_" before creating new ones.
+# It uses a diff-based approach to only add or remove rules that are different from the current state.
 allow-me-2-mssql() {
     # --- Check for the --skip-login and --add-ip arguments ---
     local skip_login=false
     local -a additional_ips
-
+    local -A detected_ips # Using a hash to store unique IPs from multiple curl calls
+    
     # Parse arguments
     for arg in "$@"; do
         if [[ "$arg" == "--skip-login" ]]; then
             skip_login=true
         elif [[ "$arg" =~ ^--add-ip= ]]; then
-            # FIX: Use a robust IFS-based method to handle splitting the IPs.
-            # This avoids the "error in flags" issue with zsh parameter expansion.
             local ips_string="${arg#--add-ip=}"
-            # Split the string by commas and add to the array
             IFS=',' read -r -A new_ips <<< "$ips_string"
             additional_ips+=("${new_ips[@]}")
         fi
@@ -23,95 +21,145 @@ allow-me-2-mssql() {
     # --- Use the new resource group and server names ---
     local RESOURCE_GROUP_NAME="MATA-ERS-DEVTEST-DATABASES"
     local SERVER_NAME="mataersdevtestsqlserver"
+    local SUBSCRIPTION_ID="487387bd-b94b-45e0-a0a8-7ada86aa52e1"
     
-    # Get public IP address
-    get_public_ip() {
-        # Fetches only the IP address string
-        curl -s https://api.ipify.org
+    # Get public IP address(es)
+    get_public_ips() {
+        echo "Detecting public IP address..."
+        local -a ip_sources=(https://api.ipify.org https://ifconfig.co/ip https://icanhazip.com https://ipinfo.io/ip)
+        for i in {1..4}; do
+            local source_url="${ip_sources[$(( (i-1) % 4 + 1 ))]}"
+            local public_ip
+            # Use 'curl -sS' for silent, but show errors if they occur
+            public_ip=$(curl -sS --fail "$source_url" || true)
+            if [[ -n "$public_ip" ]]; then
+                public_ip=$(echo "$public_ip" | tr -d '\n\r') # Remove newlines
+                detected_ips["$public_ip"]=1
+                echo "  -> Detected IP from $source_url: $public_ip"
+            fi
+            sleep 0.5 # Small delay
+        done
+
+        if [[ ${#detected_ips[@]} -eq 0 ]]; then
+            echo "Error: Could not determine any public IP address. Cannot proceed." >&2
+            return 1
+        fi
+        
+        echo "Finished detecting IPs. Unique IPs found: ${(k)detected_ips}"
+        return 0
     }
 
     # Login to Azure
     perform_az_login() {
-        echo "Logging in to Azure..."
-        
-        az login
-        if [[ $? -ne 0 ]]; then
-            echo "Azure login failed. Please check your credentials and try again." >&2
-            return 1
+        if [[ "$skip_login" == true ]]; then
+            echo "🔑 Skipping Azure login as requested. Assuming you are already authenticated."
+            return 0
         fi
-        echo "Azure login successful."
-        az account set --subscription "487387bd-b94b-45e0-a0a8-7ada86aa52e1"
+        
+        echo "Checking Azure login status..."
+        az account show &> /dev/null
+        if [[ $? -eq 0 ]]; then
+            local current_sub=$(az account show --query id -o tsv)
+            if [[ "$current_sub" == "$SUBSCRIPTION_ID" ]]; then
+                echo "Already logged in and on the correct subscription."
+                return 0
+            else
+                echo "Logged in, but on the wrong subscription. Switching..."
+                az account set --subscription "$SUBSCRIPTION_ID"
+            fi
+        else
+            echo "Logging in to Azure..."
+            az login --only-show-errors
+            if [[ $? -ne 0 ]]; then
+                echo "Azure login failed. Please check your credentials." >&2
+                return 1
+            fi
+            echo "Azure login successful. Setting subscription..."
+            az account set --subscription "$SUBSCRIPTION_ID"
+        fi
+        return 0
     }
 
     # --- Main Execution Flow ---
     {
-        # Define an array of unique IPs to process
-        local -a ips_to_process
+        # Define arrays for desired and existing rules
+        local -a desired_ips_array
+        local -A desired_rules_map # Map of IP to rule name
+        local -a existing_ips_array
+        local -A existing_rules_map # Map of IP to rule name
 
-        echo "Detecting current public IP address..."
-        local public_ip
-        public_ip=$(get_public_ip)
-        
-        if [[ -z "$public_ip" ]]; then
-            echo "Error: Could not determine public IP address. Cannot proceed." >&2
-            return 1
-        fi
-        echo "Detected public IP: $public_ip"
-        ips_to_process+=("$public_ip")
-        
-        # Add the additional IPs
-        ips_to_process+=("${additional_ips[@]}")
-        
-        # Remove duplicates from the array using zsh's unique parameter expansion
-        ips_to_process=("${(u)ips_to_process[@]}")
+        # 1. Get current and additional IPs
+        get_public_ips || return 1
+        desired_ips_array=("${(k)detected_ips[@]}")
+        desired_ips_array+=("${additional_ips[@]}")
+        desired_ips_array=("${(u)desired_ips_array[@]}") # Remove duplicates
 
-        # Login once before processing all IPs
-        if [[ "$skip_login" == true ]]; then
-            echo "🔑 Skipping Azure login as requested. Assuming you are already authenticated."
-        else
-            perform_az_login || return 1
-        fi
+        # Generate a rule name for each desired IP
+        for ip in "${desired_ips_array[@]}"; do
+            local rule_name="Eugene_WFH_$(echo "$ip" | tr '.' '-')"
+            desired_rules_map["$ip"]="$rule_name"
+        done
 
-        # Clean up old rules once
-        echo "🧹 Searching for and deleting any existing 'Eugene_WFH' rules..."
-        # Use zsh syntax for array splitting
-        local -a old_rules=("${(@f)$(az sql server firewall-rule list \
+        # 2. Authenticate with Azure
+        perform_az_login || return 1
+
+        # 3. Get existing firewall rules
+        echo "🔍 Fetching existing 'Eugene_WFH' rules from Azure..."
+        local -a existing_rules_list
+        existing_rules_list=("${(@f)$(az sql server firewall-rule list \
             --resource-group "$RESOURCE_GROUP_NAME" \
             --server "$SERVER_NAME" \
-            --query "[?starts_with(name, 'Eugene_WFH')].name" \
-            --output tsv)}")
+            --query "[?starts_with(name, 'Eugene_WFH')].{name:name, startIp:startIpAddress, endIp:endIpAddress}" \
+            --output json 2>/dev/null)}")
 
-        if (( ${#old_rules[@]} > 0 )); then
-            for old_rule in "${old_rules[@]}"; do
-                echo "  -> Deleting old rule: $old_rule"
+        if [[ -n "$existing_rules_list" ]]; then
+            for rule_json in "${existing_rules_list[@]}"; do
+                local name=$(echo "$rule_json" | jq -r '.name')
+                local ip_address=$(echo "$rule_json" | jq -r '.startIp')
+                existing_rules_map["$ip_address"]="$name"
+                existing_ips_array+=("$ip_address")
+            done
+        fi
+        
+        # 4. Determine which rules to add and which to delete
+        local -a ips_to_add=($(comm -23 <(echo "${desired_ips_array[@]}" | tr ' ' '\n' | sort) <(echo "${existing_ips_array[@]}" | tr ' ' '\n' | sort)))
+        local -a rules_to_delete=($(comm -13 <(echo "${desired_ips_array[@]}" | tr ' ' '\n' | sort) <(echo "${existing_ips_array[@]}" | tr ' ' '\n' | sort)))
+
+        # 5. Execute changes
+        
+        # Add new rules
+        if (( ${#ips_to_add[@]} > 0 )); then
+            echo "✨ Creating new rules for missing IPs..."
+            for ip in "${ips_to_add[@]}"; do
+                local rule_name="${desired_rules_map[$ip]}"
+                echo "  -> Adding rule: '$rule_name' for IP $ip"
+                az sql server firewall-rule create \
+                    --resource-group "$RESOURCE_GROUP_NAME" \
+                    --server "$SERVER_NAME" \
+                    --name "$rule_name" \
+                    --start-ip-address "$ip" \
+                    --end-ip-address "$ip" \
+                    --only-show-errors
+            done
+        else
+            echo "🎉 All desired IPs already have firewall rules. No new rules to create."
+        fi
+
+        # Delete old rules
+        if (( ${#rules_to_delete[@]} > 0 )); then
+            echo "🧹 Deleting old rules for stale IPs..."
+            for ip in "${rules_to_delete[@]}"; do
+                local rule_name="${existing_rules_map[$ip]}"
+                echo "  -> Deleting rule: '$rule_name' for IP $ip"
                 az sql server firewall-rule delete \
                     --resource-group "$RESOURCE_GROUP_NAME" \
                     --server "$SERVER_NAME" \
-                    --name "$old_rule" > /dev/null
+                    --name "$rule_name" --only-show-errors
             done
-            echo "Cleanup complete."
         else
-            echo "No old 'Eugene_WFH' rules found to delete."
+            echo "🧹 No stale 'Eugene_WFH' rules found to delete."
         fi
 
-        # Create new rules for each unique IP
-        for ip in "${ips_to_process[@]}"; do
-            local rule_name="Eugene_WFH_$(date +'%Y-%m-%d')_$(echo "$ip" | tr '.' '-')"
-            echo "✨ Creating new firewall rule: '$rule_name' for IP $ip"
-            az sql server firewall-rule create \
-                --resource-group "$RESOURCE_GROUP_NAME" \
-                --server "$SERVER_NAME" \
-                --name "$rule_name" \
-                --start-ip-address "$ip" \
-                --end-ip-address "$ip"
-            
-            if [[ $? -ne 0 ]]; then
-                echo "Failed to create firewall rule for IP $ip."
-                continue
-            fi
-            echo "✅ Successfully created firewall rule '$rule_name' for IP address $ip"
-        done
-        
         echo "Operation completed successfully."
     } || {
         echo "An error occurred during execution." >&2
