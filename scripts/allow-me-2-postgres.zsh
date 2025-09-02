@@ -1,6 +1,6 @@
 # This script is optimized for zsh.
 # Allows your current public IP to access the Azure PostgreSQL Flexible Server.
-# It first cleans up ALL old rules starting with "Eugene_WFH_" before creating a new one.
+# It performs a delta check: adds new IPs, and removes rules for IPs that are no longer needed.
 allow-me-2-postgres() {
     # --- Check for the --skip-login and --add-ip arguments ---
     local skip_login=false
@@ -36,8 +36,6 @@ allow-me-2-postgres() {
         for source_url in "${ip_sources[@]}"; do
             local public_ip=$(curl -sS --fail "$source_url" || true)
             if [[ -n "$public_ip" ]]; then
-                # We store the raw IP (even if it has quotes) as the key.
-                # It will be cleaned later.
                 local clean_ip_for_check=$(sanitize_string "$public_ip")
                 if [[ "$clean_ip_for_check" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
                     detected_ips["$public_ip"]=1
@@ -110,12 +108,21 @@ allow-me-2-postgres() {
         perform_az_login || return 1
 
         # 3. Get existing rules from Azure
-        # FIX THIS to get a list of ips from Azure existing rules
         echo "🔍 Fetching existing 'Eugene_WFH' rules from Azure..."
-        local old_rules_str
-        old_rules_str=$(az postgres flexible-server firewall-rule list \
+        local existing_rules_json
+        existing_rules_json=$(az postgres flexible-server firewall-rule list \
             -g "$RESOURCE_GROUP_NAME" -n "$SERVER_NAME" \
-            --query "[?starts_with(name, 'Eugene_WFH')].name" -o tsv)
+            --query "[?starts_with(name, 'Eugene_WFH')].{name:name, ip:startIpAddress}" -o json 2>/dev/null)
+        
+        if [[ -n "$existing_rules_json" && "$existing_rules_json" != "[]" ]]; then
+            echo "$existing_rules_json" | jq -c '.[]' | while IFS= read -r rule_entry; do
+                local name=$(echo "$rule_entry" | jq -r '.name')
+                local ip=$(echo "$rule_entry" | jq -r '.ip')
+                if [[ "$ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                    existing_rules_map["$ip"]="$name"
+                fi
+            done
+        fi
         
         # 4. Determine diff from the clean data structures
         local -a ips_to_add ips_to_delete
@@ -131,32 +138,30 @@ allow-me-2-postgres() {
             echo "✨ Creating new rules for missing IPs..."
             for ip in "${ips_to_add[@]}"; do
                 local rule_name="${desired_rules_map[$ip]}"
-
-                local clean_ip
-                clean_ip=$(sanitize_string "$ip")
+                local clean_ip=$(sanitize_string "$ip")
                 
                 echo "  -> Adding rule: '$rule_name' for IP $clean_ip"
                 az postgres flexible-server firewall-rule create \
                     --resource-group "$RESOURCE_GROUP_NAME" \
-                    --name "$SERVER_NAME" \
+                    --server-name "$SERVER_NAME" \
                     --rule-name "$rule_name" \
                     --start-ip-address "$clean_ip" \
-                    --end-ip-address "$clean_ip"
+                    --end-ip-address "$clean_ip" \
+                    --only-show-errors > /dev/null
             done
         else
             echo "🎉 No new rules to create."
         fi
 
         if (( ${#ips_to_delete[@]} > 0 )); then
-            echo "🧹 Deleting old rules for stale IPs..."
+            echo "🧹 Deleting rules for stale IPs..."
             for ip in "${ips_to_delete[@]}"; do
                 local rule_name="${existing_rules_map[$ip]}"
-                local clean_ip
-                clean_ip=$(sanitize_string "$ip")
+                local clean_ip=$(sanitize_string "$ip")
                 echo "  -> Deleting rule: '$rule_name' for IP $clean_ip"
                 az postgres flexible-server firewall-rule delete \
                     --resource-group "$RESOURCE_GROUP_NAME" \
-                    --name "$SERVER_NAME" \
+                    --server-name "$SERVER_NAME" \
                     --rule-name "$rule_name" \
                     --yes > /dev/null
             done
@@ -165,56 +170,6 @@ allow-me-2-postgres() {
         fi
 
         echo "✅ Operation completed successfully."
-    } || {
-        echo "❌ An error occurred during execution." >&2
-        return 1
-    }
-    
-    # --- Main Execution Flow ---
-    {
-        local public_ip
-        # This new method isolates the function's true output from any debug messages
-        public_ip=$(get_public_ip)
-        
-        if [[ -z "$public_ip" ]]; then
-            echo "Error: Could not determine public IP address. Cannot proceed." >&2
-            return 1
-        fi
-        echo "✅ Detected public IP: $public_ip"
-        
-        local rule_name="Eugene_WFH_$(date +'%Y-%m-%d')_$(echo "$public_ip" | tr '.' '-')"
-        
-        perform_az_login || return 1
-
-        echo "🧹 Searching for and deleting any existing 'Eugene_WFH' rules..."
-        
-        
-
-        if [[ -n "$old_rules_str" ]]; then
-            while IFS= read -r old_rule; do
-                if [[ -n "$old_rule" ]]; then
-                    echo "  -> Deleting old rule: $old_rule"
-                    az postgres flexible-server firewall-rule delete \
-                        -g "$RESOURCE_GROUP_NAME" -n "$SERVER_NAME" \
-                        --rule-name "$old_rule" --yes --only-show-errors > /dev/null
-                fi
-            done <<< "$old_rules_str"
-            echo "Cleanup complete."
-        else
-            echo "No old 'Eugene_WFH' rules found to delete."
-        fi
-
-        # Create the new firewall rule
-        echo "✨ Creating new firewall rule: '$rule_name' for IP $public_ip"
-        az postgres flexible-server firewall-rule create \
-          -g "$RESOURCE_GROUP_NAME" -n "$SERVER_NAME" \
-          --rule-name "$rule_name" \
-          --start-ip-address "$public_ip" \
-          --end-ip-address "$public_ip" \
-          --only-show-errors > /dev/null
-        
-        echo "✅ Operation completed successfully."
-        
     } || {
         echo "❌ An error occurred during execution." >&2
         return 1
