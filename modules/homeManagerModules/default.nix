@@ -1,5 +1,6 @@
 {...}: {
   imports = [
+    ./lazysql-config.nix
     ./wallpapers.nix
     ./programs.nix
     ./packages.nix
