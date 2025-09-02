@@ -181,7 +181,6 @@ allow-me-2-mssql() {
                     --resource-group "$RESOURCE_GROUP_NAME" \
                     --server "$SERVER_NAME" \
                     --name "$rule_name" \
-                    --yes \
                     --only-show-errors > /dev/null
             done
         else
