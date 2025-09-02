@@ -7,8 +7,8 @@
   # Define your connection details here for clarity
   dbHost = "mataersdevtestfpsqlserver.postgres.database.azure.com";
   dbName = "postgres";
-  # ❗ In the key-value format, enclose the username in single quotes to protect the spaces.
-  dbUsername = "'AL PSQL ERS DEVTEST READER'";
+  # The username, still URL-encoded for use in the query string
+  dbUsernameEncoded = "AL%20PSQL%20ERS%20DEVTEST%20READER";
 
   # Set the correct path to the file containing your Zsh functions.
   zshFunctionsFile = "${config.home.homeDirectory}/.zshrc";
@@ -20,7 +20,7 @@ in {
     Provider = "postgres"
     DBName = "${dbName}"
     # Use the key-value DSN format instead of a URL
-    URL = "host=${dbHost} dbname=${dbName} user=${dbUsername}"
+    URL = "postgresql://${dbHost}/${dbName}?user=${dbUsernameEncoded}"
     #
     # Commands to run BEFORE connecting
     Commands = [
