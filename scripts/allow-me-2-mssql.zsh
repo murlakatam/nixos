@@ -18,12 +18,10 @@ allow-me-2-mssql() {
         fi
     done
 
-    # --- NEW: A dedicated function to sanitize strings ---
-    # This function removes newlines, carriage returns, and double quotes.
+    # --- A dedicated function to sanitize strings ---
     sanitize_string() {
-        if [[ -n "$1" ]]; then
-            echo "$1" | tr -d '\n\r\"'
-        fi
+        # Removes newlines, carriage returns, and double quotes from a string
+        echo "$1" | tr -d '\n\r\"'
     }
 
     # --- Use the new resource group and server names ---
@@ -36,22 +34,21 @@ allow-me-2-mssql() {
         echo "Detecting public IPv4 address..."
         local -a ip_sources=(https://api.ipify.org https://ifconfig.co/ip https://icanhazip.com https://ipinfo.io/ip)
         for source_url in "${ip_sources[@]}"; do
-            local public_ip
-            public_ip=$(curl -sS --fail "$source_url" || true)
+            local public_ip=$(curl -sS --fail "$source_url" || true)
             if [[ -n "$public_ip" ]]; then
-                # We still sanitize here at the source to be safe
-                local sanitized_ip=$(sanitize_string "$public_ip")
-                
-                if [[ "$sanitized_ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-                    detected_ips["$sanitized_ip"]=1
-                    echo "  -> Detected IPv4 from $source_url: $sanitized_ip"
+                # The raw IP (even if it has quotes) is used as the key.
+                # We will clean it later at the single correct point.
+                local clean_ip_for_check=$(sanitize_string "$public_ip")
+                if [[ "$clean_ip_for_check" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                    detected_ips["$public_ip"]=1
+                    echo "  -> Detected IPv4 from $source_url: $clean_ip_for_check"
                 fi
             fi
             sleep 0.5
         done
 
         if [[ ${#detected_ips[@]} -eq 0 ]]; then
-            echo "Error: Could not determine any public IPv4 address. Cannot proceed." >&2
+            echo "Error: Could not determine public IPv4 address." >&2
             return 1
         fi
         
@@ -61,18 +58,13 @@ allow-me-2-mssql() {
 
     # Login to Azure
     perform_az_login() {
-        if [[ "$skip_login" == true ]]; then
-            echo "🔑 Skipping Azure login as requested."
-            return 0
-        fi
-        
+        if [[ "$skip_login" == true ]]; then echo "🔑 Skipping Azure login as requested."; return 0; fi
         echo "Checking Azure login status..."
         az account show &> /dev/null
         if [[ $? -eq 0 ]]; then
             local current_sub=$(az account show --query id -o tsv)
             if [[ "$current_sub" == "$SUBSCRIPTION_ID" ]]; then
-                echo "Already logged in and on the correct subscription."
-                return 0
+                echo "Already logged in and on the correct subscription."; return 0
             else
                 echo "Logged in, but on the wrong subscription. Switching..."
                 az account set --subscription "$SUBSCRIPTION_ID"
@@ -95,21 +87,21 @@ allow-me-2-mssql() {
         # 1. Get current and additional IPs
         get_public_ips || return 1
 
-        # --- STEP 3 & 4 (MODIFIED): Build the desired_ips_array by sanitizing every key ---
-        # This guarantees the array contains only clean data.
+        # --- THE FIX: Sanitize the keys from the corrupted map ONCE ---
+        # This creates a clean array that all subsequent logic will use.
         for ip_key in "${(@k)detected_ips}"; do
             desired_ips_array+=("$(sanitize_string "$ip_key")")
         done
         
         for ip in "${additional_ips[@]}"; do
-            local sanitized_ip=$(sanitize_string "$ip")
-            if [[ "$sanitized_ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-                desired_ips_array+=("$sanitized_ip")
+            local clean_ip=$(sanitize_string "$ip")
+            if [[ "$clean_ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                desired_ips_array+=("$clean_ip")
             fi
         done
         desired_ips_array=("${(u)desired_ips_array[@]}") # Get unique IPs
 
-        # This map is now built using the guaranteed-clean array
+        # This map is now built using the guaranteed-clean array.
         for ip in "${desired_ips_array[@]}"; do
             local rule_name="Eugene_WFH_$(date +'%Y-%m-%d')_$(echo "$ip" | tr '.' '-')"
             desired_rules_map["$ip"]="$rule_name"
@@ -118,7 +110,7 @@ allow-me-2-mssql() {
         # 2. Authenticate
         perform_az_login || return 1
 
-        # 3. Get existing rules
+        # 3. Get existing rules from Azure
         echo "🔍 Fetching existing 'Eugene_WFH' rules from Azure..."
         local existing_rules_json
         existing_rules_json=$(az sql server firewall-rule list -g "$RESOURCE_GROUP_NAME" -s "$SERVER_NAME" --query "[?starts_with(name, 'Eugene_WFH')].{name:name, ip:startIpAddress}" -o json 2>/dev/null)
@@ -126,15 +118,14 @@ allow-me-2-mssql() {
             echo "$existing_rules_json" | jq -c '.[]' | while IFS= read -r rule_entry; do
                 local name=$(echo "$rule_entry" | jq -r '.name')
                 local ip=$(echo "$rule_entry" | jq -r '.ip')
-                # Sanitize the IP coming from Azure as well for consistency
-                local sanitized_ip=$(sanitize_string "$ip")
-                if [[ "$sanitized_ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-                    existing_rules_map["$sanitized_ip"]="$name"
+                # No extra sanitization needed, jq -r gives clean output.
+                if [[ "$ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                    existing_rules_map["$ip"]="$name"
                 fi
             done
         fi
         
-        # 4. Determine diff
+        # 4. Determine diff from the clean data structures
         local -a ips_to_add ips_to_delete
         for ip in "${(@k)desired_rules_map}"; do
             if [[ -z "${existing_rules_map[$ip]}" ]]; then ips_to_add+=("$ip"); fi
@@ -146,13 +137,11 @@ allow-me-2-mssql() {
         # 5. Execute changes
         if (( ${#ips_to_add[@]} > 0 )); then
             echo "✨ Creating new rules for missing IPs..."
-            for ip_to_add in "${ips_to_add[@]}"; do
-                # --- STEP 5 (MODIFIED): Sanitize the final IP one last time before use ---
-                local clean_ip=$(sanitize_string "$ip_to_add")
-                local rule_name="${desired_rules_map[$clean_ip]}"
-
-                echo "  -> Adding rule: '$rule_name' for IP $clean_ip"
-                az sql server firewall-rule create -g "$RESOURCE_GROUP_NAME" -s "$SERVER_NAME" -n "$rule_name" --start-ip-address "$clean_ip" --end-ip-address "$clean_ip" --only-show-errors > /dev/null
+            for ip in "${ips_to_add[@]}"; do
+                # The 'ip' variable is now guaranteed to be clean.
+                local rule_name="${desired_rules_map[$ip]}"
+                echo "  -> Adding rule: '$rule_name' for IP $ip"
+                az sql server firewall-rule create -g "$RESOURCE_GROUP_NAME" -s "$SERVER_NAME" -n "$rule_name" --start-ip-address "$ip" --end-ip-address "$ip" --only-show-errors > /dev/null
             done
         else
             echo "🎉 No new rules to create."
@@ -160,10 +149,9 @@ allow-me-2-mssql() {
 
         if (( ${#ips_to_delete[@]} > 0 )); then
             echo "🧹 Deleting old rules for stale IPs..."
-            for ip_to_delete in "${ips_to_delete[@]}"; do
-                local clean_ip=$(sanitize_string "$ip_to_delete")
-                local rule_name="${existing_rules_map[$clean_ip]}"
-                echo "  -> Deleting rule: '$rule_name' for IP $clean_ip"
+            for ip in "${ips_to_delete[@]}"; do
+                local rule_name="${existing_rules_map[$ip]}"
+                echo "  -> Deleting rule: '$rule_name' for IP $ip"
                 az sql server firewall-rule delete -g "$RESOURCE_GROUP_NAME" -s "$SERVER_NAME" -n "$rule_name" --only-show-errors > /dev/null
             done
         else
