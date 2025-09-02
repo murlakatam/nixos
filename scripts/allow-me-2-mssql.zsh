@@ -26,13 +26,14 @@ allow-me-2-mssql() {
     # Get public IPv4 address(es)
     get_public_ips() {
         echo "Detecting public IPv4 address..."
-        # Simplified the loop for clarity
         local -a ip_sources=(https://api.ipify.org https://ifconfig.co/ip https://icanhazip.com https://ipinfo.io/ip)
         for source_url in "${ip_sources[@]}"; do
             local public_ip
             public_ip=$(curl -sS --fail "$source_url" || true)
             if [[ -n "$public_ip" ]]; then
-                public_ip=$(echo "$public_ip" | tr -d '\n\r') # Remove newlines/carriage returns
+                # Sanitize newlines, carriage returns, AND double quotes from the input.
+                public_ip=$(echo "$public_ip" | tr -d '\n\r\"')
+                
                 # Only process valid IPv4 addresses
                 if [[ "$public_ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
                     detected_ips["$public_ip"]=1
@@ -133,7 +134,6 @@ allow-me-2-mssql() {
         fi
         
         # 4. Determine which rules to add and which to delete using associative array lookups
-        # This is more robust than using `comm`.
         local -a ips_to_add
         local -a ips_to_delete
 
@@ -163,8 +163,8 @@ allow-me-2-mssql() {
                     --resource-group "$RESOURCE_GROUP_NAME" \
                     --server "$SERVER_NAME" \
                     --name "$rule_name" \
-                    --start-ip-address $ip \
-                    --end-ip-address $ip \
+                    --start-ip-address "$ip" \
+                    --end-ip-address "$ip" \
                     --only-show-errors > /dev/null
             done
         else
