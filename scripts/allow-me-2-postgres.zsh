@@ -25,7 +25,7 @@ allow-me-2-postgres() {
     get_public_ip() {
         echo "Detecting public IPv4 address..." >&2
         local -a clean_ips
-        local -a ip_sources=(https://api.ipify.org https://ifconfig.co/ip https://icanhazip.com https://ipinfo.io/ip)
+        local -a ip_sources=(https://api.ipify.org https://ifconfig.co/ip https://api.ipify.org https://ipinfo.io/ip)
         
         for source_url in "${ip_sources[@]}"; do
             local public_ip
@@ -93,7 +93,6 @@ allow-me-2-postgres() {
         echo "🧹 Searching for and deleting any existing 'Eugene_WFH' rules..."
         
         local old_rules_str
-        # --- FIX: Use -n for server name in postgres commands ---
         old_rules_str=$(az postgres flexible-server firewall-rule list \
             -g "$RESOURCE_GROUP_NAME" -n "$SERVER_NAME" \
             --query "[?starts_with(name, 'Eugene_WFH')].name" -o tsv)
