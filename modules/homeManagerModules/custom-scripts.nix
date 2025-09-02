@@ -34,6 +34,12 @@
     executable = true;
   };
 
+  # put azure token to pgpass
+  home.file.".config/zsh/functions/put-azure-token-in-pgpass.zsh" = {
+    source = ../../scripts/put-azure-token-in-pgpass.zsh;
+    executable = true;
+  };
+
   # mount local NUC
   home.file.".config/zsh/functions/mount-NUC.zsh" = {
     source = ../../scripts/mount-NUC.zsh;
