@@ -26,15 +26,14 @@ allow-me-2-mssql() {
     # Get public IPv4 address(es)
     get_public_ips() {
         echo "Detecting public IPv4 address..."
+        # Simplified the loop for clarity
         local -a ip_sources=(https://api.ipify.org https://ifconfig.co/ip https://icanhazip.com https://ipinfo.io/ip)
-        for i in {1..4}; do
-            local source_url="${ip_sources[$(( (i-1) % 4 + 1 ))]}"
+        for source_url in "${ip_sources[@]}"; do
             local public_ip
-            # Use 'curl -sS' for silent, but show errors if they occur
             public_ip=$(curl -sS --fail "$source_url" || true)
             if [[ -n "$public_ip" ]]; then
-                public_ip=$(echo "$public_ip" | tr -d '\n\r') # Remove newlines
-                # Only process IPv4 addresses
+                public_ip=$(echo "$public_ip" | tr -d '\n\r') # Remove newlines/carriage returns
+                # Only process valid IPv4 addresses
                 if [[ "$public_ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
                     detected_ips["$public_ip"]=1
                     echo "  -> Detected IPv4 from $source_url: $public_ip"
@@ -88,7 +87,6 @@ allow-me-2-mssql() {
         # Define arrays for desired and existing rules
         local -a desired_ips_array
         local -A desired_rules_map # Map of IP to rule name
-        local -a existing_ips_array
         local -A existing_rules_map # Map of IP to rule name
 
         # 1. Get current and additional IPs
@@ -123,23 +121,35 @@ allow-me-2-mssql() {
             --query "[?starts_with(name, 'Eugene_WFH') && startIpAddress == endIpAddress].{name:name, ip:startIpAddress}" \
             --output json 2>/dev/null)
 
-        # Use `jq` to parse the JSON array and populate maps
+        # Use a more robust `while read` loop to parse the JSON
         if [[ -n "$existing_rules_json" ]]; then
-            # Use `jq` to iterate and process the JSON array
-            for rule_entry in $(echo "$existing_rules_json" | jq -c '.[]'); do
+            echo "$existing_rules_json" | jq -c '.[]' | while IFS= read -r rule_entry; do
                 local name=$(echo "$rule_entry" | jq -r '.name')
                 local ip=$(echo "$rule_entry" | jq -r '.ip')
-                # Only add rules with valid IPv4
                 if [[ "$ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
                     existing_rules_map["$ip"]="$name"
-                    existing_ips_array+=("$ip")
                 fi
             done
         fi
         
-        # 4. Determine which rules to add and which to delete
-        local -a ips_to_add=($(comm -23 <(echo "${desired_ips_array[@]}" | tr ' ' '\n' | sort) <(echo "${existing_ips_array[@]}" | tr ' ' '\n' | sort)))
-        local -a rules_to_delete=($(comm -13 <(echo "${desired_ips_array[@]}" | tr ' ' '\n' | sort) <(echo "${existing_ips_array[@]}" | tr ' ' '\n' | sort)))
+        # 4. Determine which rules to add and which to delete using associative array lookups
+        # This is more robust than using `comm`.
+        local -a ips_to_add
+        local -a ips_to_delete
+
+        # Find IPs that are desired but don't exist yet
+        for ip in "${(@k)desired_rules_map}"; do
+            if [[ -z "${existing_rules_map[$ip]}" ]]; then
+                ips_to_add+=("$ip")
+            fi
+        done
+
+        # Find IPs that exist but are no longer desired
+        for ip in "${(@k)existing_rules_map}"; do
+            if [[ -z "${desired_rules_map[$ip]}" ]]; then
+                ips_to_delete+=("$ip")
+            fi
+        done
 
         # 5. Execute changes
         
@@ -155,30 +165,32 @@ allow-me-2-mssql() {
                     --name "$rule_name" \
                     --start-ip-address "$ip" \
                     --end-ip-address "$ip" \
-                    --only-show-errors
+                    --only-show-errors > /dev/null
             done
         else
             echo "🎉 All desired IPs already have firewall rules. No new rules to create."
         fi
 
         # Delete old rules
-        if (( ${#rules_to_delete[@]} > 0 )); then
+        if (( ${#ips_to_delete[@]} > 0 )); then
             echo "🧹 Deleting old rules for stale IPs..."
-            for ip in "${rules_to_delete[@]}"; do
+            for ip in "${ips_to_delete[@]}"; do
                 local rule_name="${existing_rules_map[$ip]}"
                 echo "  -> Deleting rule: '$rule_name' for IP $ip"
                 az sql server firewall-rule delete \
                     --resource-group "$RESOURCE_GROUP_NAME" \
                     --server "$SERVER_NAME" \
-                    --name "$rule_name" --only-show-errors
+                    --name "$rule_name" \
+                    --yes \
+                    --only-show-errors > /dev/null
             done
         else
             echo "🧹 No stale 'Eugene_WFH' rules found to delete."
         fi
 
-        echo "Operation completed successfully."
+        echo "✅ Operation completed successfully."
     } || {
-        echo "An error occurred during execution." >&2
+        echo "❌ An error occurred during execution." >&2
         return 1
     }
 }
