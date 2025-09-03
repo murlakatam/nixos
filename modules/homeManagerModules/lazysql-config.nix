@@ -5,10 +5,12 @@
   ...
 }: let
   # Define your connection details here for clarity
-  dbHost = "mataersdevtestfpsqlserver.postgres.database.azure.com";
+  #dbHost = "mataersdevtestfpsqlserver.postgres.database.azure.com";
+  dbHost = "fakeservername.postgres.database.azure.com";
   dbName = "postgres";
   # The username, still URL-encoded for use in the query string
-  dbUsernameEncoded = "AL%20PSQL%20ERS%20DEVTEST%20READER";
+  #dbUsernameEncoded = "AL%20PSQL%20ERS%20DEVTEST%20READER";
+  dbUsernameEncoded = "Test%20PSQL%20User";
 
   # Set the correct path to the file containing your Zsh functions.
   zshFunctionsFile = "${config.home.homeDirectory}/.zshrc";
