@@ -11,8 +11,15 @@ in {
       enable = true;
       userName = "${gitUsername}";
       userEmail = "${gitEmail}";
+
       aliases = {
         pushup = "!git push --set-upstream origin `git symbolic-ref --short HEAD`";
+      };
+
+      extraConfig = {
+        core = {
+          editor = "code --wait";
+        };
       };
     };
   };
