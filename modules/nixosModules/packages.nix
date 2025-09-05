@@ -12,7 +12,7 @@
     #  wget
     alejandra
     azure-artifacts-credprovider
-    #azure-cli
+    azure-cli
     bat # Cat clone with syntax highlighting
     bitwarden-desktop # password manager
     cabextract # needed by winetricks
