@@ -12,6 +12,7 @@
     #  wget
     alejandra
     azure-artifacts-credprovider
+    #azure-cli
     bat # Cat clone with syntax highlighting
     bitwarden-desktop # password manager
     cabextract # needed by winetricks
@@ -42,6 +43,7 @@
     pciutils
     pgadmin4-desktopmode
     poppler # pdf redneding lib
+    python313Packages.azure-mgmt-containerservice # seems like a dependency for az.cli now
     nixfmt-rfc-style # nix formatter
     sshfs # secure file system over SSH
     transmission-remote-gtk #transmission remote UI

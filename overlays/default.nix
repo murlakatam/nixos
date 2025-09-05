@@ -13,6 +13,7 @@
   };
 
   azure-creds = import ./azure-creds-overlay.nix;
+  azure-cli = import ./azure-cli-overlay.nix;
   # netpad = import ./netpad-overlay.nix;
   # opencode = import ./opencode-overlay.nix {opencodeSrc = inputs.opencodeSrc;};
   # Helix nightly overlay

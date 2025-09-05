@@ -7,8 +7,7 @@
 }: {
   home.packages = with pkgs; [
     avalonia-ilspy #dotpeek alternative
-    azure-cli
-    bruno
+    bruno # testing puppy
     bruno-cli
     #diff-so-fancy
     cod # turn any --help into completion
