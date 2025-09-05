@@ -18,6 +18,7 @@ in {
 
       extraConfig = {
         core = {
+          autocrlf = "input";
           editor = "code --wait";
         };
       };
