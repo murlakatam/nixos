@@ -79,7 +79,7 @@ in {
       exec = "${terminalExe}";
     };
 
-    # Set keyboard shortcut for terminal
+    # Set keyboard shortcut for terminal.
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
       binding = "<Primary><Alt>t";
       command = "${terminalExe}";
