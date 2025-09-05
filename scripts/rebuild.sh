@@ -12,15 +12,21 @@
 # A rebuild script that commits on a successful build           
 set -e
 
-# Initialize default flags 
+# Initialize default flags
 update_flake=false
 repair=false
+recreate_lock_file=false # <-- Added new flag
 
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
   case $1 in
     --update-flake)
       update_flake=true
+      shift
+      ;;
+    --recreate-lock-file) # <-- Added new option
+      recreate_lock_file=true
+      update_flake=true # A recreate is a type of update, so we set both
       shift
       ;;
     --repair)
@@ -35,15 +41,12 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-# Edit your config
-#$EDITOR configuration.nix  
-
 # cd to your config dir
 pushd ~/dotfiles/nixos/
 
 code --wait .
 
-# Early return if no changes were detected (thanks @singiamtel!)
+# Early return if no changes were detected (and no update is requested)
 if [[ "$update_flake" != "true" ]] && git diff --quiet '*.nix' '*.lock' '*.zsh' '*.json' '*.sh'; then
     echo "No changes detected, exiting."
     popd
@@ -59,11 +62,16 @@ git diff -U0 '*.nix'
 
 echo "NixOS Rebuilding..."
 
-# Only run flake update if the flag is set
-if $update_flake; then
+# --- MODIFIED UPDATE LOGIC ---
+# Handle flake updates, prioritizing recreate-lock-file
+if $recreate_lock_file; then
+    echo "Forcing flake update by recreating lock file..."
+    sudo nix flake update --recreate-lock-file
+elif $update_flake; then
     echo "Updating flake..."
     sudo nix flake update
 fi
+# --- END OF MODIFICATION ---
 
 
 if [ "$repair" = true ]; then
@@ -71,20 +79,17 @@ if [ "$repair" = true ]; then
   sudo nixos-rebuild switch --flake /home/eugene/dotfiles/nixos#proartp16 --show-trace --repair
 else
   # Default rebuild, output simplified errors, log trackebacks
-  #sudo nixos-rebuild switch -I nixos-config=/home/eugene/dotfiles/nixos/configuration.nix #&>nixos-switch.log || (cat nixos-switch.log | grep --color error && exit 1)
-  sudo nixos-rebuild switch --flake /home/eugene/dotfiles/nixos#proartp16 --show-trace #&>nixos-switch.log || (cat nixos-switch.log | grep --color error && exit 1)
+  sudo nixos-rebuild switch --flake /home/eugene/dotfiles/nixos#proartp16 --show-trace
 fi
-
-#homemanager change
-#if ! git diff --quiet -- 'home.nix'; then
-#echo "Homemanager change detected..."
-#journalctl -xe --unit home-manager-eugene.service
-#fi 
-
+# Check for Home Manager changes and show logs if detected
+if ! git diff --quiet -- 'hosts/proartp16/home.nix' 'modules/homeManagerModules/'; then
+  echo "Home Manager change detected, showing service logs..."
+  journalctl -xe --unit home-manager-eugene.service || true
+fi
 # Get current generation metadata
 current=$(nixos-rebuild list-generations | awk '$NF == "True" && NR>1 { $NF=""; print $0 }')
 
-# Commit all changes witih the generation metadata
+# Commit all changes with the generation metadata
 git commit -am "$current"
 
 git pushup
