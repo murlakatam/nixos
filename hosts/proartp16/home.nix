@@ -74,6 +74,7 @@ in {
   ];
 
   #Configure GNOME settings via Home Manager
+  #Kraken Wanker
   dconf.settings = {
     "org/gnome/desktop/applications/terminal" = {
       exec = "${terminalExe}";
