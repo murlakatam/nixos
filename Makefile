@@ -66,24 +66,19 @@ FLAKE_URI_HOME := .#$(USERNAME)@$(HOSTNAME)
 all: home system
 
 # --- Core Build & Commit Routine ---
-# This is a multi-line variable that defines the main workflow.
-# It assumes 'make' is already being run from the correct directory.
+# This version assumes the user has already reviewed and saved their files.
 define REBUILD_ROUTINE
-	@echo "--- 1. Checking for Changes ---" && \
-	if [ -z "$(UPDATE)$(RECREATE)" ] && git diff --quiet '*.nix' '*.lock' '*.zsh' '*.json' '*.sh' '*.Makefile'; then \
+	echo "--- 1. Checking for Changes ---" && \
+	if [ -z "$(UPDATE)$(RECREATE)" ] && git diff --quiet '*.nix' '*.lock' '*.zsh' '*.json' '*.sh'; then \
 		echo "✅ No changes detected in configuration files. Nothing to do."; \
 		exit 0; \
 	fi && \
 	\
-	@echo "--- 2. Editing and Formatting ---" && \
-	echo " opening $(EDITOR) for final review (close editor to continue)..." && \
-	$(EDITOR) . && \
+	echo "--- 2. Formatting and Confirming ---" && \
 	echo "✨ Auto-formatting Nix files with Alejandra..." && \
 	if ! alejandra . &>/dev/null; then \
 		alejandra . || (echo "❌ Formatting failed!" && exit 1); \
 	fi && \
-	\
-	@echo "--- 3. Reviewing and Confirming ---" && \
 	echo "🔍 Git changes to be applied:" && \
 	git diff -U0 --color=always '*.nix' && \
 	echo "" && \
@@ -94,7 +89,7 @@ define REBUILD_ROUTINE
 		exit 1; \
 	fi && \
 	\
-	@echo "--- 4. Updating Flake Inputs (if requested) ---" && \
+	echo "--- 3. Updating and Building ---" && \
 	if [ "$(RECREATE)" = "true" ]; then \
 		echo " Clobbering lock file and updating flake inputs..."; \
 		sudo nix flake update --recreate-lock-file; \
@@ -102,12 +97,10 @@ define REBUILD_ROUTINE
 		echo " Updating flake inputs..."; \
 		sudo nix flake update; \
 	fi && \
-	\
-	@echo "--- 5. Executing the Build ---" && \
 	echo "🚀 Starting build..." && \
 	sudo $(1) 2> >(tee /tmp/nixos-build-errors.log >&2) && \
 	\
-	@echo "--- 6. Committing, Pushing, and Notifying on Success ---" && \
+	echo "--- 4. Committing, Pushing, and Notifying ---" && \
 	echo "✅ Build successful! Committing changes..." && \
 	current_generation=$$(nixos-rebuild list-generations | grep -w 'current' | sed 's/\s\+/ /g') && \
 	git commit -am "$$current_generation" && \

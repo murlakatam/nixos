@@ -6,7 +6,7 @@
     echo "Entering Nix configuration directory..."
     pushd "$configDir" >/dev/null
 
-    # Open the editor and wait for it to be closed before proceeding.
+    # Open the editor and wait for it to be closed before proceeding. comment
     # This relies on the $EDITOR environment variable being set correctly to a command
     # that waits, such as "code --wait".
     echo " opening editor for review (close editor to continue)..."
