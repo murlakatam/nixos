@@ -23,6 +23,7 @@
     git
     google-chrome #chrome
     gparted
+    gnumake # GNU Make is the tool that runs Makefiles
     eza # Modern replacement for ls
     file # program that shows the type of files
     flatpak-builder # flatpak builder
