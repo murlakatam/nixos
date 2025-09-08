@@ -3,13 +3,19 @@
     # The directory where your SOURCE Makefile lives
     local configDir="$HOME/dotfiles/nixos"
 
-    # Use pushd to change directory and save our location
+    echo "Entering Nix configuration directory..."
     pushd "$configDir" >/dev/null
 
-    # Run 'make' and pass along all arguments you gave the function (e.g., "system", "update")
-    # The 'command' prefix ensures we don't accidentally call an alias named 'make'
+    # Open the editor and wait for it to be closed before proceeding.
+    # This relies on the $EDITOR environment variable being set correctly.
+    echo " opening editor for review (close editor to continue)..."
+    $EDITOR .
+
+    echo " editor closed. Proceeding with the build..."
+
+    # Run 'make' and pass along all arguments you gave the function
     command make "$@"
 
-    # Use popd to return to the directory you were in before
+    # Return to the directory you were in before
     popd >/dev/null
   }
