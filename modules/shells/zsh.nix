@@ -77,6 +77,7 @@
         # init zinit
         source "${pkgs.zinit}/share/zinit/zinit.zsh"
         source ${./plugins.zsh}
+        source ${./rebuild-new.zsh}
       '')
       ''
         if [[ -f ~/.secrets ]]; then
@@ -95,12 +96,6 @@
             builtin cd -- "$cwd"
           fi
           rm -f -- "$tmp"
-        }
-
-        #moe get azure token
-        azuretoken() {
-          #az login --scope https://ossrdbms-aad.database.windows.net/.default --tenant e6d2d4cc-b762-486e-8894-4f5f440d5f31
-          az account get-access-token --resource-type oss-rdbms | jq -r '.accessToken'
         }
 
         # Source all function files

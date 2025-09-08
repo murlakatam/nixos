@@ -3,7 +3,12 @@
   config,
   ...
 }: {
-  # rebuild script a
+  # rebuild Makefile
+  home.file."Makefile" = {
+    source = ../../Makefile;
+  };
+
+  # rebuild script
   home.file."rebuild.sh" = {
     # Assuming this module is in ~/dotfiles/nixos/modules/homeManagerModules/
     source = ../../scripts/rebuild.sh;
