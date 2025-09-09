@@ -69,7 +69,7 @@ all: home system
 # This version assumes the user has already reviewed and saved their files.
 define REBUILD_ROUTINE
 	echo "--- 1. Checking for Changes ---" && \
-	if [ -z "$(UPDATE)$(RECREATE)" ] && git diff --quiet '*.nix' '*.lock' '*.zsh' '*.json' '*.sh'; then \
+	if [ -z "$(UPDATE)$(RECREATE)" ] && git diff --quiet '*.nix' '*.lock' '*.zsh' '*.json' '*.sh' 'Makefile'; then \
 		echo "✅ No changes detected in configuration files. Nothing to do."; \
 		exit 0; \
 	fi && \
@@ -98,7 +98,7 @@ define REBUILD_ROUTINE
 		sudo nix flake update; \
 	fi && \
 	echo "🚀 Starting build..." && \
-	sudo $(1) 2> >(tee /tmp/nixos-build-errors.log >&2) && \
+	sudo $(1) && \
 	\
 	echo "--- 4. Committing, Pushing, and Notifying ---" && \
 	echo "✅ Build successful! Committing changes..." && \
