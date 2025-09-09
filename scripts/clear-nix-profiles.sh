@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 PROFILES_DIR="/nix/var/nix/profiles"
-# Define how many of the latest generations to keep
+# Define how many of the latest generations to keep 
 KEEP_COUNT=5
 
 [[ "$1" == "remove" ]] && [[ $EUID -ne 0 ]] && echo "Error: Root required" && exit 1
