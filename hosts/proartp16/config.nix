@@ -21,6 +21,13 @@ in {
     ../../modules/drivers/nvidia-drivers.nix
   ];
 
+  # asus ec sensors https://github.com/zeule/asus-ec-sensors
+  boot.extraModulePackages = [
+    (pkgs.callPackage ../../kernel-packages/asus-ec-sensors {
+      kernel = config.boot.kernelPackages.kernel;
+    })
+  ];
+
   # Drivers Options
   # Enable AMD GPU drivers with stability patches
   drivers.amdgpu = {
