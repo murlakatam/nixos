@@ -77,7 +77,7 @@
         # init zinit
         source "${pkgs.zinit}/share/zinit/zinit.zsh"
         source ${./plugins.zsh}
-        source ${./rebuild-new.zsh}
+        source ${./rebuild.zsh}
       '')
       ''
         if [[ -f ~/.secrets ]]; then
