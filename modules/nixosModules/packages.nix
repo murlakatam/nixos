@@ -28,7 +28,6 @@
     file # program that shows the type of files
     flatpak-builder # flatpak builder
     ffmpeg_6-full
-    home-manager #should be always available
     iftop # network monitoring
     inxi #system information tool designed for both hardware and system reporting.
     iotop # io monitoring
