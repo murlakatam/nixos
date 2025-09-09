@@ -97,7 +97,7 @@ define REBUILD_ROUTINE
 		sudo nix flake update; \
 	fi && \
 	echo "🚀 Starting build..." && \
-	sudo $(1) && \
+	$(1) && \
 	\
 	echo "--- 4. Committing, Pushing, and Notifying ---" && \
 	echo "✅ Build successful! Committing changes..." && \
@@ -129,8 +129,8 @@ system:
 	@echo "--- Starting NixOS System Build ---"
 	@# Conditional logic to handle the `REPAIR=true` case.
 	$(if $(REPAIR), \
-		@$(call REBUILD_ROUTINE, nixos-rebuild switch --flake $(FLAKE_URI_SYSTEM) --show-trace --repair), \
-		@$(call REBUILD_ROUTINE, nixos-rebuild switch --flake $(FLAKE_URI_SYSTEM) --show-trace) \
+		@$(call REBUILD_ROUTINE, sudo nixos-rebuild switch --flake $(FLAKE_URI_SYSTEM) --show-trace --repair), \
+		@$(call REBUILD_ROUTINE, sudo nixos-rebuild switch --flake $(FLAKE_URI_SYSTEM) --show-trace) \
 	)
 
 # --- Unchanged Utility Targets ---
