@@ -47,7 +47,6 @@
       lg = "lazygit";
       # just
       j = "just";
-      rebuild = "~/rebuild.sh";
     };
     # set some zsh options
     # autocd = cd into into directories without typing cd
