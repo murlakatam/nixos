@@ -60,10 +60,9 @@ FLAKE_URI_HOME := .#$(USERNAME)@$(HOSTNAME)
 
 # Use .PHONY to declare targets that are not actual files.
 # This prevents conflicts and can improve performance.
-.PHONY: all home system update clean sysboot bootloader seed-iso burn-iso test-iso seed-debug deploy-% edit-shared-secrets-host help
+.PHONY: all system update clean sysboot bootloader seed-iso burn-iso test-iso seed-debug deploy-% edit-shared-secrets-host help
 
-# The default target when you just run `make`.
-all: home system
+all: system
 
 # --- Core Build & Commit Routine ---
 # This version assumes the user has already reviewed and saved their files.
@@ -115,12 +114,6 @@ endef
 # This ensures the flake inputs are updated before the system is rebuilt.
 update:
 	$(MAKE) system UPDATE=true RECREATE=$(RECREATE)
-
-# The new `home` target.
-# It calls the REBUILD_ROUTINE with the correct `home-manager` command.
-home:
-	@echo "--- Starting Home Manager Build ---"
-	@$(call REBUILD_ROUTINE, home-manager switch --flake $(FLAKE_URI_HOME))
 
 # The new `system` target.
 # It checks for the REPAIR variable and constructs the correct `nixos-rebuild`
@@ -192,9 +185,7 @@ help:
 	@echo "Available targets:"
 	@echo ""
 	@echo "  --- Git-Integrated Workflow ---"
-	@echo "  all           - Run both 'home' and 'system' build routines (default)."
 	@echo "  system        - Build and switch NixOS configuration with git workflow."
-	@echo "  home          - Build and switch home-manager configuration with git workflow."
 	@echo "  update        - Update flake inputs, then run the 'system' build routine."
 	@echo ""
 	@echo "  --- Target Options (Variables) ---"
