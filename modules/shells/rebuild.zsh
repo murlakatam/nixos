@@ -1,5 +1,5 @@
 # A robust function to rebuild our NixOS system
-  rebuild-new() {
+  rebuild() {
     # The directory where your SOURCE Makefile lives
     local configDir="$HOME/dotfiles/nixos"
 
