@@ -9,11 +9,11 @@
     # Open the editor and wait for it to be closed before proceeding. comment
     # This relies on the $EDITOR environment variable being set correctly to a command
     # that waits, such as "code --wait".
-    echo " opening editor for review (close editor to continue)..."
+    echo " -- opening editor for review (close editor to continue)..."
     # The command here ensures the system waits for the editor to close.
     command $EDITOR .
 
-    echo " editor closed. Proceeding with the build..."
+    echo " -- editor closed. Proceeding with the build..."
 
     # Check if any arguments were passed to the function.
     # If not, default to the "system" target.

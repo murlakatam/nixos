@@ -102,15 +102,15 @@ define REBUILD_ROUTINE
 	\
 	echo "--- 4. Committing, Pushing, and Notifying ---" && \
 	echo "✅ Build successful! Committing changes..." && \
-	current_generation=$$(nixos-rebuild list-generations | grep -w 'current' | sed 's/\s\+/ /g') && \
-	git commit -am "$$current_generation" && \
+	commit_message=$$(nixos-rebuild list-generations --json | jq -r '.[] | select(.current == true) | "NixOS Gen \(.generation) (\(.nixosVersion))"') && \
+	git commit -am "$$commit_message" && \
 	echo " Pushing changes to remote..." && \
 	git push && \
-	notify-send -e "NixOS Rebuilt OK!" "Committed: $$current_generation" --icon=software-update-available && \
+	notify-send -e "NixOS Rebuilt OK!" "Committed: $$commit_message" --icon=software-update-available && \
 	echo "🎉 All done!"
 endef
 
-# --- Primary Targets ---
+# --- Primary Targets --- destroyed
 
 # The new `update` target. It sets the UPDATE variable and then depends on `system`.
 # This ensures the flake inputs are updated before the system is rebuilt.
@@ -121,7 +121,7 @@ update:
 # It calls the REBUILD_ROUTINE with the correct `home-manager` command.
 home:
 	@echo "--- Starting Home Manager Build ---"
-	$(call REBUILD_ROUTINE, home-manager switch --flake $(FLAKE_URI_HOME))
+	@$(call REBUILD_ROUTINE, home-manager switch --flake $(FLAKE_URI_HOME))
 
 # The new `system` target.
 # It checks for the REPAIR variable and constructs the correct `nixos-rebuild`
@@ -130,8 +130,8 @@ system:
 	@echo "--- Starting NixOS System Build ---"
 	@# Conditional logic to handle the `REPAIR=true` case.
 	$(if $(REPAIR), \
-		$(call REBUILD_ROUTINE, nixos-rebuild switch --flake $(FLAKE_URI_SYSTEM) --show-trace --repair), \
-		$(call REBUILD_ROUTINE, nixos-rebuild switch --flake $(FLAKE_URI_SYSTEM) --show-trace) \
+		@$(call REBUILD_ROUTINE, nixos-rebuild switch --flake $(FLAKE_URI_SYSTEM) --show-trace --repair), \
+		@$(call REBUILD_ROUTINE, nixos-rebuild switch --flake $(FLAKE_URI_SYSTEM) --show-trace) \
 	)
 
 # --- Unchanged Utility Targets ---
