@@ -70,8 +70,7 @@ all: home system
 define REBUILD_ROUTINE
 	echo "--- 1. Checking for Changes ---" && \
 	if [ -z "$(UPDATE)$(RECREATE)" ] && git diff --quiet '*.nix' '*.lock' '*.zsh' '*.json' '*.sh' 'Makefile'; then \
-		echo "✅ No changes detected in configuration files. Nothing to do."; \
-		exit 0; \
+		echo "✅ No changes detected in configuration files."; \
 	fi && \
 	\
 	echo "--- 2. Formatting and Confirming ---" && \
@@ -80,7 +79,7 @@ define REBUILD_ROUTINE
 		alejandra . || (echo "❌ Formatting failed!" && exit 1); \
 	fi && \
 	echo "🔍 Git changes to be applied:" && \
-	git diff -U0 --color=always '*.nix' && \
+	git diff -U0 --color=always -- '*.nix' '*.lock' '*.zsh' '*.json' '*.sh' 'Makefile' && \
 	echo "" && \
 	read -p "🤔 Proceed with build? (y/N) " -n 1 -r; \
 	echo; \
