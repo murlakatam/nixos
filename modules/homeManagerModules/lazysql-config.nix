@@ -9,8 +9,7 @@
   dbHost = "fakeservername.postgres.database.azure.com";
   dbName = "postgres";
   # The username, still URL-encoded for use in the query string
-  #dbUsernameEncoded = "AL%20PSQL%20ERS%20DEVTEST%20READER";
-  dbUsernameEncoded = "Test%20PSQL%20User";
+  dbUsernameEncoded = "AL%20PSQL%20ERS%20DEVTEST%20READER";
 
   # Set the correct path to the file containing your Zsh functions.
   zshFunctionsFile = "${config.home.homeDirectory}/.zshrc";
@@ -22,7 +21,7 @@ in {
     Provider = "postgres"
     DBName = "${dbName}"
     # Use the key-value DSN format instead of a URL
-    URL = "postgres://${dbUsernameEncoded}@${dbHost}/${dbName}"
+    URL = "postgres://${dbUsernameEncoded}:pass@${dbHost}/${dbName}"
     #
     # Commands to run BEFORE connecting
     Commands = [
