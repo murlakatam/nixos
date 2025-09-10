@@ -34,7 +34,7 @@ in {
     [[database]]
     Name = "Local Restored DB"
     Provider = "postgres"
-    DBName = "postgres"
+    DBName = "restored_els_db"
     # Use the key-value DSN format instead of a URL
     URL = "postgres://postgres:mysecretpassword@localhost:7452/restored_els_db?sslmode=disable"
 
