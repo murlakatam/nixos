@@ -24,7 +24,7 @@ in {
     Username = "AL PSQL ERS DEVTEST READER"
     Hostname = "mataersdevtestfpsqlserver.postgres.database.azure.com"
     Port = "5432"
-    URL = "postgres://%22AL%20PSQL%20ERS%20DEVTEST%20READER%22@mataersdevtestfpsqlserver.postgres.database.azure.com:5432/mataerstst108psqlels"
+    URL = "postgres://%27AL%20PSQL%20ERS%20DEVTEST%20READER%27@mataersdevtestfpsqlserver.postgres.database.azure.com:5432/mataerstst108psqlels"
 
 
     # Commands to run BEFORE connecting
