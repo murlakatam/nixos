@@ -146,13 +146,13 @@ allow-me-2-postgres() {
                 local clean_ip=$(sanitize_string "$ip")
                 
                 echo "  -> Adding rule: '$rule_name' for IP $clean_ip"
+                
                 az postgres flexible-server firewall-rule create \
                     --resource-group "$RESOURCE_GROUP_NAME" \
                     --server-name "$SERVER_NAME" \
                     --rule-name "$rule_name" \
                     --start-ip-address "$clean_ip" \
                     --end-ip-address "$clean_ip" \
-                    --only-show-errors > /dev/null
             done
         else
             echo "🎉 No new rules to create."
