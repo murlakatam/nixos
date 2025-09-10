@@ -38,6 +38,7 @@
     telegram-desktop
     teams-for-linux
     jetbrains.datagrip
+    jetbrains.goland
     jetbrains.rider
     jetbrains.webstorm
     whatsapp-for-linux
