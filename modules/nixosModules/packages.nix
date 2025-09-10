@@ -18,10 +18,14 @@
     cabextract # needed by winetricks
     cloudflared # cloudflare client
     cypress #cypress
+    dconf-editor # Configuration editor for dconf
+    dconf2nix # Convert dconf settings to Nix
     docker
     dotnetCorePackages.sdk_8_0-bin #dotnet
     git
     google-chrome #chrome
+    gccgo14 # Go compiler from GCC
+    go # Go programming language
     gparted
     gnumake # GNU Make is the tool that runs Makefiles
     eza # Modern replacement for ls
@@ -147,7 +151,7 @@
     # #spotify                                            # Music streaming service (commented out)
     # #neovide                                            # GUI for Neovim (commented out)
 
-    dconf2nix # Convert dconf settings to Nix
+  
     # greetd.tuigreet                                     # Console-based greeter for greetd
     # nodePackages.prettier                               # Code formatter
     # prettierd                                           # Prettier as a daemon
@@ -172,14 +176,13 @@
     # manix                                               # Documentation searcher for Nix
     # linuxKernel.packages.linux_zen.cpupower             # CPU power management tool
     # tradingview                                         # Trading and charting platform
-    dconf-editor # Configuration editor for dconf
+    
     # rose-pine-cursor                                    # Rose Pine cursor theme
     # pfetch-rs                                           # System information display tool
     # fwupd                                               # Firmware update daemon
     # openssl                                             # Cryptography and SSL/TLS toolkit
     # pkg-config                                          # Helper tool for compiling (duplicate)
-    # gccgo14                                             # Go compiler from GCC
-    # go                                                  # Go programming language
+
     # gomuks                                              # Terminal Matrix client
     # olm                                                 # Implementation of Matrix encryption
     # transmission_4-gtk                                  # BitTorrent client
