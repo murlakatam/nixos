@@ -167,7 +167,8 @@ allow-me-2-postgres() {
                 az postgres flexible-server firewall-rule delete \
                     --resource-group "$RESOURCE_GROUP_NAME" \
                     --name "$SERVER_NAME" \
-                    --rule-name "$rule_name"
+                    --rule-name "$rule_name" \
+                    --yes
             done
         else
             echo "🧹 No stale rules to delete."
