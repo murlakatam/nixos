@@ -151,7 +151,6 @@
     # #spotify                                            # Music streaming service (commented out)
     # #neovide                                            # GUI for Neovim (commented out)
 
-  
     # greetd.tuigreet                                     # Console-based greeter for greetd
     # nodePackages.prettier                               # Code formatter
     # prettierd                                           # Prettier as a daemon
@@ -176,7 +175,7 @@
     # manix                                               # Documentation searcher for Nix
     # linuxKernel.packages.linux_zen.cpupower             # CPU power management tool
     # tradingview                                         # Trading and charting platform
-    
+
     # rose-pine-cursor                                    # Rose Pine cursor theme
     # pfetch-rs                                           # System information display tool
     # fwupd                                               # Firmware update daemon
