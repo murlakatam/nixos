@@ -149,10 +149,10 @@ allow-me-2-postgres() {
                 
                 az postgres flexible-server firewall-rule create \
                     --resource-group "$RESOURCE_GROUP_NAME" \
-                    --server-name "$SERVER_NAME" \
+                    --name "$SERVER_NAME" \
                     --rule-name "$rule_name" \
                     --start-ip-address "$clean_ip" \
-                    --end-ip-address "$clean_ip" \
+                    --end-ip-address "$clean_ip"
             done
         else
             echo "🎉 No new rules to create."
@@ -166,9 +166,8 @@ allow-me-2-postgres() {
                 echo "  -> Deleting rule: '$rule_name' for IP $clean_ip"
                 az postgres flexible-server firewall-rule delete \
                     --resource-group "$RESOURCE_GROUP_NAME" \
-                    --server-name "$SERVER_NAME" \
-                    --rule-name "$rule_name" \
-                    --yes > /dev/null
+                    --name "$SERVER_NAME" \
+                    --rule-name "$rule_name"
             done
         else
             echo "🧹 No stale rules to delete."
