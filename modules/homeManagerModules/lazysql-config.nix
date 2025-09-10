@@ -36,7 +36,7 @@ in {
     Provider = "postgres"
     DBName = "postgres"
     # Use the key-value DSN format instead of a URL
-    URL = "postgres://postgres:mysecretpassword@localhost:7452/postgres?sslmode=disable"
+    URL = "postgres://postgres:mysecretpassword@localhost:7452/restored_els_db?sslmode=disable"
 
     # General application settings (optional)
     [application]
