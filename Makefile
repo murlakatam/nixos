@@ -24,7 +24,6 @@
 # --- NEW USAGE ---
 #
 # - `make system`:         Applies the system config with the new git workflow.
-# - `make home`:           Applies the home-manager config with the new git workflow.
 # - `make all`:            Runs both 'home' and 'system' targets sequentially.
 # - `make update`:         Updates flake inputs and applies the changes via the
 #                          'system' target, all in one step.
