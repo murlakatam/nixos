@@ -33,7 +33,7 @@
 # ==============================================================================
 
 # --- User Configuration ---
-# This section contains variables you should customize for your environment.
+# This section contains variables you should customize for your environment. 
 
 # Set the absolute path to your Nix configuration directory (e.g., your dotfiles repo).
 # We use $(HOME) to ensure it's an absolute path.
