@@ -19,6 +19,7 @@ in {
     ../../modules/drivers/amd-drivers.nix
     ../../modules/drivers/amdgpu-stability.nix
     ../../modules/drivers/nvidia-drivers.nix
+    ../../modules/drivers/nvidia-prime-drivers.nix
   ];
 
   # asus ec sensors https://github.com/zeule/asus-ec-sensors
@@ -34,7 +35,8 @@ in {
     enable = true;
     stability.enablePatches = true; # Set to false to disable the patches
   };
-  drivers.nvidia.enable = false;
+  drivers.nvidia.enable = true;
+  drivers.nvidia-prime.enable = true;
 
   # Enable networking
   networking.networkmanager.enable = true;

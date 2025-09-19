@@ -18,17 +18,16 @@ in {
     };
   };
 
+  # This is all you need!
   config = mkIf cfg.enable {
-    hardware.nvidia = {
-      prime = {
-        offload = {
-          enable = true;
-          enableOffloadCmd = true;
-        };
-        # Make sure to use the correct Bus ID values for your system!
-        amdgpuBusId = "${cfg.amdgpuBusId}";
-        nvidiaBusId = "${cfg.nvidiaBusID}";
+    hardware.nvidia.prime = {
+      offload = {
+        enable = true;
+        # This provides the `nvidia-offload` command for you.
+        enableOffloadCmd = true;
       };
+      amdgpuBusId = cfg.amdgpuBusId;
+      nvidiaBusId = cfg.nvidiaBusID;
     };
   };
 }
