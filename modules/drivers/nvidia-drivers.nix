@@ -21,6 +21,12 @@ in {
       # Load nvidia driver for Xorg and Wayland
       services.xserver.videoDrivers = ["nvidia"];
 
+      # sleep kernel params
+      boot.kernelParams = [
+        "mem_sleep_default=deep"
+        "nvidia.NVreg_EnableS0ixPowerManagement=1"
+      ];
+
       hardware.nvidia = {
         # Modesetting is required.
         modesetting.enable = true;
