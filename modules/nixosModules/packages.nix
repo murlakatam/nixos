@@ -94,7 +94,6 @@
     # vulkan-loader                                       # Vulkan API loader
     # vulkan-validation-layers                            # Vulkan validation layers
     # vulkan-tools                                        # Vulkan development tools
-    # amdvlk                                              # AMD Vulkan driver
 
     # profile-sync-daemon                                 # Browser profile sync tool
     # killall                                             # Process termination utility

@@ -55,7 +55,7 @@
     # notify = notify when a job completes
     # unset beep = disable the bell sound
     # then
-    # init zinit and load plugins. 
+    # init zinit and load plugins. do it
 
     initContent = lib.mkMerge [
       (lib.mkBefore ''
