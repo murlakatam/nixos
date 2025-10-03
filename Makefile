@@ -23,12 +23,10 @@
 #
 # --- NEW USAGE ---
 #
-# - `make system`:         Applies the system config with the new git workflow.
-# - `make all`:            Runs both 'home' and 'system' targets sequentially.
+# - `make system`:         Rebuilds the system config
 # - `make update`:         Updates flake inputs and applies the changes via the
 #                          'system' target, all in one step.
 # - `make system REPAIR=true`:  Run a system build in repair mode.
-# - `make update RECREATE=true`: Force a flake lock file recreation and apply.
 #
 # ==============================================================================
 
@@ -67,7 +65,7 @@ all: system
 # This version assumes the user has already reviewed and saved their files.
 define REBUILD_ROUTINE
 	echo "--- 1. Checking for Changes ---" && \
-	if [ -z "$(UPDATE)$(RECREATE)" ] && git diff --quiet '*.nix' '*.lock' '*.zsh' '*.json' '*.sh' 'Makefile'; then \
+	if [ -z "$(UPDATE)" ] && git diff --quiet '*.nix' '*.lock' '*.zsh' '*.json' '*.sh' 'Makefile'; then \
 		echo "✅ No changes detected in configuration files."; \
 	fi && \
 	\
@@ -87,10 +85,7 @@ define REBUILD_ROUTINE
 	fi && \
 	\
 	echo "--- 3. Updating and Building ---" && \
-	if [ "$(RECREATE)" = "true" ]; then \
-		echo " Clobbering lock file and updating flake inputs..."; \
-		sudo nix flake update --recreate-lock-file; \
-	elif [ "$(UPDATE)" = "true" ]; then \
+	if [ "$(UPDATE)" = "true" ]; then \
 		echo " Updating flake inputs..."; \
 		sudo nix flake update; \
 	fi && \
@@ -112,7 +107,7 @@ endef
 # The new `update` target. It sets the UPDATE variable and then depends on `system`.
 # This ensures the flake inputs are updated before the system is rebuilt.
 update:
-	$(MAKE) system UPDATE=true RECREATE=$(RECREATE)
+	$(MAKE) system UPDATE=true
 
 # The new `system` target.
 # It checks for the REPAIR variable and constructs the correct `nixos-rebuild`
@@ -188,7 +183,6 @@ help:
 	@echo "  update        - Update flake inputs, then run the 'system' build routine."
 	@echo ""
 	@echo "  --- Target Options (Variables) ---"
-	@echo "  make update RECREATE=true - Force recreation of the flake.lock file."
 	@echo "  make system REPAIR=true   - Run nixos-rebuild in '--repair' mode."
 	@echo ""
 	@echo "  --- Utility Targets ---"
