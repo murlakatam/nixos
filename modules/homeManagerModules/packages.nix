@@ -14,6 +14,12 @@
     tree # pretty print directories
     fastfetch # flexx your OS : alternative to freshly deceased neofetch
     gimp-with-plugins
+    (google-chrome.override {
+      commandLineArgs = [
+        "--enable-features=UseOzonePlatform"
+        "--ozone-platform=wayland"
+      ];
+    })
     gnome-calculator
     #silver-searcher # ag
     kubectl # kubernetes cli
