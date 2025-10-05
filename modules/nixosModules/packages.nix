@@ -23,7 +23,7 @@
     docker
     dotnetCorePackages.sdk_8_0-bin #dotnet
     git
-    #google-chrome #chrome
+    google-chrome #chrome
     gccgo14 # Go compiler from GCC
     go # Go programming language
     gparted
