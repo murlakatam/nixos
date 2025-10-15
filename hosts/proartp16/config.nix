@@ -37,6 +37,8 @@ in {
   };
   drivers.nvidia.enable = true;
   drivers.nvidia-prime.enable = true;
+  # xbox controller
+  hardware.xone.enable = true;
 
   # Enable networking
   networking.networkmanager.enable = true;

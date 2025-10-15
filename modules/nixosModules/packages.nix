@@ -28,8 +28,12 @@
     go # Go programming language
     gparted
     gnumake # GNU Make is the tool that runs Makefiles
+    gnutls # Provides secure communication protocols (SSL/TLS), required by many game launchers.
+    protontricks # A script to easily apply Winetricks or other tweaks to specific Steam games (Proton prefixes).
+    protonup-qt # A GUI tool to download and manage custom Proton-GE versions for better game compatibility on Steam.
     eza # Modern replacement for ls
     file # program that shows the type of files
+    freetype # A library for rendering fonts, crucial for displaying text correctly in games.
     flatpak-builder # flatpak builder
     ffmpeg_6-full
     iftop # network monitoring
@@ -37,20 +41,26 @@
     iotop # io monitoring
     jq
     lshw # details hardware configuration info
+    libgpg-error # A dependency for cryptographic libraries used by various applications.
     libnotify # notification manager
+    libxml2 # A library for parsing XML files, commonly used for config
+    lutris # A game manager that simplifies installing and running games from various sources (Steam, GOG, etc.).
     mosh # remote ssh
     nerd-fonts.jetbrains-mono
     nodejs_22 #node
     nodePackages.prettier #node d
     ntfs3g # file system
     omnisharp-roslyn
+    openldap # needed for games or lanuchers that usese LDAP for auth
     p7zip
     pciutils
     pgadmin4-desktopmode
     poppler # pdf redneding lib
     python313Packages.azure-mgmt-containerservice # seems like a dependency for az.cli now
     nixfmt-rfc-style # nix formatter
+    SDL2 # A library for low-level access to audio, keyboard, mouse,
     sshfs # secure file system over SSH
+    sqlite # A lightweight database engine used by many applications 
     transmission-remote-gtk #transmission remote UI
     tree-sitter-grammars.tree-sitter-bash
     tree-sitter-grammars.tree-sitter-yaml
@@ -64,11 +74,16 @@
     tree-sitter-grammars.tree-sitter-python
     tree-sitter-grammars.tree-sitter-c-sharp
     vscode
+    vulkan-tools # Provides tools for testing and debugging the Vulkan graphics API, often used by modern games.
     usbutils # lsusb
     unzip
     wget # Network downloader
+    wine # A compatibility layer to run Windows applications
+    winetricks # A helper script to install necessary runtime libraries (e.g., DirectX) for Windows apps in Wine.
+ 
     wl-clipboard # wayland clipboard
     wl-clipboard-x11 # wayland clipboard for x11
+    xml2 # cli utils for working with xml
     yt-dlp # youtube downloader
     # # vim                                               # Text editor (commented out)
 
