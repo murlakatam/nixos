@@ -21,7 +21,8 @@
     dconf-editor # Configuration editor for dconf
     dconf2nix # Convert dconf settings to Nix
     docker
-    dotnetCorePackages.sdk_8_0-bin #dotnet
+    dotnetCorePackages.sdk_8_0-bin #dotnet 8
+    dotnetCorePackages.sdk_9_0-bin #dotnet 9
     git
     google-chrome #chrome
     gccgo14 # Go compiler from GCC
@@ -60,7 +61,7 @@
     nixfmt-rfc-style # nix formatter
     SDL2 # A library for low-level access to audio, keyboard, mouse,
     sshfs # secure file system over SSH
-    sqlite # A lightweight database engine used by many applications 
+    sqlite # A lightweight database engine used by many applications
     transmission-remote-gtk #transmission remote UI
     tree-sitter-grammars.tree-sitter-bash
     tree-sitter-grammars.tree-sitter-yaml
@@ -80,7 +81,7 @@
     wget # Network downloader
     wine # A compatibility layer to run Windows applications
     winetricks # A helper script to install necessary runtime libraries (e.g., DirectX) for Windows apps in Wine.
- 
+
     wl-clipboard # wayland clipboard
     wl-clipboard-x11 # wayland clipboard for x11
     xml2 # cli utils for working with xml
