@@ -87,14 +87,6 @@ in {
       defaultCommand = "ag --hidden --ignore .git -g '' ";
     };
     home-manager.enable = true;
-    git = {
-      enable = true;
-      userName = "${gitUsername}";
-      userEmail = "${gitEmail}";
-      aliases = {
-        pushup = "!git push --set-upstream origin `git symbolic-ref --short HEAD`";
-      };
-    };
     htop.enable = true;
     oh-my-posh = {
       enable = true;
