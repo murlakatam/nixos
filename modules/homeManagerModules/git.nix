@@ -9,14 +9,15 @@ in {
   programs = {
     git = {
       enable = true;
-      userName = "${gitUsername}";
-      userEmail = "${gitEmail}";
 
-      aliases = {
-        pushup = "!git push --set-upstream origin `git symbolic-ref --short HEAD`";
-      };
-
-      extraConfig = {
+      settings = {
+        alias = {
+          pushup = "!git push --set-upstream origin `git symbolic-ref --short HEAD`";
+        };
+        user = {
+          name = "${gitUsername}";
+          email = "${gitEmail}";
+        };
         core = {
           autocrlf = "input";
           editor = "code --wait";
