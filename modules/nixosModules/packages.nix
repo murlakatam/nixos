@@ -76,6 +76,8 @@
     tree-sitter-grammars.tree-sitter-c-sharp
     vscode
     vulkan-tools # Provides tools for testing and debugging the Vulkan graphics API, often used by modern games.
+    udiskie # removable disk automounter (usb sticks)
+    udisks # Daemon, tools and libraries to access and manipulate disks, storage devices and technologies
     usbutils # lsusb
     unzip
     wget # Network downloader
