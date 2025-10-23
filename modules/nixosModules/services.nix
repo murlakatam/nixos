@@ -7,7 +7,8 @@
   inherit (import ../../hosts/${host}/variables.nix) keyboardLayout;
 in {
   services = {
-    # Enable usb mounting
+    # Enable usb auto-mounting
+    devmon.enable = true;
     gvfs.enable = true;
     udisks2.enable = true;
 
