@@ -7,6 +7,10 @@
   inherit (import ../../hosts/${host}/variables.nix) keyboardLayout;
 in {
   services = {
+    # Enable usb mounting
+    gvfs.enable = true;
+    udisks2.enable = true;
+
     # Enable the GNOME Desktop Environment.
     displayManager.gdm.enable = true;
     desktopManager.gnome.enable = true;
