@@ -6,10 +6,10 @@
   inherit (import ../../hosts/${host}/variables.nix) gitUsername gitEmail;
 in {
   programs = {
-    # btop = {
-    #   enable = true;
-    #   settings = {vim_keys = true;};
-    # };
+    btop = {
+      enable = true;
+      settings = {vim_keys = true;};
+    };
 
     # either use this or the one defined in ./fzf.nix
 
