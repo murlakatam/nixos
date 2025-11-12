@@ -6,7 +6,7 @@
   inherit (import ../../hosts/${host}/variables.nix) gitUsername gitEmail;
 in {
   programs = {
-y    # Atuin shell history tool
+    # Atuin shell history tool
     atuin = {
       enable = true;
       enableZshIntegration = true;
