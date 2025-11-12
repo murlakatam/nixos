@@ -6,16 +6,7 @@
   inherit (import ../../hosts/${host}/variables.nix) gitUsername gitEmail;
 in {
   programs = {
-    btop = {
-      enable = true;
-      settings = {vim_keys = true;};
-    };
-
-    # either use this or the one defined in ./fzf.nix
-
-    # gh.enable = true;
-
-    # Atuin shell history tool
+y    # Atuin shell history tool
     atuin = {
       enable = true;
       enableZshIntegration = true;
@@ -33,6 +24,10 @@ in {
       config = {
         theme = "catppucin-mocha";
       };
+    };
+    btop = {
+      enable = true;
+      settings = {vim_keys = true;};
     };
     bottom = {
       enable = true;
