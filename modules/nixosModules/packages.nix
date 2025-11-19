@@ -37,6 +37,7 @@
     freetype # A library for rendering fonts, crucial for displaying text correctly in games.
     flatpak-builder # flatpak builder
     ffmpeg_6-full
+    firefoxpwa #pwa support for FF
     iftop # network monitoring
     inxi #system information tool designed for both hardware and system reporting.
     iotop # io monitoring

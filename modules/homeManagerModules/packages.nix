@@ -47,7 +47,7 @@
     jetbrains.goland
     jetbrains.rider
     jetbrains.webstorm
-    whatsapp-for-linux
+    wasistlos
     youtube-music
     zenity # For winetricks dialogs 1
   ];
