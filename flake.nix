@@ -27,6 +27,10 @@
       url = "github:sst/opencode";
       flake = false;
     };
+    antigravity = {
+      url = "github:jacopone/antigravity-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
   outputs = {
     self,
@@ -37,6 +41,7 @@
     nix-flatpak,
     yazi,
     opencodeSrc,
+    antigravity,
     ...
   } @ inputs: let
     inherit (self) outputs;

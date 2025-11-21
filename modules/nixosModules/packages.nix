@@ -4,6 +4,7 @@
   ...
 }: {
   environment.systemPackages = with pkgs; [
+    inputs.antigravity.packages.${system}.default
     inputs.yazi.packages.${system}.default
     yaziPlugins.wl-clipboard
     #inputs.nix-inspect.packages.${pkgs.system}.default
@@ -18,6 +19,7 @@
     cabextract # needed by winetricks
     cloudflared # cloudflare client
     cypress #cypress
+
     dconf-editor # Configuration editor for dconf
     dconf2nix # Convert dconf settings to Nix
     docker
