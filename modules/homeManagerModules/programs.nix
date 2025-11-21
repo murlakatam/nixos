@@ -86,6 +86,7 @@ in {
     oh-my-posh = {
       enable = true;
       enableZshIntegration = true;
+      useTheme = "catppuccin";
     };
     navi = {
       enable = true;
