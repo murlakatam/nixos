@@ -44,7 +44,6 @@ in {
   networking.networkmanager.enable = true;
   networking.hostName = host;
 
-  # Set your time zone and NTP server.
   time.timeZone = "Australia/Sydney";
   networking.timeServers =
     options.networking.timeServers.default
