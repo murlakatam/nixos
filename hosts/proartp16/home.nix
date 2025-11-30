@@ -83,6 +83,10 @@ in {
   #Configure GNOME settings via Home Manager
   #Kraken Wanker
   dconf.settings = {
+    "org/gnome/system/locale" = {
+      region = "en_AU.UTF-8";
+    };
+
     "org/gnome/desktop/applications/terminal" = {
       exec = "${terminalExe}";
     };

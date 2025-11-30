@@ -20,6 +20,7 @@
         "--ozone-platform=wayland"
       ];
     })
+    glibcLocales
     gnome-calculator
     #silver-searcher # ag
     kubectl # kubernetes cli
