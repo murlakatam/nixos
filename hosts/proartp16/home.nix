@@ -49,7 +49,7 @@ in {
   # Home Manager locale settings
   home.language = {
     base = "be_BY.UTF-8";
-    address = "en_AU.UTF-8";     
+    address = "en_AU.UTF-8";
     monetary = "en_AU.UTF-8";
     paper = "en_AU.UTF-8";
     time = "en_AU.UTF-8";
@@ -64,11 +64,11 @@ in {
     // {
       # LANG mirrors the 'base' above
       LANG = "be_BY.UTF-8";
-      
+
       # Ensure specific formats use Australia
       LC_NUMERIC = "en_AU.UTF-8";
       LC_TIME = "en_AU.UTF-8";
-      
+
       # Set Timezone to Sydney
       TZ = "Australia/Sydney";
     };
