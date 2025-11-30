@@ -45,7 +45,7 @@ in {
   networking.hostName = host;
 
   # Set your time zone and NTP server.
-  time.timeZone = "Pacific/Auckland"; #"Australia/Sydney";
+  time.timeZone = "Australia/Sydney";
   networking.timeServers =
     options.networking.timeServers.default
     ++ ["au.pool.ntp.org"];

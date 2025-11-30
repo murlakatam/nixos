@@ -48,12 +48,13 @@ in {
 
   # Home Manager locale settings
   home.language = {
-    base = "en_NZ.UTF-8";
-    address = "en_NZ.UTF-8";
-    monetary = "en_NZ.UTF-8";
-    paper = "en_NZ.UTF-8";
-    time = "en_NZ.UTF-8";
-    numeric = "en_NZ.UTF-8";
+    base = "be_BY.UTF-8";
+    address = "en_AU.UTF-8";     
+    monetary = "en_AU.UTF-8";
+    paper = "en_AU.UTF-8";
+    time = "en_AU.UTF-8";
+    numeric = "en_AU.UTF-8";
+    measurement = "en_AU.UTF-8";
   };
 
   # Set environment variables globally in Home Manager
@@ -61,9 +62,15 @@ in {
   home.sessionVariables =
     globalEnvVars
     // {
-      LANG = "en_NZ.UTF-8";
-      LC_ALL = "en_NZ.UTF-8";
-      LC_NUMERIC = "en_NZ.UTF-8";
+      # LANG mirrors the 'base' above
+      LANG = "be_BY.UTF-8";
+      
+      # Ensure specific formats use Australia
+      LC_NUMERIC = "en_AU.UTF-8";
+      LC_TIME = "en_AU.UTF-8";
+      
+      # Set Timezone to Sydney
+      TZ = "Australia/Sydney";
     };
 
   # Import Program Configurations
