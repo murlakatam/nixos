@@ -25,4 +25,6 @@
     source = ../../scripts/open-ide-here.zsh;
     executable = true;
   };
+
+  home.file."/mnt/Kindle".source = config.lib.file.mkOutOfStoreSymlink "/run/media/eugene/Kindle";
 }

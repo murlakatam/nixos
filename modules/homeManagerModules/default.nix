@@ -4,7 +4,7 @@
     ./wallpapers.nix
     ./programs.nix
     ./packages.nix
-    ./custom-scripts.nix
+    ./symlinks.nix
     ./git.nix
     ./flatpak.nix
     ./tmux.nix
