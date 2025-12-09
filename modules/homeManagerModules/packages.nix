@@ -33,6 +33,7 @@
     mc
     mono # .net dev framework
     meld # gui differ
+    oscar # cpap software
     opencode #tui ai agent runner
     banner # print big banners
     figlet # better banners
