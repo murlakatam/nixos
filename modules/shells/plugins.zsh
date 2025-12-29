@@ -9,7 +9,7 @@ zinit load hlissner/zsh-autopair
 zinit load ptavares/zsh-direnv
 # git aliases
 # some aliases are overriden by forgit
-zinit snippet OMZP::git
+zinit snippet https://github.com/ohmyzsh/ohmyzsh/raw/master/lib/git.zsh
 
 # add colors to `man`
 zinit light ael-code/zsh-colored-man-pages
@@ -25,7 +25,7 @@ zinit load dim-an/cod
 
 #fzf for tab completion
 zinit ice has"fzf"
-zinit light Aloxaf/fzf-tab
+
 # A zsh plugin to search in the local tree of subdirectories for files
 # ALT+R to search hand Read
 # ALT+E to search and Edit
@@ -81,3 +81,4 @@ bindkey '^[\\' __zoxide_zi
 
 zinit ice atclone"./zplug.zsh" atpull"%atclone"
 zinit light g-plane/pnpm-shell-completion
+zinit light Aloxaf/fzf-tab
