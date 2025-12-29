@@ -18,6 +18,7 @@
       enable = true;
       highlight = "fg=#6f6c5d";
     };
+    dotDir = ".config/zsh";
     history = {
       path = "$HOME/.histfile";
       save = 10000;

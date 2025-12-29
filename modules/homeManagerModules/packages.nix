@@ -33,6 +33,7 @@
     mc
     mono # .net dev framework
     meld # gui differ
+    pear-desktop # youtube music player
     oscar # cpap software
     opencode #tui ai agent runner
     banner # print big banners
@@ -50,7 +51,6 @@
     jetbrains.rider
     jetbrains.webstorm
     wasistlos
-    youtube-music
     zenity # For winetricks dialogs 1
   ];
 }
