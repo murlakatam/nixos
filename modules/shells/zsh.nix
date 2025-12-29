@@ -1,4 +1,5 @@
 {
+  config,
   pkgs,
   host,
   username,
@@ -18,7 +19,7 @@
       enable = true;
       highlight = "fg=#6f6c5d";
     };
-    dotDir = ".config/zsh";
+    dotDir = "${config.xdg.configHome}/zsh";
     history = {
       path = "$HOME/.histfile";
       save = 10000;
