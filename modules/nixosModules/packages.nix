@@ -4,8 +4,8 @@
   ...
 }: {
   environment.systemPackages = with pkgs; [
-    inputs.antigravity.packages.${system}.default
-    inputs.yazi.packages.${system}.default
+    inputs.antigravity.packages.${pkgs.stdenv.hostPlatform.system}.default
+    inputs.yazi.packages.${pkgs.stdenv.hostPlatform.system}.default
     yaziPlugins.wl-clipboard
     #inputs.nix-inspect.packages.${pkgs.system}.default
 

@@ -3,7 +3,6 @@
   lib,
   username,
   host,
-  system,
   inputs,
   outputs,
   globalEnvVars,
