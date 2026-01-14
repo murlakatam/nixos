@@ -29,8 +29,6 @@ prefetch_bun_deps() {
   local output
   local code=0
   
-  # FIX: src = $src (UNQUOTED). This makes it a Path Literal in Nix.
-  # This tells Nix to strictly mount this path into the sandbox.
   output=$(nix-build --no-out-link -E "
     with import <nixpkgs> {};
     stdenvNoCC.mkDerivation {
@@ -38,7 +36,6 @@ prefetch_bun_deps() {
       src = $src; 
       nativeBuildInputs = [ bun ];
       
-      # FIX: Robust unpack that handles the read-only store path
       unpackPhase = ''
         mkdir source
         cp -r \$src/. source
@@ -48,7 +45,8 @@ prefetch_bun_deps() {
 
       buildPhase = ''
         export HOME=\$(mktemp -d)
-        bun install --frozen-lockfile --no-progress
+        # FIX: Added --ignore-scripts to prevent running bad shebangs in the sandbox
+        bun install --frozen-lockfile --no-progress --ignore-scripts
       '';
       
       installPhase = ''
