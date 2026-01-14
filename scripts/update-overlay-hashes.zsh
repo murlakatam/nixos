@@ -29,22 +29,33 @@ prefetch_bun_deps() {
   local output
   local code=0
   
-  # We capture the output and the exit code.
-  # We allow it to fail (|| code=$?) so we can inspect the logs.
+  # Changes made below:
+  # 1. Added explicit unpackPhase to handle the directory copy manually.
+  # 2. Added chmod -R u+w because nix store paths are read-only.
   output=$(nix-build --no-out-link -E "
     with import <nixpkgs> {};
     stdenvNoCC.mkDerivation {
       name = \"$name-deps\";
       src = builtins.toPath \"$src\";
       nativeBuildInputs = [ bun ];
+      
+      # FIX: Manually copy the source directory since generic unpack fails on it
+      unpackPhase = ''
+        cp -r \$src source
+        cd source
+        chmod -R u+w .
+      '';
+
       buildPhase = ''
         export HOME=\$(mktemp -d)
         bun install --frozen-lockfile --no-progress
       '';
+      
       installPhase = ''
         mkdir -p \$out
         cp -r node_modules \$out/
       '';
+      
       dontFixup = true;
       outputHashMode = \"recursive\";
       outputHashAlgo = \"sha256\";
@@ -52,11 +63,9 @@ prefetch_bun_deps() {
     }
   " 2>&1) || code=$?
 
-  # Extract hash from 'got: sha256-...' line
   local hash
   hash=$(echo "$output" | grep "got:" | cut -d' ' -f4 | tr -d ' ')
 
-  # IF we didn't find a hash, it means it failed for the WRONG reason (Network, Bun error, etc)
   if [[ -z "$hash" ]]; then
     log_error "❌ Failed to calculate hash for $name (Exit Code: $code)"
     log_error "👇 FULL BUILD LOGS 👇"
