@@ -64,6 +64,7 @@ in {
     flake = "path:home/${username}/dotfiles/nixos";
   };
 
+  # security.rtkit is optional but highly recommended for PipeWire stability
   security.rtkit.enable = true;
 
   # Some programs need SUID wrappers, can be configured further or are

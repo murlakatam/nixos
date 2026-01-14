@@ -89,8 +89,6 @@ define REBUILD_ROUTINE
 		echo " Updating flake inputs..."; \
 		sudo nix flake update; \
 	fi && \
-	echo "🔑 Updating dependency hashes..." && \
-    update-overlay-hashes && \
 	echo "🚀 Starting build..." && \
 	$(1) && \
 	\
