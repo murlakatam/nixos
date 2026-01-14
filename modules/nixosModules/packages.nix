@@ -51,6 +51,8 @@
     lutris # A game manager that simplifies installing and running games from various sources (Steam, GOG, etc.).
     mosh # remote ssh
     nerd-fonts.jetbrains-mono
+    nixd # nix lsp for editors
+    nixfmt-rfc-style # nix formatter
     nodejs_22 #node
     nodePackages.prettier #node d
     ntfs3g # file system
@@ -61,7 +63,6 @@
     pgadmin4-desktopmode
     poppler # pdf redneding lib
     python313Packages.azure-mgmt-containerservice # seems like a dependency for az.cli now
-    nixfmt-rfc-style # nix formatter
     SDL2 # A library for low-level access to audio, keyboard, mouse,
     sshfs # secure file system over SSH
     sqlite # A lightweight database engine used by many applications
@@ -91,6 +92,7 @@
     wl-clipboard-x11 # wayland clipboard for x11
     xml2 # cli utils for working with xml
     yt-dlp # youtube downloader
+    zig # programming language
     # # vim                                               # Text editor (commented out)
 
     # taplo                                               # TOML formatter and language server
@@ -156,7 +158,6 @@
 
     # inxi                                                # System information tool
     # nh                                                  # Nix helper tool
-    # nixfmt-rfc-style                                    # Nix code formatter
     # nix-prefetch-git                                    # Prefetch git repositories for Nix
     # nix-prefetch-github                                 # Prefetch GitHub repositories for Nix
     # chafa                                               # Terminal image viewer

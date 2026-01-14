@@ -22,6 +22,8 @@ in {
     ../../modules/drivers/nvidia-prime-drivers.nix
   ];
 
+  nix.nixPath = ["nixpkgs=${inputs.nixpkgs}"];
+
   # asus ec sensors https://github.com/zeule/asus-ec-sensors
   boot.extraModulePackages = [
     (pkgs.callPackage ../../kernel-packages/asus-ec-sensors {

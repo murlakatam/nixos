@@ -49,14 +49,14 @@
     src = ohMyOpencodeSrc;
 
     # We need nodejs so patchShebangs can find 'node' for the tsc scripts
-    nativeBuildInputs = [ prev.bun prev.nodejs ];
+    nativeBuildInputs = [prev.bun prev.nodejs];
 
     # Create a separate derivation for dependencies (FOD)
     node_modules = prev.stdenvNoCC.mkDerivation {
       name = "${pname}-node_modules";
       inherit src;
-      nativeBuildInputs = [ prev.bun ];
-      
+      nativeBuildInputs = [prev.bun];
+
       buildPhase = ''
         export HOME=$(mktemp -d)
         bun install --frozen-lockfile --no-progress
@@ -68,8 +68,8 @@
       '';
 
       # Keep this true to preserve the hash
-      dontFixup = true; 
-      
+      dontFixup = true;
+
       outputHash = "sha256-rC3UZgskHv4BPnm5IaQ6voDayHv1x7MFO1GL+wfxw/E=";
       outputHashAlgo = "sha256";
       outputHashMode = "recursive";
@@ -78,7 +78,7 @@
     buildPhase = ''
       # 1. Copy node_modules (instead of symlinking) so we can modify them
       cp -r ${node_modules}/node_modules .
-      
+
       # 2. Make them writable
       chmod -R u+w node_modules
 
