@@ -4,21 +4,45 @@ set -e
 # Configuration
 OVERLAY_FILE="overlays/opencode-overlay.nix"
 
-print -P "%F{cyan}🔄 Getting source paths from Flake inputs...%f"
+# Debug helper: prints to stderr so it shows up even inside $() captures
+log() {
+  print -P "%F{cyan}$1%f" >&2
+}
+
+log_success() {
+  print -P "%F{green}$1%f" >&2
+}
+
+log_error() {
+  print -P "%F{red}$1%f" >&2
+}
+
+# 1. Sanity Check: Ensure we are in the right directory
+if [[ ! -f "$OVERLAY_FILE" ]]; then
+  log_error "❌ Could not find overlay file at: $OVERLAY_FILE"
+  log_error "   Current Directory: $(pwd)"
+  log_error "   Please run this script from the root of your dotfiles repository."
+  exit 1
+fi
+
+log "🔄 Getting source paths from Flake inputs..."
+
+# Nix evaluation can sometimes be noisy or fail, capture it carefully
 OPENCODE_PATH=$(nix eval --raw --impure --expr '(builtins.getFlake (toString ./.)).inputs.opencodeSrc.outPath')
 OH_MY_OPENCODE_PATH=$(nix eval --raw --impure --expr '(builtins.getFlake (toString ./.)).inputs.ohMyOpencodeSrc.outPath')
 
-print -P "%F{green}✅ OpenCode Source:%f $OPENCODE_PATH"
-print -P "%F{green}✅ Oh-My-OpenCode Source:%f $OH_MY_OPENCODE_PATH"
+log_success "✅ OpenCode Source: $OPENCODE_PATH"
+log_success "✅ Oh-My-OpenCode Source: $OH_MY_OPENCODE_PATH"
 
 prefetch_bun_deps() {
   local src=$1
   local name=$2
   
-  print -P "%F{yellow}⏳ Prefetching dependencies for $name...%f"
+  # Log to stderr so it doesn't pollute the return value
+  print -P "%F{yellow}⏳ Prefetching dependencies for $name...%f" >&2
   
   local output
-  # Force a build failure to get the "got: sha256-..." hash
+  # Run nix-build. capture stderr/stdout combined to parse the hash
   output=$(nix-build --no-out-link -E "
     with import <nixpkgs> {};
     stdenvNoCC.mkDerivation {
@@ -40,32 +64,48 @@ prefetch_bun_deps() {
     }
   " 2>&1)
 
+  # Debugging: If something goes wrong, we might want to see the last few lines of output
+  # echo "$output" | tail -n 5 >&2 
+
   # Extract hash from 'got: sha256-...' line
   local hash
   hash=$(echo "$output" | grep "got:" | cut -d' ' -f4 | tr -d ' ')
 
   if [[ -z "$hash" ]]; then
-    print -P "%F{red}❌ Failed to calculate hash for $name%f"
-    echo "$output"
+    log_error "❌ Failed to calculate hash for $name"
+    log_error "   Nix Build Output:"
+    echo "$output" >&2
     exit 1
   fi
   
-  print -P "%F{blue}🔑 New Hash for $name:%f $hash"
+  print -P "%F{blue}🔑 New Hash for $name:%f $hash" >&2
+  
+  # ONLY print the hash to stdout so the variable captures it
   echo "$hash"
 }
 
-# 1. Update OpenCode
+# --- 1. Update OpenCode ---
 OPENCODE_HASH=$(prefetch_bun_deps "$OPENCODE_PATH" "opencode")
 
-# We use -E for extended regex.
-# Group 1 matches: outputHash = "
-# We replace the middle (the old hash)
-# Group 2 matches: "; # opencode-hash
-# The replacement \1$HASH\2 keeps the groups (indentation + comment) intact.
+# Verify we captured a clean hash (sanity check)
+if [[ "$OPENCODE_HASH" != sha256-* ]]; then
+    log_error "❌ captured invalid hash for OpenCode: $OPENCODE_HASH"
+    exit 1
+fi
+
+log "🛠 Patching $OVERLAY_FILE with new OpenCode hash..."
 sed -i -E "s|(outputHash = \")[^\"]*(\"; # opencode-hash)|\1$OPENCODE_HASH\2|" "$OVERLAY_FILE"
 
-# 2. Update Oh-My-OpenCode
+
+# --- 2. Update Oh-My-OpenCode ---
 OMO_HASH=$(prefetch_bun_deps "$OH_MY_OPENCODE_PATH" "oh-my-opencode")
+
+if [[ "$OMO_HASH" != sha256-* ]]; then
+    log_error "❌ captured invalid hash for Oh-My-OpenCode: $OMO_HASH"
+    exit 1
+fi
+
+log "🛠 Patching $OVERLAY_FILE with new Oh-My-OpenCode hash..."
 sed -i -E "s|(outputHash = \")[^\"]*(\"; # oh-my-opencode-hash)|\1$OMO_HASH\2|" "$OVERLAY_FILE"
 
-print -P "%F{green}🎉 Overlay updated successfully!%f"
+log_success "🎉 Overlay updated successfully!"
