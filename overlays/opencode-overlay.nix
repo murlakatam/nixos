@@ -4,7 +4,8 @@
   ...
 }: final: prev: {
   opencode = prev.opencode.overrideAttrs (oldAttrs: let
-    version = "latest";
+    packageMetadata = builtins.fromJSON (builtins.readFile "${opencodeSrc}/packages/opencode/package.json");
+    version = packageMetadata.version;
     src = opencodeSrc;
   in {
     inherit version src;
@@ -20,7 +21,7 @@
       '';
 
       # We set the marker comment that is replaced by update-overlay-hashes.zsh script (see scripts folder)
-      outputHash = "sha256-fsdyeptfV24S5URzwbuVBDT2UegEe/m6lNMUKv4o0BI="; # opencode-hash
+      outputHash = "sha256-bbq8UBA/IIlEyDgI0EyYLH5GTOYZq4Hmz8tRoPGRXbA="; # opencode-hash
     });
 
     # The patch file referencing 'relax-bun-version-check' is inside nixpkgs,
@@ -48,7 +49,7 @@
 
   oh-my-opencode = prev.stdenvNoCC.mkDerivation rec {
     pname = "oh-my-opencode";
-    version = "latest";
+    version = (builtins.fromJSON (builtins.readFile "${ohMyOpencodeSrc}/package.json")).version;
     src = ohMyOpencodeSrc;
 
     # We need nodejs so patchShebangs can find 'node' for the tsc scripts
