@@ -30,8 +30,6 @@ prefetch_bun_deps() {
   local output
   local code=0
   
-  # FIX: We now import 'pkgs' from the Flake itself to ensure 'bun' versions match exactly.
-  # We use builtins.getFlake on the current directory.
   output=$(nix-build --no-out-link -E "
     let
       flake = builtins.getFlake (toString $FLAKE_DIR);
@@ -51,8 +49,7 @@ prefetch_bun_deps() {
 
       buildPhase = ''
         export HOME=\$(mktemp -d)
-        # Match the overlay exactly:
-        ${pkgs.bun}/bin/bun install --frozen-lockfile --no-progress --ignore-scripts
+        \${pkgs.bun}/bin/bun install --frozen-lockfile --no-progress --ignore-scripts
       '';
       
       installPhase = ''
