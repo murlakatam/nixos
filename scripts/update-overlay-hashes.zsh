@@ -45,7 +45,6 @@ prefetch_bun_deps() {
 
       buildPhase = ''
         export HOME=\$(mktemp -d)
-        # FIX: Added --ignore-scripts to prevent running bad shebangs in the sandbox
         bun install --frozen-lockfile --no-progress --ignore-scripts
       '';
       
@@ -61,8 +60,9 @@ prefetch_bun_deps() {
     }
   " 2>&1) || code=$?
 
+  # FIX: Use awk to reliably extract the hash (ignores variable whitespace/indentation)
   local hash
-  hash=$(echo "$output" | grep "got:" | cut -d' ' -f4 | tr -d ' ')
+  hash=$(echo "$output" | grep "got:" | awk '{print $2}')
 
   if [[ -z "$hash" ]]; then
     log_error "❌ Failed to calculate hash for $name (Exit Code: $code)"
