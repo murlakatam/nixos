@@ -52,7 +52,7 @@
     mosh # remote ssh
     nerd-fonts.jetbrains-mono
     nixd # nix lsp for editors
-    nixfmt-rfc-style # nix formatter
+    nixfmt # nix formatter
     nodejs_22 #node
     nodePackages.prettier #node d
     ntfs3g # file system
