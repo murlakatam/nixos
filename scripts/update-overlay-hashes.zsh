@@ -29,19 +29,19 @@ prefetch_bun_deps() {
   local output
   local code=0
   
-  # Changes made below:
-  # 1. Added explicit unpackPhase to handle the directory copy manually.
-  # 2. Added chmod -R u+w because nix store paths are read-only.
+  # FIX: src = $src (UNQUOTED). This makes it a Path Literal in Nix.
+  # This tells Nix to strictly mount this path into the sandbox.
   output=$(nix-build --no-out-link -E "
     with import <nixpkgs> {};
     stdenvNoCC.mkDerivation {
       name = \"$name-deps\";
-      src = builtins.toPath \"$src\";
+      src = $src; 
       nativeBuildInputs = [ bun ];
       
-      # FIX: Manually copy the source directory since generic unpack fails on it
+      # FIX: Robust unpack that handles the read-only store path
       unpackPhase = ''
-        cp -r \$src source
+        mkdir source
+        cp -r \$src/. source
         cd source
         chmod -R u+w .
       '';
