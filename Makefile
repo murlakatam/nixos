@@ -86,8 +86,10 @@ define REBUILD_ROUTINE
 	\
 	echo "--- 3. Updating and Building ---" && \
 	if [ "$(UPDATE)" = "true" ]; then \
-		echo " Updating flake inputs..."; \
+		echo "🔄 Updating flake inputs..."; \
 		sudo nix flake update; \
+		echo "🔑 Updating dependency hashes..."; \
+        ./scripts/update-overlay-hashes.zsh; \
 	fi && \
 	echo "🚀 Starting build..." && \
 	$(1) && \

@@ -3,6 +3,7 @@ set -e
 
 # Configuration
 OVERLAY_FILE="overlays/opencode-overlay.nix"
+FLAKE_DIR="$(pwd)" # Assume running from root
 
 log() { print -P "%F{cyan}$1%f" >&2; }
 log_success() { print -P "%F{green}$1%f" >&2; }
@@ -29,12 +30,17 @@ prefetch_bun_deps() {
   local output
   local code=0
   
+  # FIX: We now import 'pkgs' from the Flake itself to ensure 'bun' versions match exactly.
+  # We use builtins.getFlake on the current directory.
   output=$(nix-build --no-out-link -E "
-    with import <nixpkgs> {};
-    stdenvNoCC.mkDerivation {
+    let
+      flake = builtins.getFlake (toString $FLAKE_DIR);
+      pkgs = flake.inputs.nixpkgs.legacyPackages.\${builtins.currentSystem};
+    in
+    pkgs.stdenvNoCC.mkDerivation {
       name = \"$name-deps\";
       src = $src; 
-      nativeBuildInputs = [ bun ];
+      nativeBuildInputs = [ pkgs.bun ];
       
       unpackPhase = ''
         mkdir source
@@ -45,7 +51,8 @@ prefetch_bun_deps() {
 
       buildPhase = ''
         export HOME=\$(mktemp -d)
-        bun install --frozen-lockfile --no-progress --ignore-scripts
+        # Match the overlay exactly:
+        ${pkgs.bun}/bin/bun install --frozen-lockfile --no-progress --ignore-scripts
       '';
       
       installPhase = ''
@@ -60,7 +67,6 @@ prefetch_bun_deps() {
     }
   " 2>&1) || code=$?
 
-  # FIX: Use awk to reliably extract the hash (ignores variable whitespace/indentation)
   local hash
   hash=$(echo "$output" | grep "got:" | awk '{print $2}')
 
@@ -78,7 +84,7 @@ prefetch_bun_deps() {
 # --- 1. Update OpenCode ---
 OPENCODE_HASH=$(prefetch_bun_deps "$OPENCODE_PATH" "opencode")
 if [[ "$OPENCODE_HASH" == sha256-* ]]; then
-    log "🛠 Patching $OVERLAY_FILE with new OpenCode hash..."
+    log "🛠 Patching $OVERLAY_FILE for OpenCode -> $OPENCODE_HASH"
     sed -i -E "s|(outputHash = \")[^\"]*(\"; # opencode-hash)|\1$OPENCODE_HASH\2|" "$OVERLAY_FILE"
 else
     log_error "❌ Invalid OpenCode hash captured: $OPENCODE_HASH"
@@ -88,7 +94,7 @@ fi
 # --- 2. Update Oh-My-OpenCode ---
 OMO_HASH=$(prefetch_bun_deps "$OH_MY_OPENCODE_PATH" "oh-my-opencode")
 if [[ "$OMO_HASH" == sha256-* ]]; then
-    log "🛠 Patching $OVERLAY_FILE with new Oh-My-OpenCode hash..."
+    log "🛠 Patching $OVERLAY_FILE for Oh-My-OpenCode -> $OMO_HASH"
     sed -i -E "s|(outputHash = \")[^\"]*(\"; # oh-my-opencode-hash)|\1$OMO_HASH\2|" "$OVERLAY_FILE"
 else
     log_error "❌ Invalid Oh-My-OpenCode hash captured: $OMO_HASH"

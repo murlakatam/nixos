@@ -14,8 +14,13 @@
     node_modules = oldAttrs.node_modules.overrideAttrs (oldNmAttrs: {
       inherit version src;
 
+      buildPhase = ''
+        export HOME=$(mktemp -d)
+        bun install --frozen-lockfile --no-progress --ignore-scripts
+      '';
+
       # We set the marker comment that is replaced by update-overlay-hashes.zsh script (see scripts folder)
-      outputHash = "sha256-Ws/XERjxQSK8HIDrE/8608TB5gBe4qoFE9mmssry78Y="; # opencode-hash
+      outputHash = "sha256-fsdyeptfV24S5URzwbuVBDT2UegEe/m6lNMUKv4o0BI="; # opencode-hash
     });
 
     # The patch file referencing 'relax-bun-version-check' is inside nixpkgs,
@@ -57,7 +62,7 @@
 
       buildPhase = ''
         export HOME=$(mktemp -d)
-        bun install --frozen-lockfile --no-progress
+        bun install --frozen-lockfile --no-progress --ignore-scripts
       '';
 
       installPhase = ''
@@ -68,8 +73,7 @@
       # Keep this true to preserve the hash
       dontFixup = true;
       # We set the marker comment that is replaced by update-overlay-hashes.zsh script (see scripts folder)
-      #"sha256-rC3UZgskHv4BPnm5IaQ6voDayHv1x7MFO1GL+wfxw/E="; # oh-my-opencode-hash
-      outputHash = "sha256-rC3UZgskHv4BPnm5IaQ6voDayHv1x7MFO1GL+wfxw/E="; # oh-my-opencode-hash
+      outputHash = "sha256-viYkTVKkI+guqKALKHNuPrOzhAhaLv/X+EW45xByzns="; # oh-my-opencode-hash
       outputHashAlgo = "sha256";
       outputHashMode = "recursive";
     };
