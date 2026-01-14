@@ -14,10 +14,8 @@
     node_modules = oldAttrs.node_modules.overrideAttrs (oldNmAttrs: {
       inherit version src;
 
-      # IMPORTANT: The dependencies (bun.lockb) change with the source.
-      # You cannot know this hash ahead of time.
-      # We set it to an empty string to force the build to fail and print the correct hash.
-      outputHash = "sha256-Ws/XERjxQSK8HIDrE/8608TB5gBe4qoFE9mmssry78Y=";
+      # We set the marker comment that is replaced by update-overlay-hashes.zsh script (see scripts folder)
+      outputHash = "sha256-Ws/XERjxQSK8HIDrE/8608TB5gBe4qoFE9mmssry78Y="; # opencode-hash
     });
 
     # The patch file referencing 'relax-bun-version-check' is inside nixpkgs,
@@ -69,8 +67,8 @@
 
       # Keep this true to preserve the hash
       dontFixup = true;
-
-      outputHash = "sha256-rC3UZgskHv4BPnm5IaQ6voDayHv1x7MFO1GL+wfxw/E=";
+      # We set the marker comment that is replaced by update-overlay-hashes.zsh script (see scripts folder)
+      outputHash = "sha256-rC3UZgskHv4BPnm5IaQ6voDayHv1x7MFO1GL+wfxw/E="; # oh-my-opencode-hash
       outputHashAlgo = "sha256";
       outputHashMode = "recursive";
     };
