@@ -26,6 +26,10 @@
       url = "github:sst/opencode";
       flake = false;
     };
+    ohMyOpencodeSrc = {
+      url = "github:code-yeongyu/oh-my-opencode";
+      flake = false;
+    };
     antigravity = {
       url = "github:jacopone/antigravity-nix";
       inputs.nixpkgs.follows = "nixpkgs";
