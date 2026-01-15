@@ -21,7 +21,7 @@
       '';
 
       # We set the marker comment that is replaced by update-overlay-hashes.zsh script (see scripts folder)
-      outputHash = "sha256-bbq8UBA/IIlEyDgI0EyYLH5GTOYZq4Hmz8tRoPGRXbA="; # opencode-hash
+      outputHash = "sha256-FQCOlh17tzREVMRoG4KOI5V4a+3tvQlZE5//ClNFxqM="; # opencode-hash
     });
 
     # The patch file referencing 'relax-bun-version-check' is inside nixpkgs,
