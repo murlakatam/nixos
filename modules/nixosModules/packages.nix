@@ -19,7 +19,7 @@
     cabextract # needed by winetricks
     cloudflared # cloudflare client
     cypress #cypress
-
+    csharp-ls # C# Language Server
     dconf-editor # Configuration editor for dconf
     dconf2nix # Convert dconf settings to Nix
     docker
@@ -78,6 +78,8 @@
     tree-sitter-grammars.tree-sitter-nix
     tree-sitter-grammars.tree-sitter-python
     tree-sitter-grammars.tree-sitter-c-sharp
+    turbo # High-performance build system for JavaScript and TypeScript codebases
+    typescript # TypeScript language support
     vscode
     vulkan-tools # Provides tools for testing and debugging the Vulkan graphics API, often used by modern games.
     udiskie # removable disk automounter (usb sticks)

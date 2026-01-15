@@ -26,11 +26,5 @@
     executable = true;
   };
 
-  # updates hashes of overlays during build process
-  home.packages = [
-    # creates a command 'update-overlay-hashes' in $PATH
-    (pkgs.writeScriptBin "update-overlay-hashes" (builtins.readFile ../../scripts/update-overlay-hashes.zsh))
-  ];
-
   home.file."/mnt/Kindle".source = config.lib.file.mkOutOfStoreSymlink "/run/media/eugene/Kindle";
 }
