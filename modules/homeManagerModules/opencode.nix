@@ -14,6 +14,8 @@
   ];
 
   xdg.configFile."opencode/opencode.json".text = builtins.toJSON {
+    "$schema" = "https://opencode.ai/config.json";
+    theme = "catppuccin-macchiato";
     plugin = [
       "file://${pkgs.oh-my-opencode}/share/oh-my-opencode/dist/index.js"
       "opencode-antigravity-auth@beta"

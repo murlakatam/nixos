@@ -22,9 +22,9 @@
       url = "github:sxyazi/yazi";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    opencodeSrc = {
-      url = "github:sst/opencode";
-      flake = false;
+    opencode = {
+      url = "github:anomalyco/opencode";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     ohMyOpencodeSrc = {
       url = "github:code-yeongyu/oh-my-opencode";
@@ -43,7 +43,7 @@
     nix-index-database,
     nix-flatpak,
     yazi,
-    opencodeSrc,
+    opencode,
     antigravity,
     ...
   } @ inputs: let

@@ -1,56 +1,22 @@
 {
-  opencodeSrc,
-  ohMyOpencodeSrc,
+  inputs,
   ...
 }: final: prev: {
-  opencode = prev.opencode.overrideAttrs (oldAttrs: let
-    packageMetadata = builtins.fromJSON (builtins.readFile "${opencodeSrc}/packages/opencode/package.json");
-    version = packageMetadata.version;
-    src = opencodeSrc;
-  in {
-    inherit version src;
+  # ========================================================================
+  # 1. OPENCODE (The Main Editor)
+  # ========================================================================
+  # Instead of building it manually, we just pull the pre-defined package
+  # from the official flake input. This delegates all build logic to them.
+  opencode = inputs.opencode.packages.${prev.system}.default;
 
-    # We must also update the inner node_modules derivation to use the new source.
-    # Nixpkgs defines this as a separate derivation, so we override it here.
-    node_modules = oldAttrs.node_modules.overrideAttrs (oldNmAttrs: {
-      inherit version src;
-
-      buildPhase = ''
-        export HOME=$(mktemp -d)
-        bun install --frozen-lockfile --no-progress --ignore-scripts
-      '';
-
-      # We set the marker comment that is replaced by update-overlay-hashes.zsh script (see scripts folder)
-      outputHash = "sha256-FQCOlh17tzREVMRoG4KOI5V4a+3tvQlZE5//ClNFxqM="; # opencode-hash
-    });
-
-    # The patch file referencing 'relax-bun-version-check' is inside nixpkgs,
-    # but might not apply cleanly to 'latest', or you might not have access to it easily.
-    # We remove the patch file and apply the fix manually using sed.
-    patches = [];
-
-    postPatch = ''
-      # Apply the "Relax Bun version check" logic manually
-      # This replaces the error throw with a console warning
-      substituteInPlace packages/script/src/index.ts \
-        --replace 'throw new Error(`This script requires bun' \
-                  'console.warn(`Warning: This script expects bun'
-    '';
-
-    # Update environment variables for the runtime
-    env =
-      oldAttrs.env
-      // {
-        OPENCODE_VERSION = version;
-        OPENCODE_CHANNEL = "nightly";
-        OPENCODE_EXPERIMENTAL_PLAN_MODE = 1;
-      };
-  });
-
+  # ========================================================================
+  # 2. OH-MY-OPENCODE (The Extension)
+  # ========================================================================
+  # This repo doesn't have a flake yet, so we still build it manually here.
   oh-my-opencode = prev.stdenvNoCC.mkDerivation rec {
     pname = "oh-my-opencode";
-    version = (builtins.fromJSON (builtins.readFile "${ohMyOpencodeSrc}/package.json")).version;
-    src = ohMyOpencodeSrc;
+    version = (builtins.fromJSON (builtins.readFile "${inputs.ohMyOpencodeSrc}/package.json")).version;
+    src = inputs.ohMyOpencodeSrc;
 
     # We need nodejs so patchShebangs can find 'node' for the tsc scripts
     nativeBuildInputs = [prev.bun prev.nodejs];

@@ -15,10 +15,7 @@
   azure-creds = import ./azure-creds-overlay.nix;
   azure-cli = import ./azure-cli-overlay.nix;
   # netpad = import ./netpad-overlay.nix;
-  opencode = import ./opencode-overlay.nix {
-    opencodeSrc = inputs.opencodeSrc;
-    ohMyOpencodeSrc = inputs.ohMyOpencodeSrc;
-  };
+  opencode = import ./opencode-overlay.nix {inherit inputs;};
   # Helix nightly overlay
   # helix-nightly = final: prev: {
   #   helix-nightly = prev.helix.overrideAttrs (oldAttrs: {
