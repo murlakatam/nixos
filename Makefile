@@ -34,8 +34,8 @@
 # This section contains variables you should customize for your environment. 
 
 # Set the absolute path to your Nix configuration directory (e.g., your dotfiles repo).
-# We use $(HOME) to ensure it's an absolute path.
-CONFIG_DIR := $(HOME)/dotfiles/nixos
+# Substituted by Nix during deployment.
+CONFIG_DIR := @dotfilesPath@
 
 # Set the default editor to open for reviewing changes.
 # It will wait for the editor to be closed before continuing (`--wait`).

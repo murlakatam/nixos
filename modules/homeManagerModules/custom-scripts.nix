@@ -1,11 +1,14 @@
 {
   pkgs,
   config,
+  username,
+  dotfilesPath,
   ...
 }: {
   # rebuild Makefile
-  home.file."Makefile" = {
-    source = ../../Makefile;
+  home.file."Makefile".source = pkgs.replaceVars ../../Makefile {
+    # This replaces @dotfilesPath@ in the Makefile with the actual path string
+    dotfilesPath = dotfilesPath;
   };
 
   # get azure token
@@ -26,5 +29,5 @@
     executable = true;
   };
 
-  home.file."/mnt/Kindle".source = config.lib.file.mkOutOfStoreSymlink "/run/media/eugene/Kindle";
+  home.file."/mnt/Kindle".source = config.lib.file.mkOutOfStoreSymlink "/run/media/${username}/Kindle";
 }
