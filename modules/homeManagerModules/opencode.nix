@@ -109,6 +109,11 @@
     "frontend-ui-ux-engineer" = {model = "google/antigravity-gemini-3-pro-high";}; # Updated ID
     "document-writer" = {model = "google/antigravity-gemini-3-flash-high";};
     "multimodal-looker" = {model = "google/antigravity-gemini-3-flash";};
+
+    "sisyphus" = {
+      model = "google/antigravity-claude-opus-4-5-thinking";
+    };
+
     # LSP Configuration
     lsp = {
       nixd = {
