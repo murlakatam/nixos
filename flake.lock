@@ -28,11 +28,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1768663407,
-        "narHash": "sha256-8QVuoshI03lSAkGLzG3mUE7krTWQC+hWae4HTngIQdY=",
+        "lastModified": 1768663829,
+        "narHash": "sha256-0C10Kv9uD3P+VVRETf9OOVapUwkiotrju0nWt/EIsII=",
         "owner": "murlakatam",
         "repo": "asus-dialpad-driver",
-        "rev": "dde248e29f9896eb26103aa2371e21e3e576d3e1",
+        "rev": "dc6c33d700de26001d28dcc7f1f77f1d3d498cfb",
         "type": "github"
       },
       "original": {
@@ -173,11 +173,11 @@
     "ohMyOpencodeSrc": {
       "flake": false,
       "locked": {
-        "lastModified": 1768660743,
-        "narHash": "sha256-T/8GHEKuIUpI1b0h4+EgoPEuBsZrE5FtUycqW+wamnk=",
+        "lastModified": 1768663673,
+        "narHash": "sha256-xjVwDl9TCdvZJl/pJpNe4sLXErIQxQqG/LcWpwYnLaM=",
         "owner": "code-yeongyu",
         "repo": "oh-my-opencode",
-        "rev": "0ce87085db175764d028c495d273da715d8886bd",
+        "rev": "31dfef85b80f9410921da1bb3f70279b04ac14da",
         "type": "github"
       },
       "original": {
