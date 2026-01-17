@@ -1,26 +1,45 @@
-{pkgs, ...}: {
-  # system level programs
-  programs = {
-    vscode = {
-      enable = true;
+{
+  pkgs,
+  osConfig,
+  dotfilesPath,
+  ...
+}: {
+  # <--- 1. ADD 'config' HERE so you can use it below
 
-      # Optional: Install the extension declaratively if you haven't already
-      extensions = with pkgs.vscode-extensions; [
-        jnoortheen.nix-ide
-      ];
+  programs.vscode = {
+    enable = true;
 
-      userSettings = {
-        # Nix IDE settings
-        "nix.enableLanguageServer" = true;
+    # Optional: Install the extension declaratively
+    extensions = with pkgs.vscode-extensions; [
+      jnoortheen.nix-ide
+    ];
 
-        # POINT 1: Use string interpolation to point to the binary directly
-        "nix.formatterPath" = "${pkgs.alejandra}/bin/alejandra";
+    userSettings = {
+      # 1. Enable the Language Server
+      "nix.enableLanguageServer" = true;
 
-        # POINT 2: formatting behavior
-        "[nix]" = {
-          "editor.defaultFormatter" = "jnoortheen.nix-ide";
-          "editor.formatOnSave" = true;
+      # 2. Point explicitly to the nixd binary
+      "nix.serverPath" = "${pkgs.nixd}/bin/nixd";
+
+      # 3. Configure nixd settings
+      "nix.serverSettings" = {
+        "nixd" = {
+          "formatting" = {
+            "command" = ["${pkgs.alejandra}/bin/alejandra"];
+          };
+
+          "options" = {
+            "nixos" = {
+              "expr" = "(builtins.getFlake \"${dotfilesPath}\").nixosConfigurations.${osConfig.networking.hostName}.options";
+            };
+          };
         };
+      };
+
+      # 4. Standard VS Code settings
+      "[nix]" = {
+        "editor.defaultFormatter" = "jnoortheen.nix-ide";
+        "editor.formatOnSave" = true;
       };
     };
   };

@@ -8,7 +8,7 @@
   globalEnvVars,
   ...
 }: let
-  inherit (import ./variables.nix) terminal gitUsername gitEmail;
+  inherit (import ./variables.nix) terminal gitUsername gitEmail dotfilesDir;
   # Function to get the terminal executable path
   getTerminalExe = terminalName:
     if terminalName == "ghostty"
@@ -24,6 +24,7 @@
 
   terminalExe = getTerminalExe terminal;
 in {
+  _module.args.dotfilesPath = "/home/${username}/${dotfilesDir}";
   # Home Manager Settings
   home.username = "${username}";
   home.homeDirectory = "/home/${username}";

@@ -7,4 +7,5 @@
   browser = "firefox"; # Set Default Browser (google-chrome-stable for google-chrome, zen for zen)
   terminal = "ghostty"; # Set Default System Terminal
   keyboardLayout = "nz,be";
+  dotfilesDir = "dotfiles/nixos";
 }

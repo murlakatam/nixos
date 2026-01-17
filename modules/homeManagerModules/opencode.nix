@@ -1,6 +1,7 @@
 {
   pkgs,
-  config,
+  osConfig,
+  dotfilesPath,
   ...
 }: {
   # check the overlays for the packages build/installation
@@ -157,7 +158,7 @@
             command = ["${pkgs.alejandra}/bin/alejandra"];
           };
           nixos = {
-            expr = "(builtins.getFlake \"${config.home.homeDirectory}/dotfiles/nixos\").nixosConfigurations.proartp16.options";
+            expr = "(builtins.getFlake \"${dotfilesPath}\").nixosConfigurations.${osConfig.networking.hostName}.options";
           };
         };
       };
@@ -176,6 +177,7 @@
     "ralph_loop" = {
       enabled = true;
       default_max_iterations = 30;
+      "state_dir" = ".opencode/";
     };
   };
 }
