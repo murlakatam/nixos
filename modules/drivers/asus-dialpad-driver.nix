@@ -31,6 +31,13 @@ in {
         ignoreWaylandDisplayEnv = false;
         runtimeDir = "/run/user/1000/";
         waylandDisplay = "wayland-0";
+
+        config = {
+          main = {
+            touchpad_disables_dialpad = false;
+            disable_due_inactivity_time = 360;
+          };
+        };
       };
     })
   ];
