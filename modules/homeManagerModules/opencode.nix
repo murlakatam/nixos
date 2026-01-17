@@ -6,11 +6,6 @@
 }: {
   # check the overlays for the packages build/installation
   home.packages = [
-    pkgs.opencode # The editor
-    pkgs.oh-my-opencode # The OmO plugin
-    pkgs.nixd # The Language Server
-    pkgs.alejandra # The Formatter
-    pkgs.csharp-ls # C# Language Server
     pkgs.dotnetCorePackages.sdk_8_0
   ];
 

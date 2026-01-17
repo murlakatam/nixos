@@ -4,6 +4,7 @@
   ...
 }: {
   environment.systemPackages = with pkgs; [
+    inputs.opencode.packages.${pkgs.stdenv.hostPlatform.system}.default
     inputs.antigravity.packages.${pkgs.stdenv.hostPlatform.system}.default
     inputs.yazi.packages.${pkgs.stdenv.hostPlatform.system}.default
     yaziPlugins.wl-clipboard

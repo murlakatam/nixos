@@ -2,13 +2,11 @@
   pkgs,
   lib,
   username,
-  host,
-  inputs,
   outputs,
   globalEnvVars,
   ...
 }: let
-  inherit (import ./variables.nix) terminal gitUsername gitEmail dotfilesDir;
+  inherit (import ./variables.nix) terminal dotfilesDir;
   # Function to get the terminal executable path
   getTerminalExe = terminalName:
     if terminalName == "ghostty"

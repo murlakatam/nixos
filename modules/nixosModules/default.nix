@@ -1,8 +1,4 @@
-{
-  pkgs,
-  lib,
-  ...
-}: {
+{...}: {
   imports = [
     ./boot.nix
     ./packages.nix

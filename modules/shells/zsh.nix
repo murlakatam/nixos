@@ -1,13 +1,25 @@
 {
   config,
   pkgs,
-  host,
-  username,
-  inputs,
   globalEnvVars,
   lib,
+  host,
   ...
-}: {
+}: let
+  # 1. Import the folder name from variables
+  inherit (import ../../hosts/${host}/variables.nix) dotfilesDir;
+
+  # 2. Construct the absolute path
+  absDotfilesPath = "${config.home.homeDirectory}/${dotfilesDir}";
+
+  # 3. Create the patched script
+  # This reads your local file, replaces @dotfilesPath@ with the string above,
+  # and writes the result to the Nix store.
+  rebuildScript = pkgs.replaceVars ./rebuild.zsh {
+    # The key must match the @dotfilesPath@ placeholder in your zsh file
+    dotfilesPath = absDotfilesPath;
+  };
+in {
   home.packages = with pkgs; [
     zinit
   ];
@@ -69,7 +81,7 @@
         # Set DOTNET_ROOT to the location of your dotnet installation
         export DOTNET_ROOT="$(dirname $(readlink -f $(which dotnet)))"
         # Add .NET tools to PATH
-        export PATH="$PATH:/home/eugene/.dotnet/tools"
+        export PATH="$PATH:${config.home.homeDirectory}/.dotnet/tools"
         export PYTHONWARNINGS="ignore::FutureWarning"
       '')
       (lib.mkOrder 550 ''
@@ -78,7 +90,7 @@
         # init zinit
         source "${pkgs.zinit}/share/zinit/zinit.zsh"
         source ${./plugins.zsh}
-        source ${./rebuild.zsh}
+        source "${rebuildScript}"
       '')
       ''
         if [[ -f ~/.secrets ]]; then

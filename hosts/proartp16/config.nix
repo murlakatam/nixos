@@ -9,7 +9,7 @@
   globalEnvVars,
   ...
 }: let
-  inherit (import ./variables.nix) keyboardLayout;
+  inherit (import ./variables.nix) dotfilesDir;
 in {
   imports = with inputs; [
     ./hardware.nix
@@ -17,7 +17,6 @@ in {
     ./users.nix
     ../../modules/nixosModules
     ../../modules/drivers/amd-drivers.nix
-    ../../modules/drivers/amdgpu-stability.nix
     ../../modules/drivers/nvidia-drivers.nix
     ../../modules/drivers/nvidia-prime-drivers.nix
   ];
@@ -32,11 +31,8 @@ in {
   ];
 
   # Drivers Options
-  # Enable AMD GPU drivers with stability patches
-  drivers.amdgpu = {
-    enable = true;
-    stability.enablePatches = true; # Set to false to disable the patches
-  };
+  # Enable AMD GPU drivers
+  drivers.amdgpu.enable = true;
   drivers.nvidia.enable = true;
   drivers.nvidia-prime.enable = true;
   # xbox controller
@@ -61,7 +57,7 @@ in {
   system.autoUpgrade = {
     enable = true;
     allowReboot = true;
-    flake = "path:home/${username}/dotfiles/nixos";
+    flake = "path:home/${username}/${dotfilesDir}";
   };
 
   # security.rtkit is optional but highly recommended for PipeWire stability

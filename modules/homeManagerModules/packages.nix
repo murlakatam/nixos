@@ -1,10 +1,4 @@
-{
-  pkgs,
-  host,
-  username,
-  inputs,
-  ...
-}: {
+{pkgs, ...}: {
   home.packages = with pkgs; [
     avalonia-ilspy #dotpeek alternative
     bruno # testing puppy
@@ -35,7 +29,6 @@
     meld # gui differ
     pear-desktop # youtube music player
     oscar # cpap software
-    opencode #tui ai agent runner
     banner # print big banners
     figlet # better banners
     toilet # even better banners

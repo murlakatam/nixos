@@ -1,9 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   # service that detects Mediatek Wifi failures on resume or timeout
   systemd.services.mt7925e-fix = {
     description = "Fix MT7925E WiFi after resume or timeout";

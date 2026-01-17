@@ -4,7 +4,6 @@
   username,
   lib,
   config,
-  inputs,
   ...
 }: let
   inherit (import ../../hosts/${host}/variables.nix) gitUsername;
@@ -26,14 +25,6 @@ in {
         ];
         shell = pkgs.zsh;
         ignoreShellProgramCheck = true;
-        packages = with pkgs; [
-          # tealdeer # troubleshooting tool for tracing systems (tldr strace)
-          # zoxide # cd override with mem
-          # mcfly #shell history override ctrl+r
-          # stow # command for managing symlinks
-          # tokei #counts code files in projects grouping by language
-          # obsidian #notes taking
-        ];
       };
     };
 

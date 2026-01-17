@@ -1,9 +1,8 @@
 # A robust function to rebuild our NixOS system. Rebuild everthing with Makefile
   rebuild() {
-    # The directory where your SOURCE Makefile lives
-    local configDir="$HOME/dotfiles/nixos"
+    local configDir="@dotfilesPath@"
 
-    echo "Entering Nix configuration directory..."
+    echo "Entering Nix configuration directory $configDir..."
     pushd "$configDir" >/dev/null
 
     # Open the editor and wait for it to be closed before proceeding. comment

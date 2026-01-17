@@ -42,9 +42,6 @@
     nix-ld,
     nix-index-database,
     nix-flatpak,
-    yazi,
-    opencode,
-    antigravity,
     ...
   } @ inputs: let
     inherit (self) outputs;

@@ -1,15 +1,4 @@
 {inputs, ...}: final: prev: {
-  # ========================================================================
-  # 1. OPENCODE (The Main Editor)
-  # ========================================================================
-  # Instead of building it manually, we just pull the pre-defined package
-  # from the official flake input. This delegates all build logic to them.
-  opencode = inputs.opencode.packages.${prev.stdenv.hostPlatform.system}.default;
-
-  # ========================================================================
-  # 2. OH-MY-OPENCODE (The Extension)
-  # ========================================================================
-  # This repo doesn't have a flake yet, so we still build it manually here.
   oh-my-opencode = prev.stdenvNoCC.mkDerivation rec {
     pname = "oh-my-opencode";
     version = (builtins.fromJSON (builtins.readFile "${inputs.ohMyOpencodeSrc}/package.json")).version;
