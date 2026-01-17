@@ -16,6 +16,7 @@ in {
     home-manager.nixosModules.default
     ./users.nix
     ../../modules/nixosModules
+    ../../modules/drivers/asus-backlight.nix
     ../../modules/drivers/amd-drivers.nix
     ../../modules/drivers/nvidia-drivers.nix
     ../../modules/drivers/nvidia-prime-drivers.nix
@@ -37,6 +38,8 @@ in {
   drivers.nvidia-prime.enable = true;
   # xbox controller
   hardware.xone.enable = true;
+  # Enable Asus Keyboard Backlight support
+  drivers.asus-backlight.enable = true;
 
   # Enable networking
   networking.networkmanager.enable = true;
