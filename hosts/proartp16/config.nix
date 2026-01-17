@@ -17,7 +17,7 @@ in {
     ./users.nix
     ../../modules/nixosModules
     ../../modules/nixosModules/asus-packages.nix
-    ../../modules/drivers/asus-backlight.nix
+    ../../modules/drivers/asus-dialpad-driver.nix
     ../../modules/drivers/amd-drivers.nix
     ../../modules/drivers/nvidia-drivers.nix
     ../../modules/drivers/nvidia-prime-drivers.nix
@@ -37,10 +37,10 @@ in {
   drivers.amdgpu.enable = true;
   drivers.nvidia.enable = true;
   drivers.nvidia-prime.enable = true;
+  # Enable Asus Dialpad Driver
+  drivers.asus-dialpad.enable = true;
   # xbox controller
   hardware.xone.enable = true;
-  # Enable Asus Keyboard Backlight support
-  drivers.asus-backlight.enable = true;
 
   # Enable networking
   networking.networkmanager.enable = true;

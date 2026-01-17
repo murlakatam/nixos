@@ -21,6 +21,27 @@
         "type": "github"
       }
     },
+    "asus-dialpad-driver": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1768661892,
+        "narHash": "sha256-uDZdHVWjUNsgJbf/wYCQxOixXSsDwpi39oUTJSKodLk=",
+        "owner": "murlakatam",
+        "repo": "asus-dialpad-driver",
+        "rev": "8ad459d90cdc6e28b6318a40dee1d8972ffe5a25",
+        "type": "github"
+      },
+      "original": {
+        "owner": "murlakatam",
+        "ref": "xcffib-fix",
+        "repo": "asus-dialpad-driver",
+        "type": "github"
+      }
+    },
     "flake-utils": {
       "inputs": {
         "systems": "systems"
@@ -188,6 +209,7 @@
     "root": {
       "inputs": {
         "antigravity": "antigravity",
+        "asus-dialpad-driver": "asus-dialpad-driver",
         "home-manager": "home-manager",
         "nix-flatpak": "nix-flatpak",
         "nix-index-database": "nix-index-database",

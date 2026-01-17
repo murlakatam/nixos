@@ -34,6 +34,10 @@
       url = "github:jacopone/antigravity-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    asus-dialpad-driver = {
+      url = "github:murlakatam/asus-dialpad-driver/xcffib-fix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
   outputs = {
     self,
