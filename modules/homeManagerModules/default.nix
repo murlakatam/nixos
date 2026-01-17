@@ -11,5 +11,6 @@
     ./emoji.nix
     ./zed.nix
     ./opencode.nix
+    ./vscode.nix
   ];
 }

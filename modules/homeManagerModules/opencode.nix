@@ -18,7 +18,7 @@
     theme = "catppuccin-macchiato";
     plugin = [
       "file://${pkgs.oh-my-opencode}/share/oh-my-opencode/dist/index.js"
-      "opencode-antigravity-auth@beta"
+      "opencode-antigravity-auth@1.2.8"
     ];
     provider = {
       google = {
@@ -106,12 +106,44 @@
   # Configure oh-my-opencode.json (The plugin settings)
   xdg.configFile."opencode/oh-my-opencode.json".text = builtins.toJSON {
     "$schema" = "https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/master/assets/oh-my-opencode.schema.json";
-    "frontend-ui-ux-engineer" = {model = "google/antigravity-gemini-3-pro-high";}; # Updated ID
-    "document-writer" = {model = "google/antigravity-gemini-3-flash-high";};
-    "multimodal-looker" = {model = "google/antigravity-gemini-3-flash";};
-
-    "sisyphus" = {
-      model = "google/antigravity-claude-opus-4-5-thinking";
+    agents = {
+      "Sisyphus" = {
+        description = "Primary orchestrator agent with powerful AI capabilities";
+        model = "google/antigravity-claude-opus-4-5-thinking";
+      };
+      "OpenCode-Builder" = {
+        description = "Default build agent for development tasks";
+        model = "google/antigravity-claude-opus-4-5-thinking";
+      };
+      "Planner-Sisyphus" = {
+        description = "Strategic planning agent with minimal creativity";
+        model = "google/antigravity-claude-opus-4-5-thinking";
+      };
+      "oracle" = {
+        description = "Expert technical advisor for architecture decisions and code analysis";
+        model = "github-copilot/gpt-5.2";
+      };
+      "librarian" = {
+        description = "Multi-repository analysis, official docs, and implementation examples";
+        model = "google/antigravity-claude-sonnet-4-5";
+        prompt_append = "\n---\n\n**Important:** The EXTERNAL RESOURCES section in AGENTS.md documents key dependencies, references, and documentation to assist you in providing accurate and context-aware responses. Read this section carefully before you begin.";
+      };
+      "explore" = {
+        description = "Fast agent for codebase exploration and pattern matching";
+        model = "google/antigravity-gemini-3-flash";
+      };
+      "frontend-ui-ux-engineer" = {
+        description = "Designer-turned-developer for stunning UI/UX implementation";
+        model = "google/antigravity-gemini-3-pro";
+      };
+      "document-writer" = {
+        description = "Technical writing expert for documentation and guides";
+        model = "google/antigravity-gemini-3-pro";
+      };
+      "multimodal-looker" = {
+        description = "Analyzes PDFs, images, diagrams beyond raw text";
+        model = "google/antigravity-gemini-3-flash";
+      };
     };
 
     # LSP Configuration
@@ -139,6 +171,11 @@
           # Since you have dotnetCorePackages.sdk_8_0 in home.packages, it should work.
         };
       };
+    };
+
+    "ralph_loop" = {
+      enabled = true;
+      default_max_iterations = 30;
     };
   };
 }
