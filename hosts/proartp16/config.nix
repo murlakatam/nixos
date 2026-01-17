@@ -16,6 +16,7 @@ in {
     home-manager.nixosModules.default
     ./users.nix
     ../../modules/nixosModules
+    ../../modules/nixosModules/asus-packages.nix
     ../../modules/drivers/asus-backlight.nix
     ../../modules/drivers/amd-drivers.nix
     ../../modules/drivers/nvidia-drivers.nix
