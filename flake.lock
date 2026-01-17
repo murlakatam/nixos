@@ -28,11 +28,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1768662650,
-        "narHash": "sha256-2wouBacB6XYNQRhYuvHD/pqXZsIZVcOJNVSUgemUDow=",
+        "lastModified": 1768663132,
+        "narHash": "sha256-gzVHD+JIhD9Zag+r4QBy5Ih7fVPUCkggP/OBO700Gm4=",
         "owner": "murlakatam",
         "repo": "asus-dialpad-driver",
-        "rev": "b936f4701cf34782122ccb3342745ea625f0ddb5",
+        "rev": "b3d19ac613fa1552c7d7e617af5d77c1e13d8731",
         "type": "github"
       },
       "original": {
