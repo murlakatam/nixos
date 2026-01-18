@@ -20,10 +20,6 @@ in {
   config = mkMerge [
     # Configuration when dialpad driver is enabled
     (mkIf cfg.enable {
-      environment.systemPackages = with pkgs; [
-        python311Packages.xcffib
-      ];
-
       services.asus-dialpad-driver = {
         enable = true;
         layout = "proartp16";
@@ -31,6 +27,7 @@ in {
         ignoreWaylandDisplayEnv = false;
         runtimeDir = "/run/user/1000/";
         waylandDisplay = "wayland-0";
+        logLevel = "INFO";
 
         config = {
           main = {

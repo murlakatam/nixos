@@ -35,7 +35,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     asus-dialpad-driver = {
-      url = "github:murlakatam/asus-dialpad-driver/xcffib-fix";
+      url = "github:murlakatam/asus-dialpad-driver/nixos-fix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
