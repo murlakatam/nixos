@@ -2,7 +2,7 @@
   lib,
   config,
   inputs,
-  pkgs,
+  username,
   ...
 }:
 with lib; let
@@ -28,6 +28,7 @@ in {
         runtimeDir = "/run/user/1000/";
         waylandDisplay = "wayland-0";
         logLevel = "DEBUG";
+        sudoUser = "${username}";
 
         config = {
           main = {
