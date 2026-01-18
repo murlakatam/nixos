@@ -28,11 +28,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1768725488,
-        "narHash": "sha256-MN51ypjIiwJDmMHLQzTykr4buGybjpCJq5QfrTAsLzo=",
+        "lastModified": 1768725837,
+        "narHash": "sha256-T2Nio4ZoaGWaLVeUwjX+ct24SO7+f1J6roOuNf4kN5U=",
         "owner": "murlakatam",
         "repo": "asus-dialpad-driver",
-        "rev": "542756ca4cd44d46f4570281410d1924ada92e6d",
+        "rev": "b37f08b8c54a6660b50b87a25fba93edacaff887",
         "type": "github"
       },
       "original": {
@@ -85,11 +85,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1768598210,
-        "narHash": "sha256-kkgA32s/f4jaa4UG+2f8C225Qvclxnqs76mf8zvTVPg=",
+        "lastModified": 1768707181,
+        "narHash": "sha256-GdwFfnwdUgABFpc4sAmX7GYx8eQs6cEjOPo6nBJ0YaI=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "c47b2cc64a629f8e075de52e4742de688f930dc6",
+        "rev": "83bcb17377f0242376a327e742e9404e9a528647",
         "type": "github"
       },
       "original": {
@@ -173,11 +173,11 @@
     "ohMyOpencodeSrc": {
       "flake": false,
       "locked": {
-        "lastModified": 1768663673,
-        "narHash": "sha256-xjVwDl9TCdvZJl/pJpNe4sLXErIQxQqG/LcWpwYnLaM=",
+        "lastModified": 1768709528,
+        "narHash": "sha256-OnCM77vCQfIXJnTlQh+VLV8po64Oa7JI2Je+2j3xsVY=",
         "owner": "code-yeongyu",
         "repo": "oh-my-opencode",
-        "rev": "31dfef85b80f9410921da1bb3f70279b04ac14da",
+        "rev": "6a4bac94785c440beecd4501079e6a9619b75962",
         "type": "github"
       },
       "original": {
@@ -193,11 +193,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1768651458,
-        "narHash": "sha256-ftgRnQB8LLnZUzL85s4WhP+ZDVnkEj34nnDbum5fdmw=",
+        "lastModified": 1768725601,
+        "narHash": "sha256-4nBjBVHxwvLSpK9DWHPJFzkXpcUlZ0mi3F1Ro6Qj9zo=",
         "owner": "anomalyco",
         "repo": "opencode",
-        "rev": "a58d1be8226c749f015047c15c47950735cd9370",
+        "rev": "0ccf9bd9acf5d861c89c39878f50fc9cd7f48735",
         "type": "github"
       },
       "original": {
@@ -280,11 +280,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1768662188,
-        "narHash": "sha256-W2CpdBFWcNTg5QXpTEeSa2OK7t+1GKbgaW4hxcoo2uQ=",
+        "lastModified": 1768669787,
+        "narHash": "sha256-gc9NTenY/ILu6j8jrXr7zFDmkCESOBsI7vksJa3yVbk=",
         "owner": "sxyazi",
         "repo": "yazi",
-        "rev": "a38a5e6377f64f8a39c87ec8fac1170a112117e1",
+        "rev": "97d0c6bb23df413f4add8b888071233c912c49a3",
         "type": "github"
       },
       "original": {
