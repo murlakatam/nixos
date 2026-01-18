@@ -34,6 +34,8 @@
     gnumake # GNU Make is the tool that runs Makefiles
     gnutls # Provides secure communication protocols (SSL/TLS), required by many game launchers.
     gnomeExtensions.battery-health-charging # GNOME extension to manage battery health charging thresholds
+    polkit # Toolkit for defining and handling the policy that allows unprivileged processes to speak to privileged processes
+    polkit_gnome # PolicyKit authentication agent for GNOME
     protontricks # A script to easily apply Winetricks or other tweaks to specific Steam games (Proton prefixes).
     protonup-qt # A GUI tool to download and manage custom Proton-GE versions for better game compatibility on Steam.
     eza # Modern replacement for ls
