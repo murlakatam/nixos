@@ -17,6 +17,7 @@
     azure-cli
     bat # Cat clone with syntax highlighting
     bitwarden-desktop # password manager
+    brightnessctl # command line tool to adjust brightness
     cabextract # needed by winetricks
     cloudflared # cloudflare client
     cypress #cypress
@@ -40,6 +41,8 @@
     polkit_gnome # PolicyKit authentication agent for GNOME
     protontricks # A script to easily apply Winetricks or other tweaks to specific Steam games (Proton prefixes).
     protonup-qt # A GUI tool to download and manage custom Proton-GE versions for better game compatibility on Steam.
+    pulseaudio # Sound server
+
     eza # Modern replacement for ls
     file # program that shows the type of files
     freetype # A library for rendering fonts, crucial for displaying text correctly in games.
