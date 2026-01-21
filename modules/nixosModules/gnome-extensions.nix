@@ -40,7 +40,8 @@
   # Final Package List
   allExtensions =
     [
-      pkgs.gnomeExtensions.window-calls
+      pkgs.gnomeExtensions.window-calls # GNOME extension to manage windows
+      pkgs.gnomeExtensions.gpu-supergfxctl-switch # GNOME extension to integrate supergfxctl with GNOME Shell
       hibernateExt
     ]
     ++ lib.optionals batteryExtensionCfg.enable [batteryExt batteryScript];
