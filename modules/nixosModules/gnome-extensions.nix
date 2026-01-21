@@ -1,52 +1,45 @@
-{
-  config,
-  pkgs,
-  lib,
-  ...
-}: let
-  # 1. Define the specific extension
+{pkgs, ...}: let
   baseExtension = pkgs.gnomeExtensions.battery-health-charging;
   uuid = "battery-health-charging@maniacx.github.com";
 
-  # 2. Extract the 'ctl' script ROBUSTLY
-  # We use 'find' to locate the script because the directory structure
-  # can vary between Nixpkgs versions.
+  # 1. Extract the tool to a stable path
   batteryCtlTool = pkgs.runCommand "battery-health-ctl" {} ''
     mkdir -p $out/bin
-
-    # Find the file anywhere inside the extension directory
+    # Find the script dynamically to avoid build errors if paths change
     SCRIPT_PATH=$(find ${baseExtension} -name batteryhealthchargingctl -type f | head -n 1)
-
     if [ -z "$SCRIPT_PATH" ]; then
       echo "ERROR: Could not find batteryhealthchargingctl in ${baseExtension}"
       exit 1
     fi
-
     cp "$SCRIPT_PATH" $out/bin/batteryhealthchargingctl
     chmod +x $out/bin/batteryhealthchargingctl
   '';
 
-  # 3. Patch the extension to use the global system path
+  # 2. Patch the extension to use NixOS paths for BOTH the executable and the policy
   patchedExtension = baseExtension.overrideAttrs (old: {
     postPatch =
       (old.postPatch or "")
       + ''
-        # We substitute the path in driver.js to point to our extracted tool
+        # Fix 1: Point to the binary we extracted above
         substituteInPlace lib/driver.js \
           --replace-fail '/usr/local/bin/batteryhealthchargingctl-''${user}' \
                          '/run/current-system/sw/bin/batteryhealthchargingctl'
+
+        # Fix 2: Point to the NixOS Polkit location so the "is installed?" check passes
+        # (This is why you were still seeing the popup)
+        substituteInPlace lib/driver.js \
+          --replace-warn '/usr/share/polkit-1/actions' \
+                         '/run/current-system/sw/share/polkit-1/actions'
       '';
   });
 in {
-  # Install the patched extension AND the standalone tool
   environment.systemPackages = with pkgs; [
     patchedExtension
     batteryCtlTool
     gnomeExtensions.window-calls
   ];
 
-  # 4. Polkit Rule (Javascript)
-  # Allows the binary at /run/current-system/sw/bin/... to run without sudo password
+  # 3. Allow the tool to run without password
   security.polkit.extraConfig = ''
     polkit.addRule(function(action, subject) {
       if (action.id == "org.freedesktop.policykit.exec" &&
@@ -58,18 +51,22 @@ in {
     });
   '';
 
-  # 5. Dconf Settings to enable it automatically
+  # 4. Force "installed" status in Dconf
+  # We set this for both possible schema paths to be safe.
   programs.dconf.profiles.user.databases = [
     {
       settings = {
         "org/gnome/shell" = {
           disable-user-extensions = false;
-          enabled-extensions = [
-            uuid
-            "window-calls@swyknox.github.com"
-          ];
+          enabled-extensions = [uuid "window-calls@swyknox.github.com"];
         };
-        # Force "installed" status to suppress the UI error popup
+
+        # Correct lowercase schema path
+        "org/gnome/shell/extensions/battery-health-charging" = {
+          polkit-status = "installed";
+        };
+
+        # CamelCase path (fallback, just in case)
         "org/gnome/shell/extensions/Battery-Health-Charging" = {
           polkit-status = "installed";
         };
