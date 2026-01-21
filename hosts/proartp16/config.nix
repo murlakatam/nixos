@@ -43,6 +43,9 @@ in {
   # xbox controller
   hardware.xone.enable = true;
 
+  #Gnome extensions
+  desktop.gnome.batteryExtension.enable = false;
+
   # Enable networking
   networking.networkmanager.enable = true;
   networking.hostName = host;
