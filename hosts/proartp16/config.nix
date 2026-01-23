@@ -44,7 +44,8 @@ in {
   hardware.xone.enable = true;
 
   #Gnome extensions
-  desktop.gnome.batteryExtension.enable = true;
+  # removing battery extension for now as it seems not to be working properly
+  desktop.gnome.batteryExtension.enable = false;
 
   # Enable networking
   networking.networkmanager.enable = true;
