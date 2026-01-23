@@ -4,57 +4,47 @@
   config,
   ...
 }: let
-  batteryExtensionCfg = config.desktop.gnome.batteryExtension;
+  cfg = config.desktop.gnome.batteryExtension;
 
-  # 1. Capture the UUID so it isn't lost during override
-  basePkg = pkgs.gnomeExtensions.battery-health-charging;
-  extUuid = basePkg.extensionUuid;
+  # 1. Define the correct, case-sensitive UUID and Schema
+  # As confirmed by the docs you found:
+  extUuid = "Battery-Health-Charging@maniacx.github.com";
 
-  # Helper to patch extension metadata version
-  patchExt = ext:
-    ext.overrideAttrs (old: {
-      nativeBuildInputs = (old.nativeBuildInputs or []) ++ [pkgs.jq];
-      postPatch =
-        (old.postPatch or "")
-        + ''
-          jq '.["shell-version"] += ["${lib.versions.major pkgs.gnome-shell.version}"]' metadata.json > t.json && mv t.json metadata.json
-        '';
-    });
-
-  hibernateExt = patchExt pkgs.gnomeExtensions.hibernate-status-button;
-
-  # 2. Patch the Extension (Driver and Script)
-  batteryExt = basePkg.overrideAttrs (old: {
-    # CRITICAL: Preserve the UUID so the extension stays "Enabled"
+  # 2. Patch the extension package
+  batteryExt = pkgs.gnomeExtensions.battery-health-charging.overrideAttrs (old: {
+    # Force the UUID to match upstream exactly so GNOME recognizes it
     passthru = (old.passthru or {}) // {extensionUuid = extUuid;};
 
     postPatch =
       (old.postPatch or "")
       + ''
-        # A. Patch Driver.js: Point to NixOS paths
-        # We replace the path to the binary AND the path to the policy file
+        # Point the extension to the system-level binary and policy we are creating below
         substituteInPlace lib/driver.js \
           --replace-fail '/usr/local/bin/batteryhealthchargingctl-''${user}' \
                          '/run/current-system/sw/bin/batteryhealthchargingctl' \
           --replace-warn '/usr/share/polkit-1' \
                          '/run/current-system/sw/share/polkit-1'
-
-        # B. Patch the Helper Script: Fix hardcoded /usr/bin/pkexec
-        # This fixes the "Unknown Command" or crash when the script tries to escalate privileges
-        sed -i 's|/usr/bin/pkexec|pkexec|g' resources/batteryhealthchargingctl
       '';
   });
 
-  # 3. Create the System Binary
-  # We use 'find' to dynamically locate the script inside the package
+  # 3. Create the Wrapper Script
+  # This fixes the "Unknown Command" error by pointing 'pkexec' to the right place
   batteryScript = pkgs.runCommand "batteryhealthchargingctl" {} ''
     mkdir -p $out/bin
-    SCRIPT_PATH=$(find ${batteryExt} -name batteryhealthchargingctl -type f | head -n 1)
-    ln -s "$SCRIPT_PATH" $out/bin/batteryhealthchargingctl
+
+    # Find the original script
+    ORIG=$(find ${batteryExt} -name batteryhealthchargingctl -type f | head -n 1)
+
+    # Copy and patch it to use NixOS's pkexec wrapper
+    cp "$ORIG" $out/bin/batteryhealthchargingctl
+    chmod +x $out/bin/batteryhealthchargingctl
+
+    # The critical fix: /usr/bin/pkexec -> /run/wrappers/bin/pkexec
+    sed -i 's|/usr/bin/pkexec|/run/wrappers/bin/pkexec|g' $out/bin/batteryhealthchargingctl
   '';
 
-  # 4. Create the Policy XML File (The missing piece!)
-  # The extension looks for this file to confirm installation.
+  # 4. Generate the Policy XML
+  # This makes the "Install Check" pass because the file actually exists
   batteryPolicy = pkgs.writeTextFile {
     name = "battery-health-policy";
     destination = "/share/polkit-1/actions/org.freedesktop.policykit.batteryhealthcharging.setthreshold.policy";
@@ -79,16 +69,17 @@
     '';
   };
 
+  # 5. List of extensions to install
   allExtensions =
     [
       pkgs.gnomeExtensions.window-calls
       pkgs.gnomeExtensions.gpu-supergfxctl-switch
-      hibernateExt
+      # Add others here
     ]
-    ++ lib.optionals batteryExtensionCfg.enable [
+    ++ lib.optionals cfg.enable [
       batteryExt
       batteryScript
-      batteryPolicy # <--- REQUIRED
+      batteryPolicy
     ];
 in {
   options.desktop.gnome.batteryExtension.enable = lib.mkEnableOption "Battery Health Charging Extension";
@@ -96,6 +87,7 @@ in {
   config = {
     environment.systemPackages = allExtensions;
 
+    # 6. Configure Dconf with the CORRECT Schema
     programs.dconf.profiles.user.databases = [
       {
         lockAll = false;
@@ -103,20 +95,21 @@ in {
           {
             "org/gnome/shell" = {
               disable-user-extensions = false;
-              # Filter ensures we only enable extensions that actually have UUIDs
               enabled-extensions = map (e: e.extensionUuid) (lib.filter (e: e ? extensionUuid) allExtensions);
             };
           }
-          (lib.mkIf batteryExtensionCfg.enable {
-            # Force "installed" status for both casing variants
-            "org/gnome/shell/extensions/battery-health-charging".polkit-status = "installed";
-            "org/gnome/shell/extensions/Battery-Health-Charging".polkit-status = "installed";
+          (lib.mkIf cfg.enable {
+            # Use the EXACT CamelCase schema from the docs
+            "org/gnome/shell/extensions/Battery-Health-Charging" = {
+              polkit-status = "installed";
+            };
           })
         ];
       }
     ];
 
-    security.polkit.extraConfig = lib.mkIf batteryExtensionCfg.enable ''
+    # 7. Polkit Rule (matches our wrapper path)
+    security.polkit.extraConfig = lib.mkIf cfg.enable ''
       polkit.addRule(function(a, s) {
         if (a.id == "org.freedesktop.policykit.exec" &&
             a.lookup("program") == "/run/current-system/sw/bin/batteryhealthchargingctl" &&
