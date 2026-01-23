@@ -6,11 +6,11 @@
 }: let
   batteryExtensionCfg = config.desktop.gnome.batteryExtension;
 
-  # 1. Capture the original UUID so we can restore it after overriding
+  # 1. Capture the UUID so it isn't lost during override
   basePkg = pkgs.gnomeExtensions.battery-health-charging;
   extUuid = basePkg.extensionUuid;
 
-  # Helper: Patch metadata.json
+  # Helper to patch extension metadata version
   patchExt = ext:
     ext.overrideAttrs (old: {
       nativeBuildInputs = (old.nativeBuildInputs or []) ++ [pkgs.jq];
@@ -23,42 +23,38 @@
 
   hibernateExt = patchExt pkgs.gnomeExtensions.hibernate-status-button;
 
-  # 2. The Extension Patch
+  # 2. Patch the Extension (Driver and Script)
   batteryExt = basePkg.overrideAttrs (old: {
-    # CRITICAL: Restore the extensionUuid so your filter doesn't delete it
+    # CRITICAL: Preserve the UUID so the extension stays "Enabled"
     passthru = (old.passthru or {}) // {extensionUuid = extUuid;};
 
     postPatch =
       (old.postPatch or "")
       + ''
-        # A. Fix the binary path in the driver
+        # A. Patch Driver.js: Point to NixOS paths
+        # We replace the path to the binary AND the path to the policy file
         substituteInPlace lib/driver.js \
           --replace-fail '/usr/local/bin/batteryhealthchargingctl-''${user}' \
-                         '/run/current-system/sw/bin/batteryhealthchargingctl'
-
-        # B. Fix the "Is Installed?" check
-        # The extension looks for the policy file in /usr/share. We redirect it to NixOS path.
-        substituteInPlace lib/driver.js \
+                         '/run/current-system/sw/bin/batteryhealthchargingctl' \
           --replace-warn '/usr/share/polkit-1' \
                          '/run/current-system/sw/share/polkit-1'
 
-        # C. Patch the helper script just in case (lobotomy)
-        sed -i '/^    CHECKINSTALLATION)$/,/^        ;;$/{ s/check_installation/exit 0/ }' resources/batteryhealthchargingctl
+        # B. Patch the Helper Script: Fix hardcoded /usr/bin/pkexec
+        # This fixes the "Unknown Command" or crash when the script tries to escalate privileges
+        sed -i 's|/usr/bin/pkexec|pkexec|g' resources/batteryhealthchargingctl
       '';
   });
 
-  # 3. The Helper Script (Binary)
-  # using 'find' to avoid directory naming errors (CamelCase vs lowercase)
+  # 3. Create the System Binary
+  # We use 'find' to dynamically locate the script inside the package
   batteryScript = pkgs.runCommand "batteryhealthchargingctl" {} ''
     mkdir -p $out/bin
-    # Find the script dynamically inside the extension folder
     SCRIPT_PATH=$(find ${batteryExt} -name batteryhealthchargingctl -type f | head -n 1)
     ln -s "$SCRIPT_PATH" $out/bin/batteryhealthchargingctl
   '';
 
-  # 4. CRITICAL MISSING PIECE: The Policy XML File
-  # The extension checks specifically for the existence of this file.
-  # Without this, the "Install Check" fails even if you have permissions.
+  # 4. Create the Policy XML File (The missing piece!)
+  # The extension looks for this file to confirm installation.
   batteryPolicy = pkgs.writeTextFile {
     name = "battery-health-policy";
     destination = "/share/polkit-1/actions/org.freedesktop.policykit.batteryhealthcharging.setthreshold.policy";
@@ -92,7 +88,7 @@
     ++ lib.optionals batteryExtensionCfg.enable [
       batteryExt
       batteryScript
-      batteryPolicy # <--- Must be installed!
+      batteryPolicy # <--- REQUIRED
     ];
 in {
   options.desktop.gnome.batteryExtension.enable = lib.mkEnableOption "Battery Health Charging Extension";
@@ -107,11 +103,12 @@ in {
           {
             "org/gnome/shell" = {
               disable-user-extensions = false;
+              # Filter ensures we only enable extensions that actually have UUIDs
               enabled-extensions = map (e: e.extensionUuid) (lib.filter (e: e ? extensionUuid) allExtensions);
             };
           }
           (lib.mkIf batteryExtensionCfg.enable {
-            # Set both casings to be safe. "polkit-status" is often case-sensitive in dconf.
+            # Force "installed" status for both casing variants
             "org/gnome/shell/extensions/battery-health-charging".polkit-status = "installed";
             "org/gnome/shell/extensions/Battery-Health-Charging".polkit-status = "installed";
           })
