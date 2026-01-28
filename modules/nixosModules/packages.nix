@@ -25,8 +25,13 @@
     dconf-editor # Configuration editor for dconf
     dconf2nix # Convert dconf settings to Nix
     docker
-    dotnetCorePackages.sdk_8_0-bin #dotnet 8
-    dotnetCorePackages.sdk_9_0-bin #dotnet 9
+    (with dotnetCorePackages;
+      combinePackages [
+        # dotnet sdks
+        sdk_8_0
+        sdk_9_0
+        sdk_10_0
+      ])
     git
     google-chrome #chrome
     gccgo14 # Go compiler from GCC
