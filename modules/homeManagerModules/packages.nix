@@ -5,6 +5,13 @@
     bruno-cli
     #diff-so-fancy
     cod # turn any --help into completion
+    (lib.hiPrio (with dotnetCorePackages; #dotnet sdk versions
+      
+        combinePackages [
+          sdk_8_0
+          sdk_9_0
+          sdk_10_0
+        ]))
     tree # pretty print directories
     fastfetch # flexx your OS : alternative to freshly deceased neofetch
     gimp-with-plugins
