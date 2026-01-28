@@ -1,10 +1,14 @@
-{pkgs, ...}: let
+{
+  pkgs,
+  lib,
+  ...
+}: let
   omnisharp-path = "${pkgs.omnisharp-roslyn}/bin/OmniSharp";
 in {
   # Ensure the necessary packages are installed
   home.packages = [
     pkgs.zed-editor
-    pkgs.omnisharp-roslyn
+    (lib.lowPrio pkgs.omnisharp-roslyn)
   ];
 
   # Configure Zed
