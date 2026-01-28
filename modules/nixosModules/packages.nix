@@ -66,7 +66,7 @@
     nodejs_22 #node
     nodePackages.prettier #node d
     ntfs3g # file system
-    omnisharp-roslyn
+    #omnisharp-roslyn
     openldap # needed for games or lanuchers that usese LDAP for auth
     p7zip
     pciutils
