@@ -8,11 +8,13 @@
   # https://nixos.wiki/wiki/Overlays
   modifications = final: prev: {
     # Fix for opencode hash mismatch
-    opencode = inputs.opencode.packages.${final.system}.default.overrideAttrs (oldAttrs: {
-      node_modules = oldAttrs.node_modules.overrideAttrs (oldModules: {
-        outputHash = "sha256-fPXBw/ZBo2J8kIjgfVh5cwBfMRQWOpBH7djHncnSdpA=";
+    opencode =
+      inputs.opencode.packages.${final.stdenv.hostPlatform.system}.default.overrideAttrs
+      (oldAttrs: {
+        node_modules = oldAttrs.node_modules.overrideAttrs (oldModules: {
+          outputHash = "sha256-fPXBw/ZBo2J8kIjgfVh5cwBfMRQWOpBH7djHncnSdpA=";
+        });
       });
-    });
   };
 
   azure-creds = import ./azure-creds-overlay.nix;
