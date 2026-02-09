@@ -7,9 +7,12 @@
   # You can change versions, add patches, set compilation flags, anything really.
   # https://nixos.wiki/wiki/Overlays
   modifications = final: prev: {
-    # example = prev.example.overrideAttrs (oldAttrs: rec {
-    # ...
-    # });
+    # Fix for opencode hash mismatch
+    opencode = inputs.opencode.packages.${final.system}.default.overrideAttrs (oldAttrs: {
+      node_modules = oldAttrs.node_modules.overrideAttrs (oldModules: {
+        outputHash = "sha256-fPXBw/ZBo2J8kIjgfVh5cwBfMRQWOpBH7djHncnSdpA=";
+      });
+    });
   };
 
   azure-creds = import ./azure-creds-overlay.nix;

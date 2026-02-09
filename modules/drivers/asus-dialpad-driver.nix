@@ -27,8 +27,8 @@ in {
         ignoreWaylandDisplayEnv = false;
         runtimeDir = "/run/user/1000/";
         waylandDisplay = "wayland-0";
-        logLevel = "DEBUG";
-        sudoUser = "${username}";
+        # logLevel = "DEBUG";
+        # sudoUser = "${username}";
 
         config = {
           main = {

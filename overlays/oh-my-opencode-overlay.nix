@@ -26,7 +26,7 @@
       # Keep this true to preserve the hash
       dontFixup = true;
       # We set the marker comment that is replaced by update-overlay-hashes.zsh script (see scripts folder)
-      outputHash = "sha256-96dQ/4wswKXevc+DyJuN1zfDuJGDAZ24n/pYcNJo5G0="; # oh-my-opencode-hash
+      outputHash = "sha256-qq/eEoxFELVdt4qaJkrw8XNZ/Ph/RJdsyIp7LteQE5A="; # oh-my-opencode-hash
       outputHashAlgo = "sha256";
       outputHashMode = "recursive";
     };
