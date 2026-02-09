@@ -14,7 +14,7 @@
     theme = "catppuccin-macchiato";
     plugin = [
       "file://${pkgs.oh-my-opencode}/share/oh-my-opencode/dist/index.js"
-      "opencode-antigravity-auth@1.2.8"
+      "opencode-antigravity-auth@latest"
     ];
     provider = {
       google = {
@@ -47,6 +47,21 @@
           };
           "antigravity-claude-opus-4-5-thinking" = {
             name = "Claude Opus 4.5 Thinking";
+            limit = {
+              context = 200000;
+              output = 64000;
+            };
+            modalities = {
+              input = ["text" "image" "pdf"];
+              output = ["text"];
+            };
+            variants = {
+              low = {thinkingConfig = {thinkingBudget = 8192;};};
+              max = {thinkingConfig = {thinkingBudget = 32768;};};
+            };
+          };
+          "antigravity-claude-opus-4-6-thinking" = {
+            name = "Claude Opus 4.6 Thinking";
             limit = {
               context = 200000;
               output = 64000;
