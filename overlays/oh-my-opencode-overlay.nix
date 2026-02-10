@@ -15,7 +15,7 @@
 
       buildPhase = ''
         export HOME=$(mktemp -d)
-        bun install --frozen-lockfile --no-progress --ignore-scripts
+        bun install --no-progress --ignore-scripts
       '';
 
       installPhase = ''

@@ -11,15 +11,17 @@
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
-  boot.initrd.availableKernelModules = ["nvme" "xhci_pci" "thunderbolt" "usbhid" "usb_storage" "sd_mod" "sdhci_pci"];
+  boot.initrd.availableKernelModules = ["nvme" "xhci_pci" "thunderbolt" "usbhid" "usb_storage" "sd_mod" "sdhci_pci" "aesni_intel" "cryptd"];
   boot.initrd.kernelModules = [];
   boot.kernelModules = ["kvm-amd" "asus-ec-sensors"];
   boot.extraModulePackages = [];
 
   fileSystems."/" = {
-    device = "/dev/disk/by-uuid/26d4ea87-998d-47fe-8e0b-21f3cd098041";
+    device = "/dev/mapper/cryptroot";
     fsType = "ext4";
   };
+
+  boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/31714531-4287-4216-b5a8-88c26cfaa7ff";
 
   fileSystems."/boot" = {
     device = "/dev/disk/by-uuid/14DF-E3B9";
