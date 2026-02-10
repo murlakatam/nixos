@@ -6,6 +6,6 @@
   # Program Options
   browser = "firefox"; # Set Default Browser (google-chrome-stable for google-chrome, zen for zen)
   terminal = "ghostty"; # Set Default System Terminal
-  keyboardLayout = "nz,by";
+  keyboardLayout = "nz,by"; # by for Belarusian, not BE (for belgian)
   dotfilesDir = "dotfiles/nixos";
 }
