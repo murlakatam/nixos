@@ -27,4 +27,6 @@ in {
       ignoreShellProgramCheck = true;
     };
   };
+
+  environment.shells = with pkgs; [zsh];
 }
