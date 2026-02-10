@@ -1,0 +1,57 @@
+# Template for encrypted NixOS hardware configuration
+# ====================================================
+# After running `nixos-generate-config --root /mnt` from the installer,
+# merge these settings into the generated hardware-configuration.nix
+#
+# Replace placeholders:
+#   - YOUR-LUKS-UUID: UUID of the encrypted partition (nvme0n1p5 after luksFormat)
+#   - Get it with: blkid /dev/nvme0n1p5
+{
+  config,
+  lib,
+  modulesPath,
+  ...
+}: {
+  imports = [
+    (modulesPath + "/installer/scan/not-detected.nix")
+  ];
+
+  boot.initrd.availableKernelModules = [
+    "nvme"
+    "xhci_pci"
+    "thunderbolt"
+    "usbhid"
+    "usb_storage"
+    "sd_mod"
+    "sdhci_pci"
+    "aesni_intel"
+    "cryptd"
+  ];
+
+  boot.initrd.kernelModules = ["dm-snapshot"];
+  boot.kernelModules = ["kvm-amd" "asus-ec-sensors"];
+  boot.extraModulePackages = [];
+
+  boot.initrd.luks.devices."cryptroot" = {
+    device = "/dev/disk/by-uuid/YOUR-LUKS-UUID";
+    allowDiscards = true;
+    bypassWorkqueues = true;
+  };
+
+  fileSystems."/" = {
+    device = "/dev/mapper/cryptroot";
+    fsType = "ext4";
+  };
+
+  fileSystems."/boot" = {
+    device = "/dev/disk/by-uuid/14DF-E3B9";
+    fsType = "vfat";
+    options = ["fmask=0077" "dmask=0077"];
+  };
+
+  swapDevices = [];
+
+  networking.useDHCP = lib.mkDefault true;
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+}
