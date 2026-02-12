@@ -18,6 +18,7 @@ in {
     ../../modules/nixosModules
     ../../modules/nixosModules/asus-packages.nix
     ../../modules/nixosModules/gnome-extensions.nix
+    ../../modules/nixosModules/yubikey.nix
     ../../modules/drivers/asus-dialpad-driver.nix
     ../../modules/drivers/amd-drivers.nix
     ../../modules/drivers/nvidia-drivers.nix
