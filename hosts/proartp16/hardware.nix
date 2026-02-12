@@ -21,7 +21,11 @@
     fsType = "ext4";
   };
 
-  boot.initrd.luks.devices."cryptroot".device = "/dev/disk/by-uuid/31714531-4287-4216-b5a8-88c26cfaa7ff";
+  boot.initrd.luks.devices."cryptroot" = {
+    device = "/dev/disk/by-uuid/31714531-4287-4216-b5a8-88c26cfaa7ff";
+    # This tells systemd to try the YubiKey first
+    crypttabExtraOpts = ["fido2-device=auto"];
+  };
 
   fileSystems."/boot" = {
     device = "/dev/disk/by-uuid/14DF-E3B9";
