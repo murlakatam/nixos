@@ -104,8 +104,8 @@
     wl-clipboard-x11 # wayland clipboard for x11
     xml2 # cli utils for working with xml
     yt-dlp # youtube downloader
-    yubikey-manager # The CLI tool (useful for scripting or quick "ykman" commands)
     yubioath-flutter # The Authenticator App (View 2FA codes on your desktop)
+    yubikey-manager # The CLI tool (useful for scripting or quick "ykman" commands)
     yubikey-personalization #Low-level tool, sometimes needed for troubleshooting
     zig # programming language
     # # vim                                               # Text editor (commented out)
