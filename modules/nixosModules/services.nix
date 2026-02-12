@@ -1,7 +1,17 @@
-{host, ...}: let
+{
+  host,
+  pkgs,
+  ...
+}: let
   inherit (import ../../hosts/${host}/variables.nix) keyboardLayout;
 in {
   services = {
+    # Critical: Without this, ykman and the GUIs won't find the key.
+    pcscd.enable = true;
+
+    # Critical: This allows your user to access the key without 'sudo'.
+    udev.packages = [pkgs.yubikey-personalization];
+
     # Enable usb auto-mounting
     devmon.enable = true;
     gvfs.enable = true;
