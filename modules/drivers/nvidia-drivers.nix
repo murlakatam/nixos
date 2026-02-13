@@ -64,7 +64,7 @@ in {
         package = config.boot.kernelPackages.nvidiaPackages.stable;
       };
 
-      virtualisation.docker.enableNvidia = true;
+      hardware.nvidia-container-toolkit.enable = true;
 
       # Stolen from https://wiki.nixos.org/wiki/NVIDIA#Troubleshooting
 

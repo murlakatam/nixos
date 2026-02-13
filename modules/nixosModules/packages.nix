@@ -40,7 +40,9 @@
     gparted
     gnumake # GNU Make is the tool that runs Makefiles
     gnutls # Provides secure communication protocols (SSL/TLS), required by many game launchers.
+    gnome-shell # as it says on the can.
 
+    procps # Utilities that give information about processes using the /proc filesystem
     protontricks # A script to easily apply Winetricks or other tweaks to specific Steam games (Proton prefixes).
     protonup-qt # A GUI tool to download and manage custom Proton-GE versions for better game compatibility on Steam.
     pulseaudio # Sound server
