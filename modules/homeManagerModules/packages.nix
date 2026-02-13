@@ -34,6 +34,7 @@
     mc
     mono # .net dev framework
     meld # gui differ
+    musicpod #music and podcast player
     pear-desktop # youtube music player
     oscar # cpap software
     banner # print big banners
