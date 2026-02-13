@@ -11,10 +11,12 @@ in {
     amdgpuBusId = mkOption {
       type = types.str;
       default = "PCI:101:0:0";
+      #default = "PCI:101@0:0:0";
     };
     nvidiaBusID = mkOption {
       type = types.str;
       default = "PCI:100:0:0";
+      #default = "PCI:100@0:0:0";
     };
   };
 
