@@ -40,7 +40,7 @@ in {
   drivers.nvidia.enable = true;
   drivers.nvidia-prime.enable = true;
   # Enable Asus Dialpad Driver
-  drivers.asus-dialpad.enable = true;
+  drivers.asus-dialpad.enable = false;
   # xbox controller
   hardware.xone.enable = true;
 
