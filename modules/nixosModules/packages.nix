@@ -80,6 +80,7 @@
     SDL2 # A library for low-level access to audio, keyboard, mouse,
     sshfs # secure file system over SSH
     sqlite # A lightweight database engine used by many applications
+    sqlitebrowser # sql lite browser
     transmission-remote-gtk #transmission remote UI
     tree-sitter-grammars.tree-sitter-bash
     tree-sitter-grammars.tree-sitter-yaml
