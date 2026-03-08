@@ -5,6 +5,7 @@
     bruno-cli
     #diff-so-fancy
     cod # turn any --help into completion
+    devenv
     (lib.hiPrio (with dotnetCorePackages; #dotnet sdk versions
       
         combinePackages [
