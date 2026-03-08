@@ -12,7 +12,7 @@
       inputs.opencode.packages.${final.stdenv.hostPlatform.system}.default.overrideAttrs
       (oldAttrs: {
         node_modules = oldAttrs.node_modules.overrideAttrs (oldModules: {
-          outputHash = "sha256-fPXBw/ZBo2J8kIjgfVh5cwBfMRQWOpBH7djHncnSdpA=";
+          outputHash = "sha256-4kjoJ06VNvHltPHfzQRBG0bC6R39jao10ffGzrNZ230=";
         });
       });
   };

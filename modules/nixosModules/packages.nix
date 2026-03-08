@@ -7,7 +7,7 @@
   environment.systemPackages = with pkgs; [
     opencode
     inputs.antigravity.packages.${pkgs.stdenv.hostPlatform.system}.default
-    inputs.yazi.packages.${pkgs.stdenv.hostPlatform.system}.default
+    yazi
     yaziPlugins.wl-clipboard
     #inputs.nix-inspect.packages.${pkgs.system}.default
 

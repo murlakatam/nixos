@@ -23,10 +23,6 @@
     nix-flatpak = {
       url = "github:gmodena/nix-flatpak/?ref=latest";
     };
-    yazi = {
-      url = "github:sxyazi/yazi";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     opencode = {
       url = "github:anomalyco/opencode";
       inputs.nixpkgs.follows = "nixpkgs";
