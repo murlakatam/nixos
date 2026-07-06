@@ -110,6 +110,8 @@
     xml2 # cli utils for working with xml
     yt-dlp # youtube downloader
 
+    ventoy-full # ventoy (rufus alternatives)
+
     zig # programming language
     # # vim                                               # Text editor (commented out)
 
@@ -224,5 +226,9 @@
     # gomuks                                              # Terminal Matrix client
     # olm                                                 # Implementation of Matrix encryption
     # transmission_4-gtk                                  # BitTorrent client
+  ];
+
+  nixpkgs.config.permittedInsecurePackages = [
+    "ventoy-1.1.10"
   ];
 }
