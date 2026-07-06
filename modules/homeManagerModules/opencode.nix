@@ -14,104 +14,9 @@
     theme = "catppuccin-macchiato";
     plugin = [
       "file://${pkgs.oh-my-opencode}/share/oh-my-opencode/dist/index.js"
-      "opencode-antigravity-auth@latest"
     ];
-    provider = {
-      google = {
-        models = {
-          "antigravity-claude-sonnet-4-5" = {
-            name = "Claude Sonnet 4.5";
-            limit = {
-              context = 200000;
-              output = 64000;
-            };
-            modalities = {
-              input = ["text" "image" "pdf"];
-              output = ["text"];
-            };
-          };
-          "antigravity-claude-sonnet-4-5-thinking" = {
-            name = "Claude Sonnet 4.5 Thinking";
-            limit = {
-              context = 200000;
-              output = 64000;
-            };
-            modalities = {
-              input = ["text" "image" "pdf"];
-              output = ["text"];
-            };
-            variants = {
-              low = {thinkingConfig = {thinkingBudget = 8192;};};
-              max = {thinkingConfig = {thinkingBudget = 32768;};};
-            };
-          };
-          "antigravity-claude-opus-4-5-thinking" = {
-            name = "Claude Opus 4.5 Thinking";
-            limit = {
-              context = 200000;
-              output = 64000;
-            };
-            modalities = {
-              input = ["text" "image" "pdf"];
-              output = ["text"];
-            };
-            variants = {
-              low = {thinkingConfig = {thinkingBudget = 8192;};};
-              max = {thinkingConfig = {thinkingBudget = 32768;};};
-            };
-          };
-          "antigravity-claude-opus-4-6-thinking" = {
-            name = "Claude Opus 4.6 Thinking";
-            limit = {
-              context = 200000;
-              output = 64000;
-            };
-            modalities = {
-              input = ["text" "image" "pdf"];
-              output = ["text"];
-            };
-            variants = {
-              low = {thinkingConfig = {thinkingBudget = 8192;};};
-              max = {thinkingConfig = {thinkingBudget = 32768;};};
-            };
-          };
-          "antigravity-gemini-3-pro" = {
-            name = "Gemini 3 Pro Thinking";
-            limit = {
-              context = 200000;
-              output = 64000;
-            };
-            modalities = {
-              input = ["text" "image" "pdf"];
-              output = ["text"];
-            };
-            variants = {
-              low = {thinkingLevel = "low";};
-              high = {thinkingLevel = "high";};
-            };
-          };
-          "antigravity-gemini-3-flash" = {
-            name = "Gemini 3 Flash";
-            limit = {
-              context = 200000;
-              output = 64000;
-            };
-            modalities = {
-              input = ["text" "image" "pdf"];
-              output = ["text"];
-            };
-            variants = {
-              low = {thinkingLevel = "low";};
-              medium = {thinkingLevel = "medium";};
-              high = {thinkingLevel = "high";};
-            };
-          };
-        };
-      };
-    };
-
-    # You can add other standard OpenCode settings here
-    # "theme" = "dark";
+    # OpenCode Zen is a built-in provider — authenticate via `/connect` in the TUI.
+    # Models are referenced as `opencode/<model-id>` (see https://opencode.ai/docs/zen/).
   };
 
   # Configure oh-my-opencode.json (The plugin settings)
@@ -120,40 +25,40 @@
     agents = {
       "Sisyphus" = {
         description = "Primary orchestrator agent with powerful AI capabilities";
-        model = "google/antigravity-claude-opus-4-5-thinking";
+        model = "opencode/claude-opus-4-8";
       };
       "OpenCode-Builder" = {
         description = "Default build agent for development tasks";
-        model = "google/antigravity-claude-opus-4-5-thinking";
+        model = "opencode/gpt-5.5";
       };
       "Planner-Sisyphus" = {
         description = "Strategic planning agent with minimal creativity";
-        model = "google/antigravity-claude-opus-4-5-thinking";
+        model = "opencode/claude-opus-4-8";
       };
       "oracle" = {
         description = "Expert technical advisor for architecture decisions and code analysis";
-        model = "github-copilot/gpt-5.2";
+        model = "opencode/gpt-5.5";
       };
       "librarian" = {
         description = "Multi-repository analysis, official docs, and implementation examples";
-        model = "google/antigravity-claude-sonnet-4-5";
+        model = "opencode/claude-sonnet-4-6";
         prompt_append = "\n---\n\n**Important:** The EXTERNAL RESOURCES section in AGENTS.md documents key dependencies, references, and documentation to assist you in providing accurate and context-aware responses. Read this section carefully before you begin.";
       };
       "explore" = {
         description = "Fast agent for codebase exploration and pattern matching";
-        model = "google/antigravity-gemini-3-flash";
+        model = "opencode/gemini-3.5-flash";
       };
       "frontend-ui-ux-engineer" = {
         description = "Designer-turned-developer for stunning UI/UX implementation";
-        model = "google/antigravity-gemini-3-pro";
+        model = "opencode/claude-sonnet-4-6";
       };
       "document-writer" = {
         description = "Technical writing expert for documentation and guides";
-        model = "google/antigravity-gemini-3-pro";
+        model = "opencode/claude-sonnet-4-6";
       };
       "multimodal-looker" = {
         description = "Analyzes PDFs, images, diagrams beyond raw text";
-        model = "google/antigravity-gemini-3-flash";
+        model = "opencode/gemini-3.5-flash";
       };
     };
 
