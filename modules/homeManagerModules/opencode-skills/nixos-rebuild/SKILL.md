@@ -16,10 +16,23 @@ nixos-rebuild-ai "<git commit message>"
 
 That's it. This wrapper is:
 
-- **Non-interactive** — never opens an editor, never prompts, never blocks.
+- **Non-interactive** — never opens an editor, never prompts for a password, never blocks on stdin.
 - **Token-efficient** — prints nothing but a single `OK:` line on success.
 - **Loud on failure** — dumps the full build log to stderr and exits non-zero.
-- **Auto-committing** — formats with alejandra, `nixos-rebuild switch`, then `git commit -am "<message>"` on success.
+- **Auto-committing** — formats with alejandra, does the privileged switch, then `git commit -am "<message>"` on success.
+
+## IMPORTANT: requires a physical YubiKey touch
+
+The privileged rebuild step is gated by a **YubiKey touch** (proof of human
+presence) instead of a password. When you run `nixos-rebuild-ai`, a human must
+physically tap the YubiKey when it flashes ("Please touch the device.").
+
+- If nobody touches the key, the command **fails closed** — it does NOT hang
+  forever, it errors out. This is expected and correct.
+- You (the agent) **cannot** satisfy this yourself. If it fails with a U2F/PAM
+  error, tell the user a touch is required and let them run it (or touch the key).
+- Do **not** try to work around it with `sudo nixos-rebuild`, passwords, or any
+  other escalation path — those are blocked / password-protected by design.
 
 ## Rules (HARD)
 

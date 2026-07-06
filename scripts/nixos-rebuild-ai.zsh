@@ -2,9 +2,13 @@
 #
 # Contract:
 #   - Takes a git commit message as its single argument (required).
-#   - NEVER opens an editor, NEVER prompts, NEVER blocks on input.
+#   - NEVER opens an editor, NEVER prompts for a password, NEVER blocks on stdin.
+#   - Privilege escalation is gated by a YubiKey TOUCH (user presence), not a
+#     password: the privileged step goes through `sudo nixos-rebuild-ai-root`
+#     which is wired to a U2F-only PAM service. No touch => it fails closed.
 #   - On SUCCESS: prints one terse line. No diff, no logs, no notifications.
-#   - On FAILURE: prints the FULL captured build/commit output, then exits non-zero.
+#   - On FAILURE: prints the FULL captured output, then exits non-zero.
+#   - Commit happens UNPRIVILEGED (as you), only after a successful build.
 #
 # Usage:
 #   nixos-rebuild-ai "feat: add foo module"
@@ -17,33 +21,43 @@ nixos-rebuild-ai() {
     return 2
   fi
 
-  local host flake log status
-  host="$(hostname)"
-  flake=".#${host}"
+  # NB: do NOT name this `status` — that's a read-only special var in zsh.
+  local log rc
   log="$(mktemp -t nixos-rebuild-ai.XXXXXX)"
 
-  # Run everything from the config dir without disturbing the caller's cwd.
+  # ── Privileged build (touch-gated) ──────────────────────────────────────
+  # `sudo nixos-rebuild-ai-root` triggers a YubiKey touch prompt via PAM.
+  # The helper takes no arguments and does the switch as root. All output is
+  # captured; nothing streams to the caller unless it fails.
   (
     cd "$configDir" || exit 1
-
-    # Format (non-fatal noise suppressed; only surfaces on hard failure below).
-    alejandra . >/dev/null 2>&1
-
-    # Build + switch. All output captured; nothing streamed to the caller.
-    sudo nixos-rebuild switch --flake "$flake" --show-trace || exit 1
-
-    # Commit with the provided message. Nothing to commit is not an error.
-    if ! git diff --quiet || ! git diff --cached --quiet; then
-      git commit -am "$msg" || exit 1
-    fi
+    alejandra . >/dev/null 2>&1 # format (best-effort; noise suppressed)
+    # Absolute path MUST match the sudoers Cmnd_Alias verbatim (see yubikey.nix).
+    sudo /run/current-system/sw/bin/nixos-rebuild-ai-root
   ) >"$log" 2>&1
-  status=$?
+  rc=$?
 
-  if [[ $status -ne 0 ]]; then
-    print -ru2 -- "nixos-rebuild-ai FAILED (exit $status):"
+  if [[ $rc -ne 0 ]]; then
+    print -ru2 -- "nixos-rebuild-ai FAILED (exit $rc):"
     cat -- "$log" >&2
     rm -f -- "$log"
-    return $status
+    return $rc
+  fi
+
+  # ── Unprivileged commit (as you), only on a successful build ────────────
+  (
+    cd "$configDir" || exit 1
+    if ! git diff --quiet || ! git diff --cached --quiet; then
+      git commit -am "$msg"
+    fi
+  ) >>"$log" 2>&1
+  rc=$?
+
+  if [[ $rc -ne 0 ]]; then
+    print -ru2 -- "nixos-rebuild-ai: build OK but commit FAILED (exit $rc):"
+    cat -- "$log" >&2
+    rm -f -- "$log"
+    return $rc
   fi
 
   rm -f -- "$log"

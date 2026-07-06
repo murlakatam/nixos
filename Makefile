@@ -112,12 +112,20 @@ update:
 # The new `system` target.
 # It checks for the REPAIR variable and constructs the correct `nixos-rebuild`
 # command before passing it to the REBUILD_ROUTINE.
+#
+# Normal builds go through the MANUAL touch-gated helper
+# `nixos-rebuild-manual-root`: tap the YubiKey, OR fall back to your password if
+# the key is absent/dead (its PAM service allows touch-OR-password). The AI
+# wrapper uses a SEPARATE strict touch-only helper (see yubikey.nix).
+# `REPAIR=true` is a rare escape hatch that keeps the classic password-based
+# `sudo nixos-rebuild --repair` (the helper takes no args, so it can't carry
+# the --repair flag).
 system:
 	@echo "--- Starting NixOS System Build ---"
 	@# Conditional logic to handle the `REPAIR=true` case.
 	$(if $(REPAIR), \
 		@$(call REBUILD_ROUTINE, sudo nixos-rebuild switch --flake $(FLAKE_URI_SYSTEM) --show-trace --repair), \
-		@$(call REBUILD_ROUTINE, sudo nixos-rebuild switch --flake $(FLAKE_URI_SYSTEM) --show-trace) \
+		@$(call REBUILD_ROUTINE, sudo /run/current-system/sw/bin/nixos-rebuild-manual-root) \
 	)
 
 # --- Unchanged Utility Targets ---
