@@ -9,6 +9,14 @@
     pkgs.dotnetCorePackages.sdk_8_0
   ];
 
+  # Declaratively deploy the custom "nixos-rebuild" agent skill.
+  # This teaches agents to rebuild ONLY via the token-efficient `nixos-rebuild-ai`
+  # wrapper and nothing else.
+  xdg.configFile."opencode/skill/nixos-rebuild" = {
+    source = ./opencode-skills/nixos-rebuild;
+    recursive = true;
+  };
+
   xdg.configFile."opencode/opencode.json".text = builtins.toJSON {
     "$schema" = "https://opencode.ai/config.json";
     theme = "catppuccin-macchiato";

@@ -29,5 +29,15 @@
     executable = true;
   };
 
-  home.file."/mnt/Kindle".source = config.lib.file.mkOutOfStoreSymlink "/run/media/${username}/Kindle";
+  # token-efficient, non-interactive rebuild wrapper for AI agents.
+  # Substitutes @dotfilesPath@ so the function knows the config dir.
+  home.file.".config/zsh/functions/nixos-rebuild-ai.zsh" = {
+    source = pkgs.replaceVars ../../scripts/nixos-rebuild-ai.zsh {
+      dotfilesPath = dotfilesPath;
+    };
+    executable = true;
+  };
+
+  home.file."/mnt/Kindle".source =
+    config.lib.file.mkOutOfStoreSymlink "/run/media/${username}/Kindle";
 }
