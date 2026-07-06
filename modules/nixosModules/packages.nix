@@ -110,7 +110,7 @@
     xml2 # cli utils for working with xml
     yt-dlp # youtube downloader
 
-    ventoy-full # ventoy (rufus alternatives)
+    ventoy-full-qt # ventoy (rufus alternatives)
 
     zig # programming language
     # # vim                                               # Text editor (commented out)
@@ -229,6 +229,6 @@
   ];
 
   nixpkgs.config.permittedInsecurePackages = [
-    "ventoy-1.1.10"
+    "ventoy-qt5-1.1.10"
   ];
 }
