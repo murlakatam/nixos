@@ -9,6 +9,7 @@
     inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.claude-code
     inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.herdr # herdr TUI
     inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.herdr-app # herdr GUI (bundles herdr-core)
+    inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.ccstatusline # claude code statusline
     yazi
     yaziPlugins.wl-clipboard
     #inputs.nix-inspect.packages.${pkgs.system}.default
