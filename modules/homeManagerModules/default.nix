@@ -13,5 +13,6 @@
     # ./opencode.nix
     ./vscode.nix
     ./ccstatusline
+    ./claude-skills.nix
   ];
 }
