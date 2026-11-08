@@ -33,7 +33,8 @@ nixos-rebuild-ai() {
     cd "$configDir" || exit 1
     alejandra . >/dev/null 2>&1 # format (best-effort; noise suppressed)
     # Absolute path MUST match the sudoers Cmnd_Alias verbatim (see yubikey.nix).
-    sudo /run/current-system/sw/bin/nixos-rebuild-ai-root
+    # -n: never prompt (rule is NOPASSWD); fail fast if it isn't active.
+    sudo -n /run/current-system/sw/bin/nixos-rebuild-ai-root
   ) >"$log" 2>&1
   rc=$?
 

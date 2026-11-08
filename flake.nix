@@ -7,10 +7,10 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nix-index-database = {
-      url = "github:nix-community/nix-index-database";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # nix-index-database = {
+    #   url = "github:nix-community/nix-index-database";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
     nix-ld = {
       url = "github:Mic92/nix-ld";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -23,16 +23,12 @@
     nix-flatpak = {
       url = "github:gmodena/nix-flatpak/?ref=latest";
     };
-    opencode = {
-      url = "github:anomalyco/opencode";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     ohMyOpencodeSrc = {
       url = "github:code-yeongyu/oh-my-opencode";
       flake = false;
     };
-    antigravity = {
-      url = "github:jacopone/antigravity-nix";
+    llm-agents = {
+      url = "github:numtide/llm-agents.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     asus-dialpad-driver = {
@@ -45,7 +41,7 @@
     nixpkgs,
     home-manager,
     nix-ld,
-    nix-index-database,
+    # nix-index-database,
     nix-flatpak,
     ...
   } @ inputs: let
@@ -102,7 +98,7 @@
           nix-flatpak.nixosModules.nix-flatpak
           ./hosts/${host}/config.nix
           home-manager.nixosModules.home-manager
-          nix-index-database.nixosModules.nix-index
+          # nix-index-database.nixosModules.nix-index
           {
             # Apply overlays to nixpkgs
             nixpkgs.overlays = builtins.attrValues outputs.overlays;

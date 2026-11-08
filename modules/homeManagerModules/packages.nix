@@ -52,7 +52,6 @@
     jetbrains.goland
     jetbrains.rider
     jetbrains.webstorm
-    wasistlos
     zenity # For winetricks dialogs 1
   ];
 }

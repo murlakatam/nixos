@@ -5,8 +5,10 @@
   ...
 }: {
   environment.systemPackages = with pkgs; [
-    opencode
-    inputs.antigravity.packages.${pkgs.stdenv.hostPlatform.system}.default
+    #inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.opencode
+    inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.claude-code
+    inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.herdr # herdr TUI
+    inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.herdr-app # herdr GUI (bundles herdr-core)
     yazi
     yaziPlugins.wl-clipboard
     #inputs.nix-inspect.packages.${pkgs.system}.default
@@ -22,7 +24,6 @@
     brightnessctl # command line tool to adjust brightness
     cabextract # needed by winetricks
     cloudflared # cloudflare client
-    cypress #cypress
     csharp-ls # C# Language Server
     dconf-editor # Configuration editor for dconf
     dconf2nix # Convert dconf settings to Nix
@@ -66,8 +67,8 @@
     nerd-fonts.jetbrains-mono
     nixd # nix lsp for editors
     nixfmt # nix formatter
-    nodejs_22 #node
-    nodePackages.prettier #node d
+    # nodejs_22 #node
+    # nodePackages.prettier #node d
     ntfs3g # file system
     #omnisharp-roslyn
     openldap # needed for games or lanuchers that usese LDAP for auth
@@ -110,7 +111,7 @@
     xml2 # cli utils for working with xml
     yt-dlp # youtube downloader
 
-    ventoy-full-qt # ventoy (rufus alternatives)
+    #ventoy-full-qt # ventoy (rufus alternatives)
 
     zig # programming language
     # # vim                                               # Text editor (commented out)
@@ -228,7 +229,7 @@
     # transmission_4-gtk                                  # BitTorrent client
   ];
 
-  nixpkgs.config.permittedInsecurePackages = [
-    "ventoy-qt5-1.1.10"
-  ];
+  # nixpkgs.config.permittedInsecurePackages = [
+  #   "ventoy-qt5-1.1.10"
+  # ];
 }

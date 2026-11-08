@@ -10,7 +10,7 @@
     ./tmux.nix
     ./emoji.nix
     ./zed.nix
-    ./opencode.nix
+    # ./opencode.nix
     ./vscode.nix
   ];
 }

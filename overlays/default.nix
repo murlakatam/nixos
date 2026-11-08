@@ -7,20 +7,20 @@
   # You can change versions, add patches, set compilation flags, anything really.
   # https://nixos.wiki/wiki/Overlays
   modifications = final: prev: {
-    # Fix for opencode hash mismatch
-    opencode =
-      inputs.opencode.packages.${final.stdenv.hostPlatform.system}.default.overrideAttrs
-      (oldAttrs: {
-        node_modules = oldAttrs.node_modules.overrideAttrs (oldModules: {
-          outputHash = "sha256-4kjoJ06VNvHltPHfzQRBG0bC6R39jao10ffGzrNZ230=";
-        });
-      });
+    # # Fix for opencode hash mismatch
+    # opencode =
+    #   inputs.opencode.packages.${final.stdenv.hostPlatform.system}.default.overrideAttrs
+    #   (oldAttrs: {
+    #     node_modules = oldAttrs.node_modules.overrideAttrs (oldModules: {
+    #       outputHash = "sha256-4kjoJ06VNvHltPHfzQRBG0bC6R39jao10ffGzrNZ230=";
+    #     });
+    #   });
   };
 
   azure-creds = import ./azure-creds-overlay.nix;
   azure-cli = import ./azure-cli-overlay.nix;
   # netpad = import ./netpad-overlay.nix;
-  oh-my-opencode = import ./oh-my-opencode-overlay.nix {inherit inputs;};
+  # oh-my-opencode = import ./oh-my-opencode-overlay.nix {inherit inputs;};
   # Helix nightly overlay
   # helix-nightly = final: prev: {
   #   helix-nightly = prev.helix.overrideAttrs (oldAttrs: {

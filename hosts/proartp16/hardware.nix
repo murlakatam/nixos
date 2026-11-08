@@ -13,7 +13,6 @@
 
   boot.initrd.availableKernelModules = ["nvme" "xhci_pci" "thunderbolt" "usbhid" "usb_storage" "sd_mod" "sdhci_pci" "aesni_intel" "cryptd"];
   boot.initrd.kernelModules = ["usbhid" "hid_generic"];
-  boot.initrd.systemd.enable = true;
 
   boot.kernelModules = ["kvm-amd" "asus-ec-sensors"];
 

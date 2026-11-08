@@ -74,8 +74,6 @@ in {
     initContent = lib.mkMerge [
       (lib.mkBefore ''
         eval "$(${pkgs.oh-my-posh}/bin/oh-my-posh init zsh --config ${./catppuccin.omp.json})"
-        export CYPRESS_INSTALL_BINARY=0
-        export CYPRESS_RUN_BINARY=${pkgs.cypress}/bin/Cypress
         export NIX_LD_LIBRARY_PATH="${globalEnvVars.NIX_LD_LIBRARY_PATH}"
         export NIX_LD="${globalEnvVars.NIX_LD}"
         # Set DOTNET_ROOT to the location of your dotnet installation
