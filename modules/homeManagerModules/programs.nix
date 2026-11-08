@@ -58,6 +58,8 @@ in {
     };
     firefox = {
       enable = true;
+      # keep the legacy profile location (new default is XDG, needs a manual move)
+      configPath = ".mozilla/firefox";
       languagePacks = [
         "en-GB"
         "be"
@@ -80,6 +82,8 @@ in {
       enableZshIntegration = true;
       # make fzf search hidden files too
       defaultCommand = "ag --hidden --ignore .git -g '' ";
+      # atuin owns Ctrl-R; drop fzf's history widget so they don't fight over it
+      historyWidget.command = "";
     };
     home-manager.enable = true;
     htop.enable = true;
