@@ -12,5 +12,6 @@
     ./zed.nix
     # ./opencode.nix
     ./vscode.nix
+    ./ccstatusline
   ];
 }
