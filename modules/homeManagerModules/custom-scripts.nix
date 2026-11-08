@@ -30,13 +30,17 @@
   };
 
   # token-efficient, non-interactive rebuild wrapper for AI agents.
-  # Substitutes @dotfilesPath@ so the function knows the config dir.
-  home.file.".config/zsh/functions/nixos-rebuild-ai.zsh" = {
-    source = pkgs.replaceVars ../../scripts/nixos-rebuild-ai.zsh {
-      dotfilesPath = dotfilesPath;
-    };
-    executable = true;
-  };
+  # Shipped as a real executable on PATH (not a zsh function) so it works from
+  # any shell, including non-interactive agent shells. The script file defines
+  # the function; the bin wrapper calls it. @dotfilesPath@ is substituted.
+  home.packages = [
+    (pkgs.writeScriptBin "nixos-rebuild-ai" ''
+      #!${pkgs.zsh}/bin/zsh
+      ${builtins.replaceStrings ["@dotfilesPath@"] [dotfilesPath]
+        (builtins.readFile ../../scripts/nixos-rebuild-ai.zsh)}
+      nixos-rebuild-ai "$@"
+    '')
+  ];
 
   home.file."/mnt/Kindle".source =
     config.lib.file.mkOutOfStoreSymlink "/run/media/${username}/Kindle";

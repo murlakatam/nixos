@@ -1,7 +1,7 @@
 ---
 name: nixos-rebuild-ai
 description: Apply/rebuild/switch this NixOS + home-manager config. Use WHENEVER changes in this repo need to be applied ("rebuild", "switch", "make system", "nixos-rebuild", "apply the config", installing a package, testing a module). This is the ONLY approved rebuild path for Claude; it is token-efficient (one line on success).
-allowed-tools: Bash(source ~/.config/zsh/functions/nixos-rebuild-ai.zsh && nixos-rebuild-ai:*)
+allowed-tools: Bash(nixos-rebuild-ai:*)
 ---
 
 # nixos-rebuild-ai — how Claude rebuilds this machine
@@ -14,11 +14,11 @@ non-zero.
 
 ## The exact invocation
 
-`nixos-rebuild-ai` is a zsh **function** loaded only by interactive shells, so it
-is NOT visible in the Bash tool. Always source it in the same command:
+`nixos-rebuild-ai` is an executable on PATH (packaged in
+`modules/homeManagerModules/custom-scripts.nix`), so call it directly:
 
 ```bash
-source ~/.config/zsh/functions/nixos-rebuild-ai.zsh && nixos-rebuild-ai "<commit message>"
+nixos-rebuild-ai "<commit message>"
 ```
 
 Use `timeout: 600000`. If you expect a long local build (see pre-flight), use
