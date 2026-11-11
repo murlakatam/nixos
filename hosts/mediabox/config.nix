@@ -8,6 +8,8 @@
     ./disko.nix
     ./users.nix
     ./secrets.nix
+    ./plex.nix
+    ./tailscale.nix
   ];
 
   networking.hostName = "mediabox";
