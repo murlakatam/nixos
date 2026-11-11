@@ -35,6 +35,13 @@
       url = "github:asus-linux-drivers/asus-dialpad-driver";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nixos-facter-modules = {
+      url = "github:nix-community/nixos-facter-modules";
+    };
   };
   outputs = {
     self,
@@ -80,51 +87,63 @@
 
     overlays = overlays; # Export the overlays attribute set
 
-    nixosConfigurations = {
-      "${host}" = nixpkgs.lib.nixosSystem {
-        specialArgs = {
-          inherit systems;
-          inherit inputs;
-          inherit username;
-          inherit host;
-          inherit outputs;
+    nixosConfigurations = let
+      # Build a NixOS system for the given host name from a module list.
+      mkHost = hostName: modules:
+        nixpkgs.lib.nixosSystem {
+          specialArgs = {
+            inherit systems;
+            inherit inputs;
+            inherit username;
+            host = hostName;
+            inherit outputs;
+          };
+          inherit modules;
         };
-        modules = [
-          # Import global-env-vars.nix inside a module where pkgs is available
-          ({pkgs, ...}: {
-            _module.args.globalEnvVars = mkGlobalEnvVars pkgs;
-          })
-          nix-ld.nixosModules.nix-ld
-          nix-flatpak.nixosModules.nix-flatpak
-          ./hosts/${host}/config.nix
-          home-manager.nixosModules.home-manager
-          # nix-index-database.nixosModules.nix-index
-          {
-            # Apply overlays to nixpkgs
-            nixpkgs.overlays = builtins.attrValues outputs.overlays;
+    in {
+      "${host}" = mkHost host [
+        # Import global-env-vars.nix inside a module where pkgs is available
+        ({pkgs, ...}: {
+          _module.args.globalEnvVars = mkGlobalEnvVars pkgs;
+        })
+        nix-ld.nixosModules.nix-ld
+        nix-flatpak.nixosModules.nix-flatpak
+        ./hosts/${host}/config.nix
+        home-manager.nixosModules.home-manager
+        # nix-index-database.nixosModules.nix-index
+        {
+          # Apply overlays to nixpkgs
+          nixpkgs.overlays = builtins.attrValues outputs.overlays;
 
-            home-manager.extraSpecialArgs = {
-              inherit username;
-              inherit inputs;
-              inherit host;
-              inherit systems;
-              inherit outputs; # Ensure outputs is passed for overlays
-            };
-            home-manager.useUserPackages = true;
-            home-manager.backupFileExtension = "backup";
-            home-manager.users.${username} = {pkgs, ...}: {
-              # Define globalEnvVars inside the Home Manager configuration
-              _module.args.globalEnvVars = mkGlobalEnvVars pkgs;
-              imports = [
-                nix-flatpak.homeManagerModules.nix-flatpak
-                ./hosts/${host}/home.nix
-              ];
-            };
-            nixpkgs.config.allowUnfree = true;
-            programs.nix-ld.dev.enable = true;
-          }
-        ];
-      };
+          home-manager.extraSpecialArgs = {
+            inherit username;
+            inherit inputs;
+            inherit host;
+            inherit systems;
+            inherit outputs; # Ensure outputs is passed for overlays
+          };
+          home-manager.useUserPackages = true;
+          home-manager.backupFileExtension = "backup";
+          home-manager.users.${username} = {pkgs, ...}: {
+            # Define globalEnvVars inside the Home Manager configuration
+            _module.args.globalEnvVars = mkGlobalEnvVars pkgs;
+            imports = [
+              nix-flatpak.homeManagerModules.nix-flatpak
+              ./hosts/${host}/home.nix
+            ];
+          };
+          nixpkgs.config.allowUnfree = true;
+          programs.nix-ld.dev.enable = true;
+        }
+      ];
+
+      mediabox = mkHost "mediabox" [
+        inputs.disko.nixosModules.disko
+        inputs.nixos-facter-modules.nixosModules.facter
+        inputs.sops-nix.nixosModules.sops
+        {nixpkgs.config.allowUnfree = true;}
+        ./hosts/mediabox/config.nix
+      ];
     };
   };
 }

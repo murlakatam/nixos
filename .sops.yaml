@@ -1,2 +1,9 @@
 keys:
-  -
+  - &admin age1heh2e3nrfhcsy2fxf8yzfkpknxa3tk7ul37vu57d07cjgnh0yy4sg2c6dk
+  - &mediabox age105823kewupwhcepc7qn3hsw86gasdn9glhe690at88ffzc83lfzspu2d60
+creation_rules:
+  - path_regex: secrets/mediabox\.yaml$
+    key_groups:
+      - age:
+          - *admin
+          - *mediabox
