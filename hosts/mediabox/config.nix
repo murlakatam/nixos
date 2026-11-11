@@ -10,6 +10,8 @@
     ./secrets.nix
     ./plex.nix
     ./tailscale.nix
+    ./transmission.nix
+    ./cloudflared.nix
   ];
 
   networking.hostName = "mediabox";
@@ -120,12 +122,23 @@
     wifi.powersave = false;
     ensureProfiles = {
       environmentFiles = [config.sops.secrets."wifi-env".path];
+      # Primary link: ethernet. Wi-Fi is a manual fallback (`nmcli con up wifi`).
+      profiles.ethernet = {
+        connection = {
+          id = "ethernet";
+          type = "ethernet";
+          interface-name = "enp3s0";
+          autoconnect = true;
+        };
+        ipv4.method = "auto";
+        ipv6.method = "auto";
+      };
       profiles.wifi = {
         connection = {
           id = "wifi";
           type = "wifi";
           interface-name = "wlp2s0";
-          autoconnect = true;
+          autoconnect = false;
         };
         wifi = {
           mode = "infrastructure";
