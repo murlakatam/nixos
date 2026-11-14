@@ -11,8 +11,8 @@
     backupDir = "/srv/backup/vaultwarden";
     environmentFile = config.sops.secrets."vaultwarden-env".path;
     config = {
-      # TEMPORARY hostname during setup/import; becomes https://bw.murfly.me at cutover.
-      DOMAIN = "https://bw-new.murfly.me";
+      # Public hostname (cut over from the NUC).
+      DOMAIN = "https://bw.murfly.me";
       ROCKET_ADDRESS = "127.0.0.1";
       ROCKET_PORT = 8222;
       # Accounts are created through admin-panel invites.
