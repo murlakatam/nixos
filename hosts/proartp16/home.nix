@@ -90,6 +90,13 @@ in {
     inputs.herdr-nix.homeManagerModules.default
   ];
 
+  # herdr flavours (private herdr-nix flake; setup skills: herdr-nix-app/-tui/-core).
+  herdr-nix = {
+    app.enable = true; # implies core: Claude resumes after reboot
+    tui.enable = true;
+    machines = ["mediabox"];
+  };
+
   #Configure GNOME settings via Home Manager
   #Kraken Wanker
   dconf.settings = {

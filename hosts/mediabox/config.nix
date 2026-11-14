@@ -17,6 +17,7 @@
     ./tor.nix
     ./prowlarr.nix
     ./telegram-requests.nix
+    ./herdr.nix
   ];
 
   networking.hostName = "mediabox";
