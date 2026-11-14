@@ -1,4 +1,17 @@
 {pkgs, ...}: {
+  # Run the cod daemon as a service: when many shells start at once (herdr app
+  # restoring tabs) each `cod init` races to spawn its own daemon and all but one
+  # die on the flock with `"cod daemonize" error: exit status 2`.
+  systemd.user.services.cod = {
+    Unit.Description = "cod completion daemon";
+    Service = {
+      ExecStart = "${pkgs.cod}/bin/cod daemon --foreground";
+      Restart = "on-failure";
+      RestartSec = 2;
+    };
+    Install.WantedBy = ["default.target"];
+  };
+
   home.packages = with pkgs; [
     avalonia-ilspy #dotpeek alternative
     bruno # testing puppy
