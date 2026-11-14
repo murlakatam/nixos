@@ -6,8 +6,9 @@
     Unit.Description = "cod completion daemon";
     Service = {
       ExecStart = "${pkgs.cod}/bin/cod daemon --foreground";
-      Restart = "on-failure";
-      RestartSec = 2;
+      # cod exits "normally" once its last attached shell closes; bring it back.
+      Restart = "always";
+      RestartSec = 1;
     };
     Install.WantedBy = ["default.target"];
   };
