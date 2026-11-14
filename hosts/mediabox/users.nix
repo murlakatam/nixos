@@ -13,4 +13,11 @@
   security.pam.sshAgentAuth.enable = true;
   security.pam.services.sudo.sshAgentAuth = true;
   security.sudo.wheelNeedsPassword = true;
+  # Fallback: without an agent, sudo asks eugene's Unix password (pam_unix after
+  # ssh_agent_auth). That password was set by hand (`sudo passwd eugene`, 2026-11-14)
+  # and lives only in /etc/shadow; it survives rebuilds because mutableUsers = true.
+  # TODO: for full reproducibility (reinstall / mutableUsers = false), move it to sops:
+  #   sops.secrets.eugene-password.neededForUsers = true;  # value: `mkpasswd -m yescrypt`
+  #   users.users.eugene.hashedPasswordFile = config.sops.secrets.eugene-password.path;
+  # (add `config` to the module args; after that, don't change it with passwd).
 }

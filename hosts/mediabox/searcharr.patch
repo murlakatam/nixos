@@ -1,0 +1,86 @@
+diff --git a/bot/searcharr_bot.py b/bot/searcharr_bot.py
+--- a/bot/searcharr_bot.py
++++ b/bot/searcharr_bot.py
+@@ -5,7 +5,13 @@
+ By Todd Roberts
+ https://github.com/toddrob99/searcharr
+ """
+-from telegram.ext import ApplicationBuilder, CallbackQueryHandler
++from telegram import Update
++from telegram.ext import (
++    ApplicationBuilder,
++    ApplicationHandlerStop,
++    CallbackQueryHandler,
++    TypeHandler,
++)
+ 
+ from api.sonarr import Sonarr
+ from api.radarr import Radarr
+@@ -117,6 +123,22 @@
+         # Build the application
+         application = ApplicationBuilder().token(self.token).job_queue(None).build()
+         
++        # NIX PATCH (security): Telegram user-ID allow-list, checked BEFORE every other handler
++        # (handler group -1) for all updates: commands, callbacks, everything. An update from
++        # anyone not in settings.searcharr_allowed_user_ids is dropped silently, so the shared
++        # password alone is not enough. Fails closed: missing/empty list allows nobody.
++        allowed = {int(i) for i in getattr(settings, "searcharr_allowed_user_ids", [])}
++
++        async def _allow_list_gate(update, context):
++            user = update.effective_user
++            if user is None or user.id not in allowed:
++                self.logger.warning(
++                    f"Dropped update from non-allow-listed user id={getattr(user, 'id', None)}"
++                )
++                raise ApplicationHandlerStop
++
++        application.add_handler(TypeHandler(Update, _allow_list_gate), group=-1)
++
+         # Register command handlers from each module
+         register_commands(application, self)
+         
+diff --git a/bot/utils/database.py b/bot/utils/database.py
+--- a/bot/utils/database.py
++++ b/bot/utils/database.py
+@@ -14,7 +14,8 @@
+ 
+ logger = set_up_logger("database")
+ 
+-DBPATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))), "data")
++# NIX PATCH: writable state dir (the source tree is read-only)
++DBPATH = os.environ.get("SEARCHARR_DATA_DIR") or os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))), "data")
+ DBFILE = "searcharr.db"
+ DBLOCK = Lock()
+ 
+diff --git a/bot/utils/log.py b/bot/utils/log.py
+--- a/bot/utils/log.py
++++ b/bot/utils/log.py
+@@ -59,8 +59,10 @@
+     )
+ 
+     # Set up file logging
++    # NIX PATCH: logs go under the writable state dir (the source tree is read-only)
+     log_dir = os.path.join(
+-        os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))),
++        os.environ.get("SEARCHARR_DATA_DIR")
++        or os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))),
+         "logs",
+     )
+ 
+diff --git a/config/settings_loader.py b/config/settings_loader.py
+--- a/config/settings_loader.py
++++ b/config/settings_loader.py
+@@ -11,7 +11,12 @@
+ import sys
+ 
+ _PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+-_DATA_SETTINGS = os.path.join(_PROJECT_ROOT, "data", "settings.py")
++# NIX PATCH: the source tree is read-only. SEARCHARR_DATA_DIR is the writable state dir and
++# SEARCHARR_SETTINGS the (secret-free, store-resident) settings file.
++_DATA_DIR = os.environ.get("SEARCHARR_DATA_DIR", os.path.join(_PROJECT_ROOT, "data"))
++_DATA_SETTINGS = os.environ.get(
++    "SEARCHARR_SETTINGS", os.path.join(_DATA_DIR, "settings.py")
++)
+ _ROOT_SETTINGS = os.path.join(_PROJECT_ROOT, "settings.py")
+ 
+ 

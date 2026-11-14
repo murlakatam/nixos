@@ -14,6 +14,9 @@
     ./cloudflared.nix
     ./vaultwarden.nix
     ./arr.nix
+    ./tor.nix
+    ./prowlarr.nix
+    ./telegram-requests.nix
   ];
 
   networking.hostName = "mediabox";
