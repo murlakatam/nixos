@@ -23,7 +23,11 @@
     enable = true;
     port = 8191;
   };
-  systemd.services.flaresolverr.environment.HOST = "127.0.0.1";
+  systemd.services.flaresolverr.environment = {
+    HOST = "127.0.0.1";
+    # Chromium goes out via Tor (socks5 = remote DNS), for sites blocked by the ISP, e.g. rutracker.
+    PROXY_URL = "socks5://127.0.0.1:9050";
+  };
 
   networking.firewall.interfaces.enp3s0.allowedTCPPorts = [9696];
 }
