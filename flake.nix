@@ -42,6 +42,10 @@
     nixos-facter-modules = {
       url = "github:nix-community/nixos-facter-modules";
     };
+    # Private: herdr skill stack incl. the vendored Sharesies ai-marketplace
+    # herdr plugin. Root can't fetch it, so nixos-rebuild-ai / `make system`
+    # run `nix flake archive` as the user first to put it in the store.
+    herdr-nix.url = "git+ssh://git@github.com/murlakatam/herdr-nix";
   };
   outputs = {
     self,

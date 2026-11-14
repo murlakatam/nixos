@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  inputs,
   username,
   outputs,
   globalEnvVars,
@@ -86,6 +87,7 @@ in {
     ../../modules/shells
     ../../modules/terms
     ../../modules/homeManagerModules
+    inputs.herdr-nix.homeManagerModules.default
   ];
 
   #Configure GNOME settings via Home Manager

@@ -87,8 +87,10 @@ define REBUILD_ROUTINE
 	echo "--- 3. Updating and Building ---" && \
 	if [ "$(UPDATE)" = "true" ]; then \
 		echo "🔄 Updating flake inputs..."; \
-		sudo nix flake update; \
+		nix flake update; \
 	fi && \
+	echo "📦 Archiving flake inputs (root can't fetch the private herdr-nix)..." && \
+	nix flake archive . >/dev/null && \
 	echo "🚀 Starting build..." && \
 	$(1) && \
 	\

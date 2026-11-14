@@ -6,15 +6,10 @@
 {
   pkgs,
   lib,
-  inputs,
   ...
 }: let
-  herdr = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.herdr;
-  # `herdr --skill` prints the SKILL.md matching the installed herdr version.
-  herdrSkill = pkgs.runCommand "herdr-claude-skill" {} ''
-    HOME=$TMPDIR ${herdr}/bin/herdr --skill > $out
-  '';
-
+  # herdr skills (herdr, herdr-subagent, herd-new, ...) come from the private
+  # herdr-nix flake input, imported in hosts/proartp16/home.nix.
   terraformSkill = pkgs.fetchFromGitHub {
     owner = "antonbabenko";
     repo = "terraform-skill";
@@ -36,7 +31,6 @@ in {
     (map (name: skillDir name (vendoredDir + "/${name}")) vendored)
     ++ [
       (skillDir "terraform-skill" terraformSkill)
-      {".claude/skills/herdr/SKILL.md".source = herdrSkill;}
     ]
   );
 }

@@ -32,6 +32,9 @@ nixos-rebuild-ai() {
   (
     cd "$configDir" || exit 1
     alejandra . >/dev/null 2>&1 # format (best-effort; noise suppressed)
+    # Root has no GitHub key: put the private herdr-nix input (and every other
+    # locked input) in the store as this user, so root's eval never fetches.
+    nix flake archive . >/dev/null || exit 1
     # Absolute path MUST match the sudoers Cmnd_Alias verbatim (see yubikey.nix).
     # -n: never prompt (rule is NOPASSWD); fail fast if it isn't active.
     sudo -n /run/current-system/sw/bin/nixos-rebuild-ai-root

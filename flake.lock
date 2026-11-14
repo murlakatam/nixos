@@ -95,6 +95,21 @@
         "type": "github"
       }
     },
+    "herdr-nix": {
+      "locked": {
+        "lastModified": 1794656512,
+        "narHash": "sha256-e8o0kL1WSTsjZ5PIOMtZP8o4PcfKdMQgg7GZlqQ9eD4=",
+        "ref": "refs/heads/main",
+        "rev": "6c23116b6e5cf59bc8b9e5b297d242bf4e0e268c",
+        "revCount": 2,
+        "type": "git",
+        "url": "ssh://git@github.com/murlakatam/herdr-nix"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/murlakatam/herdr-nix"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -226,6 +241,7 @@
       "inputs": {
         "asus-dialpad-driver": "asus-dialpad-driver",
         "disko": "disko",
+        "herdr-nix": "herdr-nix",
         "home-manager": "home-manager",
         "llm-agents": "llm-agents",
         "nix-flatpak": "nix-flatpak",

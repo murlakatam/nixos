@@ -7,7 +7,7 @@
   environment.systemPackages = with pkgs; [
     #inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.opencode
     inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.claude-code
-    inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.herdr # herdr TUI
+    # herdr TUI: installed shell-wrapped by the herdr-nix home-manager module
     inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.herdr-app # herdr GUI (bundles herdr-core)
     inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.ccstatusline # claude code statusline
     yazi
