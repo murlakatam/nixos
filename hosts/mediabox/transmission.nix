@@ -20,7 +20,7 @@
       anti-brute-force-enabled = true;
       anti-brute-force-threshold = 10;
       peer-port = 51413;
-      umask = "022";
+      umask = "002"; # group media must be able to write (hardlinks, protected_hardlinks)
     };
   };
 

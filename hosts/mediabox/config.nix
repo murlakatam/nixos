@@ -13,6 +13,7 @@
     ./transmission.nix
     ./cloudflared.nix
     ./vaultwarden.nix
+    ./arr.nix
   ];
 
   networking.hostName = "mediabox";

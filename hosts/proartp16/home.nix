@@ -39,7 +39,13 @@ in {
 
       Host ssh-mediabox.murfly.me
         User eugene
+        ForwardAgent yes
         ProxyCommand ${pkgs.cloudflared}/bin/cloudflared access ssh --hostname %h
+
+      Host mediabox 192.168.0.81
+        HostName 192.168.0.81
+        User eugene
+        ForwardAgent yes
     '';
   };
 

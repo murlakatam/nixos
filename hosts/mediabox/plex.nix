@@ -59,7 +59,7 @@
     options = ["bind" "nofail" "x-systemd.requires-mounts-for=/srv/media"];
   };
 
-  systemd.tmpfiles.rules = ["d /srv/media/Media 0755 root root -"];
+  systemd.tmpfiles.rules = ["d /srv/media/Media 2775 root media -"];
 
   # Cutover rsync (run by hand): exclude Cache and Codecs.
 }

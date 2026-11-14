@@ -8,5 +8,9 @@
     ];
   };
   programs.zsh.enable = true;
-  security.sudo.wheelNeedsPassword = false;
+  # sudo is authenticated by the forwarded SSH agent (key must be in the root-owned
+  # /etc/ssh/authorized_keys.d/%u). No agent forwarded => no sudo.
+  security.pam.sshAgentAuth.enable = true;
+  security.pam.services.sudo.sshAgentAuth = true;
+  security.sudo.wheelNeedsPassword = true;
 }
