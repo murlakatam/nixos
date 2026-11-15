@@ -78,6 +78,7 @@
     pciutils
     pgadmin4-desktopmode
     poppler # pdf redneding lib
+    python3 # same as the work laptop's python3 (3.14 at the pinned nixpkgs)
     python313Packages.azure-mgmt-containerservice # seems like a dependency for az.cli now
     SDL2 # A library for low-level access to audio, keyboard, mouse,
     sshfs # secure file system over SSH
