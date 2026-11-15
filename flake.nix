@@ -96,6 +96,12 @@
 
     overlays = overlays; # Export the overlays attribute set
 
+    # Shared NixOS modules (options under dotfiles.*), importable by any host/flake.
+    nixosModules = {
+      tailscale = ./modules/shared/nixos/tailscale.nix;
+      default = {imports = [./modules/shared/nixos/tailscale.nix];};
+    };
+
     nixosConfigurations = let
       # Build a NixOS system for the given host name from a module list.
       mkHost = hostName: modules:
@@ -107,7 +113,7 @@
             host = hostName;
             inherit outputs;
           };
-          inherit modules;
+          modules = [self.nixosModules.default] ++ modules;
         };
     in {
       "${host}" = mkHost host [

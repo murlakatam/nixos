@@ -9,7 +9,6 @@
     ./users.nix
     ./secrets.nix
     ./plex.nix
-    ./tailscale.nix
     ./transmission.nix
     ./cloudflared.nix
     ./vaultwarden.nix
@@ -24,6 +23,12 @@
   # declarr: sync (WRITES) after a verified-zero --diff; backups in /srv/backup/arr/2026-11-15, restore: docs/arr-restore.md.
   mediabox.declarr.enable = true;
   mediabox.declarr.sync = true;
+
+  # Tailnet: reach Plex/SSH over tailscale0 without opening them on LAN/WAN.
+  dotfiles.tailscale = {
+    enable = true;
+    trustTailnet = true;
+  };
 
   networking.hostName = "mediabox";
   system.stateVersion = "26.05";

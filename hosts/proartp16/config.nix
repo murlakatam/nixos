@@ -86,6 +86,12 @@ in {
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
 
+  # Tailscale + Tailscale SSH (no sshd); tailnet is NOT trusted on the firewall.
+  dotfiles.tailscale = {
+    enable = true;
+    ssh = true;
+  };
+
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
