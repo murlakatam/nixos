@@ -23,7 +23,8 @@
   # declarr resolves "DECLARR_SECRET_FILE_<X>" to the contents of the file named by env var <that>.
   sec = key: "DECLARR_SECRET_FILE_${secretNames.${key}}";
 
-  tags = ["flaresolverr"]; # unused tag, kept so v1 == live (removed in the v2 cleanup)
+  # Top-level tags list is declared (empty), so declarr deletes tags nothing uses and the config does not declare.
+  tags = [];
 
   plexFields = {
     host = "localhost";
@@ -142,15 +143,6 @@
           implementation = "FlareSolverr";
           tags = ["flare"];
           fields.requestTimeout = 180;
-        };
-        FlareSolverrViaTor = {
-          name = "FlareSolverrViaTor";
-          implementation = "FlareSolverr";
-          tags = ["flaretor"];
-          fields = {
-            host = "http://localhost:8192";
-            requestTimeout = 180;
-          };
         };
         tor = {
           name = "tor";
