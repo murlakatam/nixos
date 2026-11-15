@@ -103,6 +103,12 @@ in {
     app.enable = true; # implies core: Claude resumes after reboot
     tui.enable = true;
     machines = ["mediabox"];
+    # hc machines (name -> ssh target), added on activation if missing.
+    # work is forward-only: its WARP blocks connections back into the tailnet.
+    hcMachines = {
+      work = "work";
+      mediabox = "mediabox";
+    };
   };
 
   #Configure GNOME settings via Home Manager
