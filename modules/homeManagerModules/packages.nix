@@ -30,7 +30,6 @@
           sdk_10_0
         ]))
     tree # pretty print directories
-    fastfetch # flexx your OS : alternative to freshly deceased neofetch
     gimp-with-plugins
     (google-chrome.override {
       commandLineArgs = [

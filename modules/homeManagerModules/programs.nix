@@ -25,22 +25,6 @@ in {
         theme = "catppucin-mocha";
       };
     };
-    btop = {
-      enable = true;
-      settings = {vim_keys = true;};
-    };
-    bottom = {
-      enable = true;
-      settings = {
-        flags = {
-          avg_cpu = true;
-          color = "gruvbox";
-          group_processes = true;
-          tree = true;
-          temperature_type = "c";
-        };
-      };
-    };
     direnv = {
       enable = true;
       enableZshIntegration = true;
@@ -86,7 +70,6 @@ in {
       historyWidget.command = "";
     };
     home-manager.enable = true;
-    htop.enable = true;
     oh-my-posh = {
       enable = true;
       enableZshIntegration = true;

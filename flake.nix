@@ -102,6 +102,9 @@
       default = {imports = [./modules/shared/nixos/tailscale.nix];};
     };
 
+    # Shared home-manager modules (options under dotfiles.*); see modules/shared/home/default.nix.
+    homeManagerModules = import ./modules/shared/home {inherit inputs;};
+
     nixosConfigurations = let
       # Build a NixOS system for the given host name from a module list.
       mkHost = hostName: modules:
