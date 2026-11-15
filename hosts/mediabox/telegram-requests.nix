@@ -71,7 +71,7 @@
     sonarr_quality_profile_id = ${pyList cfg.qualityProfiles}
     sonarr_add_monitored = True
     sonarr_search_on_add = True
-    sonarr_tag_with_username = True
+    sonarr_tag_with_username = False  # Radarr rejects tags with chars outside a-z0-9- (Telegram usernames have _ and capitals)
     sonarr_forced_tags = []
     sonarr_allow_user_to_select_tags = False
     sonarr_user_selectable_tags = []
@@ -85,7 +85,7 @@
     radarr_quality_profile_id = ${pyList cfg.qualityProfiles}
     radarr_add_monitored = True
     radarr_search_on_add = True
-    radarr_tag_with_username = True
+    radarr_tag_with_username = False  # Radarr rejects tags with chars outside a-z0-9- (Telegram usernames have _ and capitals)
     radarr_forced_tags = []
     radarr_allow_user_to_select_tags = False
     radarr_user_selectable_tags = []
