@@ -46,6 +46,11 @@
     # herdr plugin. Root can't fetch it, so nixos-rebuild-ai / `make system`
     # run `nix flake archive` as the user first to put it in the store.
     herdr-nix.url = "git+ssh://git@github.com/murlakatam/herdr-nix";
+    # Declarative Radarr/Sonarr/Prowlarr config (fork of upidapi/declarr; adds --diff, bug fixes).
+    declarr = {
+      url = "github:murlakatam/declarr/b885390ccd6bd25b6e578725104202050cfee07d";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
   outputs = {
     self,

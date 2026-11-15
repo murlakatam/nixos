@@ -16,9 +16,14 @@
     ./arr.nix
     ./tor.nix
     ./prowlarr.nix
+    ./declarr.nix
     ./telegram-requests.nix
     ./herdr.nix
   ];
+
+  # declarr: sync (WRITES) after a verified-zero --diff; backups in /srv/backup/arr/2026-11-15, restore: docs/arr-restore.md.
+  mediabox.declarr.enable = true;
+  mediabox.declarr.sync = true;
 
   networking.hostName = "mediabox";
   system.stateVersion = "26.05";
@@ -34,6 +39,13 @@
     trusted-users = ["root" "eugene"];
   };
   nixpkgs.config.allowUnfree = true;
+
+  # /srv/backup must stay traversable (0755): service users (vaultwarden, ...) write their own
+  # 07x0 subdirs. A hand-made `install -d -m 0700` once broke the vaultwarden backup.
+  systemd.tmpfiles.rules = [
+    "z /srv/backup 0755 root root -"
+    "d /srv/backup/arr 0700 root root -"
+  ];
 
   # TEMPORARY until a dedicated media disk is added: /srv/media is a btrfs
   # subvolume @media on the backup HDD.
