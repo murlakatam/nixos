@@ -35,6 +35,14 @@ in {
   home.file.".ssh/config" = {
     # Use .text for inline content
     text = ''
+      # Untracked per-machine hosts (real HostNames kept out of this public repo),
+      # e.g. ~/.ssh/config.d/work: `Host work` / `HostName <magicdns>`.
+      Include ~/.ssh/config.d/*
+
+      # Work laptop over Tailscale SSH (HostName in ~/.ssh/config.d/work); used by hc.
+      Host work
+        User eugene
+
       Host ssh.murfly.me
         ProxyCommand ${pkgs.cloudflared}/bin/cloudflared access ssh --hostname %h
 
