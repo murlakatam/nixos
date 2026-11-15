@@ -48,9 +48,46 @@
     };
   };
 
+  # Size caps in MB per minute of runtime (Radarr: film runtime, Sonarr: episode runtime).
+  # Targets: 1080p film <= ~8 GB (68 MB/min * 120 min), 1080p episode <= ~2 GB (45 MB/min * 45 min);
+  # 720p is half of that. Only the qualities in the "HD - 720p/1080p" profile are declared (names are
+  # the API titles); 2160p/others are left as they are because no family profile can pick them.
+  sizes = names: pref: max:
+    lib.genAttrs names (_: {
+      preferredSize = pref;
+      maxSize = max;
+    });
+  radarrSizes =
+    sizes ["HDTV-720p" "WEBDL-720p" "WEBRip-720p" "Bluray-720p"] 27 34
+    // sizes ["HDTV-1080p" "WEBDL-1080p" "WEBRip-1080p" "Bluray-1080p" "Remux-1080p"] 55 68;
+  sonarrSizes =
+    sizes ["HDTV-720p" "WEBDL-720p" "WEBRip-720p" "Bluray-720p"] 17 22
+    // sizes ["HDTV-1080p" "WEBDL-1080p" "WEBRip-1080p" "Bluray-1080p"] 35 45;
+
+  # Prefer HEVC/x265 within the same quality tier; x264 stays allowed (minFormatScore stays 0).
+  hevcFormat = {
+    HEVC = {
+      includeCustomFormatWhenRenaming = false;
+      specifications = [
+        {
+          name = "x265/HEVC";
+          implementation = "ReleaseTitleSpecification";
+          negate = false;
+          required = false;
+          fields.value = "(?i)\\b(x265|h[ ._-]?265|hevc)\\b";
+        }
+      ];
+    };
+  };
+  hevcProfile."HD - 720p/1080p" = {
+    formatScores.HEVC = 100;
+    minFormatScore = 0;
+  };
+
   # Absent top-level keys are left untouched by declarr; present ones are made EXACT (extras deleted).
   # Deliberately not declared: radarr/sonarr `indexer` (Prowlarr pushes them), qualityProfile,
-  # customFormat, qualityDefinition (v1 scope).
+  # customFormat (profilarr-compiled, would delete the stock profiles). Sizes, the HEVC format and its score are
+  # declared via qualityDefinition / customFormatSet / qualityProfilePatch (fork, non-destructive).
   declarrConfig = {
     declarr.globalResolvePaths = [];
 
@@ -60,6 +97,9 @@
         url = "http://127.0.0.1:7878";
       };
       config.host.apiKey = sec "arr-radarr-apikey";
+      qualityDefinition = radarrSizes;
+      customFormatSet = hevcFormat;
+      qualityProfilePatch = hevcProfile;
       downloadClient = transmission {movieImportedCategory = "radarr";};
       rootFolder = [
         "/srv/media/Media/Movies/Regular"
@@ -84,6 +124,9 @@
         url = "http://127.0.0.1:8989";
       };
       config.host.apiKey = sec "arr-sonarr-apikey";
+      qualityDefinition = sonarrSizes;
+      customFormatSet = hevcFormat;
+      qualityProfilePatch = hevcProfile;
       downloadClient = transmission {tvImportedCategory = "sonarr";};
       rootFolder = [
         "/srv/media/Media/TV Shows/Regular"
