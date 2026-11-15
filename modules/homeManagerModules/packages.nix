@@ -20,6 +20,7 @@
     #diff-so-fancy
     cod # turn any --help into completion
     devenv
+    gh # GitHub CLI (forks, PRs)
     (lib.hiPrio (with dotnetCorePackages; #dotnet sdk versions
       
         combinePackages [
