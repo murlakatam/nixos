@@ -145,7 +145,7 @@ diff --git a/lang/be-by.yml b/lang/be-by.yml
 +remove_admin_button: Выдаліць правы адміністратара
 +done: Гатова
 +listing_users_pagination: Спіс карыстальнікаў Searcharr {page_info}.
-+help_sonarr: Выкарыстоўвайце {series_commands} для дадання серыялаў у Sonarr.
-+help_radarr: Выкарыстоўвайце {movie_commands} для дадання фільмаў у Radarr.
++help_sonarr: Выкарыстоўвайце {series_commands}, каб дадаць серыял у Plex.
++help_radarr: Выкарыстоўвайце {movie_commands}, каб дадаць фільм у Plex.
 +no_features: Выбачайце, але ўсе мае функцыі зараз адключаны.
 +admin_help: У вас ёсць правы адміністратара, таму вы можаце выкарыстоўваць {commands} для кіравання карыстальнікамі.
