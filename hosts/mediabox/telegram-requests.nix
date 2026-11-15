@@ -98,8 +98,9 @@
     searcharr-token = "token";
     searcharr-password = "password";
     searcharr-admin-password = "admin-password";
-    searcharr-radarr-api-key = "radarr-api-key";
-    searcharr-sonarr-api-key = "sonarr-api-key";
+    # Shared with declarr (declarr.nix), which pins these across reinstalls.
+    arr-radarr-apikey = "radarr-api-key";
+    arr-sonarr-apikey = "sonarr-api-key";
   };
 in {
   options.local.searcharr = {
@@ -121,7 +122,7 @@ in {
     #   searcharr-token            BotFather token
     #   searcharr-password         shared user password (members send `/start <password>` in a DM with the bot)
     #   searcharr-admin-password   admin password (DM only, never in the group)
-    #   searcharr-radarr-api-key / searcharr-sonarr-api-key   from each config.xml
+    #   arr-radarr-apikey / arr-sonarr-apikey   already declared by declarr.nix, nothing to add
     sops.secrets = lib.mapAttrs (_: _: {}) secrets;
 
     systemd.services.searcharr = {
