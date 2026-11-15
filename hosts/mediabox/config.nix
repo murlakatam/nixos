@@ -24,6 +24,14 @@
   mediabox.declarr.enable = true;
   mediabox.declarr.sync = true;
 
+  # Telegram request bot (Searcharr). IDs are not secret. Add Olga's ID here when known.
+  local.searcharr = {
+    enable = true;
+    allowedUserIds = [
+      680033455 # Eugene
+    ];
+  };
+
   # Tailnet: reach Plex/SSH over tailscale0 without opening them on LAN/WAN.
   dotfiles.tailscale = {
     enable = true;
