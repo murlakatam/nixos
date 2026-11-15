@@ -84,3 +84,68 @@ diff --git a/config/settings_loader.py b/config/settings_loader.py
  _ROOT_SETTINGS = os.path.join(_PROJECT_ROOT, "settings.py")
  
  
+diff --git a/lang/be-by.yml b/lang/be-by.yml
+--- a/lang/be-by.yml
++++ b/lang/be-by.yml
+@@ -0,0 +1,61 @@
++language_ietf: be-by
++language_label: Беларуская
++
++movie: фільм
++series: серыял
++season: сезон
++title: назва
++title_here: назва тут
++password: пароль
++admin_password: пароль адміністратара
++admin_auth_success: Паспяхова аўтарызаваны як адміністратар. Выкарыстоўвайце {commands} для камандаў.
++already_authenticated: Вы ўжо аўтарызаваны. Паспрабуйце {commands} для інфармацыі аб выкарыстанні.
++auth_successful: Аўтарызацыя паспяховая. Выкарыстоўвайце {commands} для камандаў.
++incorrect_pw: Няправільны пароль.
++auth_required: Я вас не ведаю... Калі ласка, аўтарызуйцеся з дапамогай {commands} і паспрабуйце яшчэ раз.
++admin_auth_required: У вас няма правоў адміністратара... Калі ласка, аўтарызуйцеся з дапамогай {commands} і паспрабуйце яшчэ раз.
++radarr_disabled: Выбачайце, але падтрымка фільмаў адключана.
++include_movie_title_in_cmd: Калі ласка, дадайце назву фільма да каманды, напрыклад {commands}
++no_matching_movies: Выбачайце, але я не здолеў знайсці адпаведныя фільмы.
++sonarr_disabled: Выбачайце, але падтрымка серыялаў адключана.
++include_series_title_in_cmd: Калі ласка, дадайце назву серыяла да каманды, напрыклад {commands}
++no_matching_series: Выбачайце, але я не здолеў знайсці адпаведныя серыялы.
++no_users_found: Выбачайце, але я не здолеў знайсці карыстальнікаў. Нешта пайшло не так...
++convo_not_found: Я атрымаў вашу каманду, але не пазнаю размову. Калі ласка, пачніце спачатку.
++search_canceled: Пошук скасаваны!
++no_root_folders: "Памылка пры даданні {kind}: няма ўключаных каранёвых папак для {app}! Калі ласка, праверце вашу канфігурацыю Searcharr і паспрабуйце яшчэ раз."
++no_quality_profiles: "Памылка пры даданні {kind}: няма ўключаных профіляў якасці для {app}! Калі ласка, праверце вашу канфігурацыю Searcharr і паспрабуйце яшчэ раз."
++no_language_profiles: "Памылка пры даданні {kind}: для {app} не ўключаны моўныя профілі! Праверце налады Searcharr і паўтарыце спробу."
++all_seasons: Усе сезоны
++first_season: Толькі першы сезон
++latest_season: Толькі апошні сезон
++added: "Паспяхова дададзена: {title}!"
++unknown_error_adding: Адбылася нечаканая памылка пры даданні {kind}!
++removed_user: Паспяхова выдалены ўвесь доступ для карыстальніка [{user}]!
++unknown_error_removing_user: Адбылася нечаканая памылка пры выдаленні карыстальніка [{user}]!
++added_admin_access: Дададзены правы адміністратара для карыстальніка [{user}]!
++unknown_error_adding_admin: Адбылася нечаканая памылка пры даданні правоў адміністратара для карыстальніка [{user}]!
++removed_admin_access: Выдалены правы адміністратара для карыстальніка [{user}]!
++unknown_error_removing_admin: Адбылася нечаканая памылка пры выдаленні правоў адміністратара для карыстальніка [{user}]!
++prev_button: < Папярэд.
++next_button: Наст. >
++add_tag_button: "Дадаць тэг: {tag}"
++finished_tagging_button: Скончыць тэгаванне
++monitor_button: Адсочваць {option}
++add_quality_button: "Дадаць якасць: {quality}"
++add_language_button: "Дадаць мову: {language}"
++add_path_button: Дадаць у {path}
++add_button: Дадаць {kind}!
++already_added_button: Ужо дададзена!
++cancel_search_button: Скасаваць пошук
++add_series_anime_button: Дадаць серыял як Аніме!
++unexpected_error: Нешта пайшло не так!
++remove_user_button: Выдаліць
++make_admin_button: Зрабіць адміністратарам
++remove_admin_button: Выдаліць правы адміністратара
++done: Гатова
++listing_users_pagination: Спіс карыстальнікаў Searcharr {page_info}.
++help_sonarr: Выкарыстоўвайце {series_commands} для дадання серыялаў у Sonarr.
++help_radarr: Выкарыстоўвайце {movie_commands} для дадання фільмаў у Radarr.
++no_features: Выбачайце, але ўсе мае функцыі зараз адключаны.
++admin_help: У вас ёсць правы адміністратара, таму вы можаце выкарыстоўваць {commands} для кіравання карыстальнікамі.

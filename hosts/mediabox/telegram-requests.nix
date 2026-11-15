@@ -56,7 +56,7 @@
 
     searcharr_password = _cred("password")
     searcharr_admin_password = _cred("admin-password")
-    searcharr_language = "en-us"
+    searcharr_language = "be-by"
     searcharr_start_command_aliases = ["start"]
     searcharr_help_command_aliases = ["help"]
     searcharr_users_command_aliases = ["users"]
