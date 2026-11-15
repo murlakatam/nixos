@@ -1,0 +1,16 @@
+# Catppuccin Mocha theme for Atuin
+# https://github.com/catppuccin/catppuccin - Mocha palette
+
+[theme]
+name = "catppuccin-mocha"
+
+[colors]
+AlertInfo = "#a6e3a1"
+AlertWarn = "#f9e2af"
+AlertError = "#f38ba8"
+Base = "#cdd6f4"
+Guidance = "#7f849c"
+Important = "#cba6f7"
+Annotation = "#a6adc8"
+Title = "#89b4fa"
+Muted = "#6c7086"

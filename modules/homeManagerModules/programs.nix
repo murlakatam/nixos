@@ -6,39 +6,11 @@
   inherit (import ../../hosts/${host}/variables.nix) gitUsername gitEmail;
 in {
   programs = {
-    # Atuin shell history tool
-    atuin = {
-      enable = true;
-      enableZshIntegration = true;
-    };
-    bat = {
-      enable = true;
-      themes = {
-        catppucin-mocha = {
-          src = pkgs.fetchurl {
-            url = "https://raw.githubusercontent.com/catppuccin/bat/main/themes/Catppuccin%20Mocha.tmTheme";
-            hash = "sha256-OVVm8IzrMBuTa5HAd2kO+U9662UbEhVT8gHJnCvUqnc=";
-          };
-        };
-      };
-      config = {
-        theme = "catppucin-mocha";
-      };
-    };
     direnv = {
       enable = true;
       enableZshIntegration = true;
       enableBashIntegration = true;
       nix-direnv.enable = true;
-    };
-    eza = {
-      enable = true;
-      enableZshIntegration = true;
-      git = true;
-      icons = "auto";
-    };
-    fd = {
-      enable = true;
     };
     firefox = {
       enable = true;
@@ -61,23 +33,11 @@ in {
     #     mouse = {hide-when-typing = "yes";};
     #   };
     # };
-    fzf = {
-      enable = true;
-      enableZshIntegration = true;
-      # make fzf search hidden files too
-      defaultCommand = "ag --hidden --ignore .git -g '' ";
-      # atuin owns Ctrl-R; drop fzf's history widget so they don't fight over it
-      historyWidget.command = "";
-    };
     home-manager.enable = true;
     oh-my-posh = {
       enable = true;
       enableZshIntegration = true;
       useTheme = "catppuccin";
-    };
-    navi = {
-      enable = true;
-      enableZshIntegration = true;
     };
     # nix-ld = {
     #   enable = true;
@@ -89,17 +49,6 @@ in {
     #     stdenv.cc.cc
     #   ];
     # };
-    ripgrep = {
-      enable = true;
-      arguments = [
-        "--max-columns-preview"
-        "--pretty"
-      ];
-    };
-    tealdeer = {
-      enable = true;
-      settings.updates.auto_update = true;
-    };
 
     #yazi = {
     #  enable = true;
@@ -110,11 +59,6 @@ in {
     # zathura = {
     #   enable = true;
     # };
-
-    zoxide = {
-      enable = true;
-      enableZshIntegration = true;
-    };
 
     # hyprlock = {
     #   enable = true;

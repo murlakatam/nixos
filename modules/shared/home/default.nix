@@ -14,9 +14,11 @@
 #   dotfiles.system-monitors.enable = true;
 {inputs}: {
   system-monitors = ./system-monitors;
+  cli-tools = ./cli-tools;
   default = {
     imports = [
       ./system-monitors
+      ./cli-tools
     ];
   };
 }

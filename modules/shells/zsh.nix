@@ -44,8 +44,6 @@ in {
       FZF_FINDER_PAGER_BINDKEY = "^[r";
       # make fzf finder plugin search hidden files too
       FZF_FINDER_FD_OPTS = "--hidden -t f";
-      # print path before cding for zoxide
-      _ZO_ECHO = 1;
     };
     shellAliases = {
       # HOME MANAGER
