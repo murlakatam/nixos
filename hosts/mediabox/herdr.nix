@@ -1,7 +1,11 @@
 # herdr-core on mediabox (herdr-nix core flavour, see the herdr-nix-core skill):
 # terminals that survive SSH logout and reboots, attach with `hc` over SSH or
 # from the laptop's Herdr app. Home-manager exists here only for this.
-{inputs, ...}: {
+{
+  inputs,
+  pkgs,
+  ...
+}: {
   imports = [inputs.home-manager.nixosModules.home-manager];
 
   # herdr-core keeps running with nobody logged in.
@@ -18,6 +22,9 @@
       # Resume runs from zsh's initContent, so HM must own ~/.zshrc.
       programs.zsh.enable = true;
       herdr-nix.core.enable = true;
+      # Claude Code for sessions moved here (herd-evacuate) and for resume after
+      # reboot. Login is manual, once: `ssh mediabox`, then `claude /login`.
+      home.packages = [inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.claude-code];
     };
   };
 }
