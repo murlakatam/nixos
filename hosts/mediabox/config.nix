@@ -38,6 +38,7 @@
       chatId = -5135740760;
       failures.enable = true; # nothing found / download failed / import stuck
     };
+    status.enable = true; # /status: requests with live download state
   };
 
   # Tailnet: reach Plex/SSH over tailscale0 without opening them on LAN/WAN.
