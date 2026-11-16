@@ -81,7 +81,7 @@ diff --git a/bot/commands/__init__.py b/bot/commands/__init__.py
 diff --git a/bot/notify.py b/bot/notify.py
 --- a/bot/notify.py
 +++ b/bot/notify.py
-@@ -0,0 +1,421 @@
+@@ -0,0 +1,462 @@
 +"""
 +NIX PATCH: "available in Plex" notifications.
 +
@@ -183,6 +183,9 @@ diff --git a/bot/notify.py b/bot/notify.py
 +    execute_query(
 +        "CREATE TABLE IF NOT EXISTS notify_sent (key text primary key, sent_at real not null);"
 +    )
++    execute_query(
++        "CREATE TABLE IF NOT EXISTS user_names (id integer primary key, first_name text, updated_at real);"
++    )
 +    # /status keeps finished requests (done=1) so it can list what is ready
 +    cols = {c.get("name") for c in execute_query("PRAGMA table_info(notify_requests);") or []}
 +    if "done" not in cols:
@@ -196,8 +199,43 @@ diff --git a/bot/notify.py b/bot/notify.py
 +    execute_query("DELETE FROM notify_requests WHERE requested_at < ?;", (time.time() - KEEP_MAX_AGE,))
 +
 +
++_name_cache = {}
++
++
++def remember_name(user_id, first):
++    """Store a user's Telegram first name (called from the allow-list gate on every update). Never raises."""
++    try:
++        if not first or _name_cache.get(user_id) == first:
++            return
++        init_tables()
++        execute_query(
++            "INSERT OR REPLACE INTO user_names (id, first_name, updated_at) VALUES (?, ?, ?);",
++            (int(user_id), str(first), time.time()),
++        )
++        _name_cache[user_id] = first
++    except Exception as e:
++        logger.error(f"remember_name failed: {type(e).__name__}")
++
++
++def first_name(user_id):
++    if user_id in _name_cache:
++        return _name_cache[user_id]
++    try:
++        init_tables()
++        rows = execute_query("SELECT first_name FROM user_names WHERE id=?;", (int(user_id),)) or []
++        if rows and rows[0].get("first_name"):
++            _name_cache[user_id] = rows[0]["first_name"]
++            return _name_cache[user_id]
++    except Exception as e:
++        logger.error(f"first_name lookup failed: {type(e).__name__}")
++    return None
++
++
 +def requester_name(user_id):
-+    """Plain display name (no mention/link), for /status."""
++    """Plain display name (no mention/link), for /status: first name, else username, else id."""
++    first = first_name(user_id)
++    if first:
++        return first
 +    for u in get_users():
 +        if int(u.get("id", -1)) == user_id:
 +            name = u.get("username")
@@ -288,6 +326,9 @@ diff --git a/bot/notify.py b/bot/notify.py
 +
 +
 +def _mention(user_id):
++    first = first_name(user_id)
++    if first:  # NIX PATCH: first name, linked to the user (Telegram shows it as a mention)
++        return f'<a href="tg://user?id={user_id}">{html.escape(first)}</a>'
 +    username = None
 +    for u in get_users():
 +        if int(u.get("id", -1)) == user_id:
@@ -521,7 +562,7 @@ diff --git a/bot/searcharr_bot.py b/bot/searcharr_bot.py
  
  from api.sonarr import Sonarr
  from api.radarr import Radarr
-@@ -117,6 +123,22 @@
+@@ -117,6 +123,26 @@
          # Build the application
          application = ApplicationBuilder().token(self.token).job_queue(None).build()
          
@@ -538,13 +579,17 @@ diff --git a/bot/searcharr_bot.py b/bot/searcharr_bot.py
 +                    f"Dropped update from non-allow-listed user id={getattr(user, 'id', None)}"
 +                )
 +                raise ApplicationHandlerStop
++            # NIX PATCH: remember first names, so /status and group messages can use them
++            from bot.notify import remember_name
++
++            remember_name(user.id, user.first_name)
 +
 +        application.add_handler(TypeHandler(Update, _allow_list_gate), group=-1)
 +
          # Register command handlers from each module
          register_commands(application, self)
          
-@@ -129,5 +151,9 @@
+@@ -129,5 +155,9 @@
          else:
              self.logger.info("Developer mode is enabled; skipping registration of error handler--exceptions will be raised.")
          
@@ -558,7 +603,7 @@ diff --git a/bot/searcharr_bot.py b/bot/searcharr_bot.py
 diff --git a/bot/status.py b/bot/status.py
 --- a/bot/status.py
 +++ b/bot/status.py
-@@ -0,0 +1,312 @@
+@@ -0,0 +1,315 @@
 +"""
 +NIX PATCH: /status command. Shows the family's bot requests (notify_requests table, see
 +bot/notify.py) with their live state: still searching, downloading (table with %, speed, time
@@ -692,6 +737,9 @@ diff --git a/bot/status.py b/bot/status.py
 +
 +
 +def _ago(ts):
++    # NIX PATCH: arrow's Belarusian "seconds" form is broken ("24 некалькі секунд таму")
++    if time.time() - float(ts) < 60:
++        return translate("status_just_now")
 +    try:
 +        return arrow.get(ts).humanize(locale=translate("status_locale"))
 +    except Exception:
@@ -932,7 +980,7 @@ diff --git a/config/settings_loader.py b/config/settings_loader.py
 diff --git a/lang/be-by.yml b/lang/be-by.yml
 --- a/lang/be-by.yml
 +++ b/lang/be-by.yml
-@@ -0,0 +1,85 @@
+@@ -0,0 +1,86 @@
 +language_ietf: be-by
 +language_label: Беларуская
 +
@@ -1018,10 +1066,11 @@ diff --git a/lang/be-by.yml b/lang/be-by.yml
 +status_unknown: стан невядомы
 +status_episodes: "{have}/{total} серый"
 +status_locale: be
++status_just_now: толькі што
 diff --git a/lang/en-us.yml b/lang/en-us.yml
 --- a/lang/en-us.yml
 +++ b/lang/en-us.yml
-@@ -59,3 +59,27 @@
+@@ -59,3 +59,28 @@
  help_radarr: Use {movie_commands} to add a movie to Radarr.
  no_features: Sorry, but all of my features are currently disabled.
  admin_help: Since you are an admin, you can also use {commands} to manage users.
@@ -1049,3 +1098,4 @@ diff --git a/lang/en-us.yml b/lang/en-us.yml
 +status_unknown: status unknown
 +status_episodes: "{have}/{total} episodes"
 +status_locale: en
++status_just_now: just now
