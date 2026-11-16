@@ -108,6 +108,37 @@ diff --git a/bot/commands/__init__.py b/bot/commands/__init__.py
      # Register users management commands
      for cmd in settings.searcharr_users_command_aliases:
          logger.debug(f"Registering [/{cmd}] as a users command")
+diff --git a/bot/commands/start.py b/bot/commands/start.py
+--- a/bot/commands/start.py
++++ b/bot/commands/start.py
+@@ -26,6 +26,27 @@
+     # Extract password from message
+     password = strip_entities(update.message)
+     
++    # NIX PATCH: declarative users (local.searcharr.users in Nix): passwords grant nothing here,
++    # so never claim a successful sign-in. The password itself is never logged.
++    from bot import declarative
++
++    if declarative.enabled():
++        level = authenticated(update.message.from_user.id)
++        if password and password == getattr(settings, "searcharr_admin_password", None):
++            key = "start_declarative_admin_ok" if level == 2 else "start_declarative_admin"
++        elif level:
++            key = "already_authenticated"
++        else:
++            key = "users_declarative"
++        logger.info(f"/start in declarative mode from user id={update.message.from_user.id}: {key}")
++        await update.message.reply_text(
++            translate(
++                key,
++                commands=" OR ".join([f"`/{c}`" for c in settings.searcharr_help_command_aliases]),
++            )
++        )
++        return
++
+     # Check if it's an admin authentication
+     if password and password == settings.searcharr_admin_password:
+         # Add user as admin
 diff --git a/bot/commands/users.py b/bot/commands/users.py
 --- a/bot/commands/users.py
 +++ b/bot/commands/users.py
@@ -262,7 +293,7 @@ diff --git a/bot/declarative.py b/bot/declarative.py
 diff --git a/bot/notify.py b/bot/notify.py
 --- a/bot/notify.py
 +++ b/bot/notify.py
-@@ -0,0 +1,530 @@
+@@ -0,0 +1,553 @@
 +"""
 +NIX PATCH: "available in Plex" notifications.
 +
@@ -324,7 +355,15 @@ diff --git a/bot/notify.py b/bot/notify.py
 +
 +
 +def _should_send(key):
-+    """At most one message per key per DEBOUNCE_SECONDS; prunes expired entries."""
++    """At most one message per key per DEBOUNCE_SECONDS; prunes expired entries.
++
++    NIX PATCH: in declarative mode the window is stored in notify_sent, so a restart in the
++    middle of a season-pack import does not send a second "available" message."""
++    if declarative.enabled():
++        try:
++            return _should_send_db(key)
++        except Exception as e:
++            logger.error(f"Debounce DB error, using memory: {type(e).__name__}")
 +    now = time.monotonic()
 +    with _sent_lock:
 +        for k in [k for k, t in _sent.items() if now - t >= DEBOUNCE_SECONDS]:
@@ -332,6 +371,21 @@ diff --git a/bot/notify.py b/bot/notify.py
 +        if key in _sent:
 +            return False
 +        _sent[key] = now
++        return True
++
++
++def _should_send_db(key):
++    now = time.time()
++    k = "available:" + ":".join(str(x) for x in key)
++    with _sent_lock:
++        init_tables()
++        execute_query(
++            "DELETE FROM notify_sent WHERE key LIKE 'available:%' AND sent_at < ?;",
++            (now - DEBOUNCE_SECONDS,),
++        )
++        if execute_query("SELECT key FROM notify_sent WHERE key=?;", (k,)):
++            return False
++        execute_query("INSERT OR REPLACE INTO notify_sent (key, sent_at) VALUES (?, ?);", (k, now))
 +        return True
 +
 +
@@ -1284,7 +1338,7 @@ diff --git a/config/settings_loader.py b/config/settings_loader.py
 diff --git a/lang/be-by.yml b/lang/be-by.yml
 --- a/lang/be-by.yml
 +++ b/lang/be-by.yml
-@@ -0,0 +1,92 @@
+@@ -0,0 +1,94 @@
 +language_ietf: be-by
 +language_label: Беларуская
 +
@@ -1377,10 +1431,12 @@ diff --git a/lang/be-by.yml b/lang/be-by.yml
 +help_desc_status: што спампоўваецца і што ўжо ў Plex
 +help_desc_users: кіраванне карыстальнікамі
 +users_declarative: Карыстальнікі задаюцца ў канфігурацыі сервера, тут іх нельга змяніць.
++start_declarative_admin: Адміністратары задаюцца ў канфігурацыі сервера (Nix). Пароль тут нічога не змяняе.
++start_declarative_admin_ok: Вы ўжо адміністратар. Адміністратары задаюцца ў канфігурацыі сервера (Nix).
 diff --git a/lang/en-us.yml b/lang/en-us.yml
 --- a/lang/en-us.yml
 +++ b/lang/en-us.yml
-@@ -59,3 +59,34 @@
+@@ -59,3 +59,36 @@
  help_radarr: Use {movie_commands} to add a movie to Radarr.
  no_features: Sorry, but all of my features are currently disabled.
  admin_help: Since you are an admin, you can also use {commands} to manage users.
@@ -1415,3 +1471,5 @@ diff --git a/lang/en-us.yml b/lang/en-us.yml
 +help_desc_status: what is downloading and what is ready
 +help_desc_users: manage users
 +users_declarative: Users are set in the server configuration and cannot be changed here.
++start_declarative_admin: Admins are set in the server configuration (Nix). The password changes nothing here.
++start_declarative_admin_ok: You are already an admin. Admins are set in the server configuration (Nix).

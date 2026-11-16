@@ -31,6 +31,9 @@
   sec = key: "DECLARR_SECRET_FILE_${secretNames.${key}}";
 
   # Top-level tags list is declared (empty), so declarr deletes tags nothing uses and the config does not declare.
+  # Prowlarr ONLY. Never declare `tags` for radarr/sonarr: the searcharr-<telegram id> tags there are
+  # the only record of who requested what (Searcharr declarative mode, telegram-requests.nix), and a
+  # declared list would make declarr delete them.
   tags = [];
 
   plexFields = {
