@@ -29,6 +29,7 @@
     enable = true;
     allowedUserIds = [
       680033455 # Eugene
+      657340029 # Olga
     ];
   };
 
