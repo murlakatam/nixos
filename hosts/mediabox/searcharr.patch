@@ -1,3 +1,223 @@
+diff --git a/bot/callbacks/base/tag_selection.py b/bot/callbacks/base/tag_selection.py
+--- a/bot/callbacks/base/tag_selection.py
++++ b/bot/callbacks/base/tag_selection.py
+@@ -125,7 +125,9 @@
+     
+     # Add username tag if enabled
+     if service_config.get("tag_with_username", True):
+-        tag = f"searcharr-{user.username if user.username else user.id}"
++        # NIX PATCH: always the numeric Telegram id (Radarr only accepts a-z0-9- labels, and
++        # bot/notify.py maps searcharr-<id> back to the requester)
++        tag = f"searcharr-{user.id}"
+         if tag_id := service.get_tag_id(tag):
+             tags.append(str(tag_id))
+         else:
+diff --git a/bot/notify.py b/bot/notify.py
+--- a/bot/notify.py
++++ b/bot/notify.py
+@@ -0,0 +1,202 @@
++"""
++NIX PATCH: "available in Plex" notifications.
++
++A tiny stdlib HTTP server (daemon thread, 127.0.0.1 only) receives Radarr/Sonarr Webhook
++connection calls. On an import ("Download", not an upgrade) of an item that carries the arr tag
++searcharr-<telegram user id> (set by the bot when that user requested it), it posts a message
++naming the requester into settings.searcharr_notify_chat_id.
++
++Settings (all optional; listener only starts when searcharr_notify_enabled is True):
++  searcharr_notify_enabled  bool
++  searcharr_notify_port     int   (bind 127.0.0.1:<port>)
++  searcharr_notify_chat_id  int   (group chat id)
++  searcharr_notify_secret   str   (required value of the X-Searcharr-Secret header)
++"""
++import hmac
++import html
++import json
++import re
++import threading
++import time
++from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
++
++import requests
++
++import settings
++from bot.utils.auth import get_users
++from bot.utils.log import set_up_logger
++from config.language import translate
++
++logger = set_up_logger("notify")
++
++TAG_RE = re.compile(r"^searcharr-(\d+)$")
++DEBOUNCE_SECONDS = 600
++MAX_BODY = 1024 * 1024
++
++_sent = {}  # (kind, item id, requester id) -> monotonic time of last message
++_sent_lock = threading.Lock()
++
++
++def _should_send(key):
++    """At most one message per key per DEBOUNCE_SECONDS; prunes expired entries."""
++    now = time.monotonic()
++    with _sent_lock:
++        for k in [k for k, t in _sent.items() if now - t >= DEBOUNCE_SECONDS]:
++            del _sent[k]
++        if key in _sent:
++            return False
++        _sent[key] = now
++        return True
++
++
++def _arr_settings(kind):
++    if kind == "movie":
++        return settings.radarr_url, settings.radarr_api_key
++    return settings.sonarr_url, settings.sonarr_api_key
++
++
++def _resolve_tag_labels(kind, item):
++    """Tag labels of the item; payload labels if present, else looked up via the arr API."""
++    tags = item.get("tags") or []
++    if tags and all(isinstance(t, str) for t in tags):
++        return tags
++    url, key = _arr_settings(kind)
++    endpoint = "movie" if kind == "movie" else "series"
++    try:
++        if not tags:
++            r = requests.get(
++                f"{url}/api/v3/{endpoint}/{int(item['id'])}",
++                headers={"X-Api-Key": key},
++                timeout=10,
++            )
++            r.raise_for_status()
++            tags = r.json().get("tags") or []
++        if not tags:
++            return []
++        r = requests.get(f"{url}/api/v3/tag", headers={"X-Api-Key": key}, timeout=10)
++        r.raise_for_status()
++        labels = {t.get("id"): t.get("label", "") for t in r.json()}
++        return [labels.get(t, "") if isinstance(t, int) else str(t) for t in tags]
++    except Exception as e:
++        logger.error(f"Could not resolve tags for {endpoint} id={item.get('id')}: {type(e).__name__}")
++        return []
++
++
++def _requester_ids(labels):
++    ids = []
++    for label in labels:
++        if m := TAG_RE.match(str(label).strip().lower()):
++            ids.append(int(m.group(1)))
++    return ids
++
++
++def _mention(user_id):
++    username = None
++    for u in get_users():
++        if int(u.get("id", -1)) == user_id:
++            username = u.get("username")
++            break
++    if username and username not in ("None", ""):
++        return f"@{html.escape(username)}"
++    return f'<a href="tg://user?id={user_id}">{user_id}</a>'
++
++
++def _send(text):
++    r = requests.post(
++        f"https://api.telegram.org/bot{settings.tgram_token}/sendMessage",
++        json={
++            "chat_id": settings.searcharr_notify_chat_id,
++            "text": text,
++            "parse_mode": "HTML",
++            "disable_web_page_preview": True,
++        },
++        timeout=15,
++    )
++    if r.status_code != 200:
++        # never log the URL (it holds the token)
++        logger.error(f"Telegram sendMessage failed: HTTP {r.status_code}")
++        return False
++    return True
++
++
++def handle_event(payload):
++    """Process one webhook payload. Returns a short decision string (logged and returned)."""
++    event = payload.get("eventType")
++    if event != "Download":
++        return f"ignored eventType={event}"
++    if payload.get("isUpgrade"):
++        return "ignored upgrade"
++    if isinstance(payload.get("movie"), dict):
++        kind, item = "movie", payload["movie"]
++    elif isinstance(payload.get("series"), dict):
++        kind, item = "series", payload["series"]
++    else:
++        return "ignored: no movie/series in payload"
++
++    title = item.get("title") or "?"
++    if kind == "movie" and item.get("year"):
++        title = f"{title} ({item['year']})"
++
++    requesters = _requester_ids(_resolve_tag_labels(kind, item))
++    if not requesters:
++        return f"no searcharr-<id> tag on {kind} id={item.get('id')}: not requested via bot"
++
++    sent = []
++    for uid in requesters:
++        if not _should_send((kind, item.get("id"), uid)):
++            sent.append(f"{uid}:debounced")
++            continue
++        text = translate(
++            f"notify_{kind}_available", user=_mention(uid), title=html.escape(title)
++        )
++        sent.append(f"{uid}:{'sent' if _send(text) else 'failed'}")
++    return f"{kind} id={item.get('id')} requesters " + ",".join(sent)
++
++
++class _Handler(BaseHTTPRequestHandler):
++    def log_message(self, fmt, *args):  # silence default stderr access log
++        pass
++
++    def _reply(self, code):
++        self.send_response(code)
++        self.send_header("Content-Length", "0")
++        self.end_headers()
++
++    def do_POST(self):
++        secret = str(getattr(settings, "searcharr_notify_secret", "") or "")
++        given = self.headers.get("X-Searcharr-Secret", "")
++        if not secret or not hmac.compare_digest(given.encode(), secret.encode()):
++            logger.warning(f"Rejected webhook to {self.path}: missing/wrong secret")
++            return self._reply(403)
++        try:
++            length = int(self.headers.get("Content-Length", 0))
++            if length > MAX_BODY:
++                return self._reply(413)
++            payload = json.loads(self.rfile.read(length) or b"{}")
++            if not isinstance(payload, dict):
++                raise ValueError("not an object")
++        except Exception:
++            logger.warning("Rejected webhook: bad JSON")
++            return self._reply(400)
++        try:
++            logger.info(f"Webhook: {handle_event(payload)}")
++        except Exception as e:
++            logger.error(f"Webhook handling error: {type(e).__name__}: {e}")
++        # always 200 so arr does not mark the connection failing over our own issues
++        self._reply(200)
++
++
++def start_listener():
++    """Start the listener in a daemon thread if enabled. Returns the server or None."""
++    if not getattr(settings, "searcharr_notify_enabled", False):
++        logger.info("Plex-available notifications disabled")
++        return None
++    port = int(getattr(settings, "searcharr_notify_port", 8086))
++    server = ThreadingHTTPServer(("127.0.0.1", port), _Handler)
++    server.daemon_threads = True
++    threading.Thread(target=server.serve_forever, name="notify", daemon=True).start()
++    logger.info(
++        f"Plex-available notification listener on 127.0.0.1:{port}, "
++        f"chat id {settings.searcharr_notify_chat_id}"
++    )
++    return server
 diff --git a/bot/searcharr_bot.py b/bot/searcharr_bot.py
 --- a/bot/searcharr_bot.py
 +++ b/bot/searcharr_bot.py
@@ -39,6 +259,17 @@ diff --git a/bot/searcharr_bot.py b/bot/searcharr_bot.py
          # Register command handlers from each module
          register_commands(application, self)
          
+@@ -129,5 +151,9 @@
+         else:
+             self.logger.info("Developer mode is enabled; skipping registration of error handler--exceptions will be raised.")
+         
++        # NIX PATCH: "available in Plex" webhook listener (no-op unless searcharr_notify_enabled)
++        from bot.notify import start_listener
++        start_listener()
++
+         # Start the bot
+         application.run_polling()
+\ No newline at end of file
 diff --git a/bot/utils/database.py b/bot/utils/database.py
 --- a/bot/utils/database.py
 +++ b/bot/utils/database.py
@@ -87,7 +318,7 @@ diff --git a/config/settings_loader.py b/config/settings_loader.py
 diff --git a/lang/be-by.yml b/lang/be-by.yml
 --- a/lang/be-by.yml
 +++ b/lang/be-by.yml
-@@ -0,0 +1,61 @@
+@@ -0,0 +1,63 @@
 +language_ietf: be-by
 +language_label: Беларуская
 +
@@ -149,3 +380,14 @@ diff --git a/lang/be-by.yml b/lang/be-by.yml
 +help_radarr: Выкарыстоўвайце {movie_commands}, каб дадаць фільм у Plex.
 +no_features: Выбачайце, але ўсе мае функцыі зараз адключаны.
 +admin_help: У вас ёсць правы адміністратара, таму вы можаце выкарыстоўваць {commands} для кіравання карыстальнікамі.
++notify_movie_available: "{user}, фільм {title} ужо ў Plex!"
++notify_series_available: "{user}, серыял {title} ужо ў Plex!"
+diff --git a/lang/en-us.yml b/lang/en-us.yml
+--- a/lang/en-us.yml
++++ b/lang/en-us.yml
+@@ -59,3 +59,5 @@
+ help_radarr: Use {movie_commands} to add a movie to Radarr.
+ no_features: Sorry, but all of my features are currently disabled.
+ admin_help: Since you are an admin, you can also use {commands} to manage users.
++notify_movie_available: "{user}, the movie {title} is now in Plex!"
++notify_series_available: "{user}, the series {title} is now in Plex!"

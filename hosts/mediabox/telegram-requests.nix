@@ -11,6 +11,9 @@
   # ./searcharr.patch (minimal, commented "NIX PATCH" hunks):
   #   1. Telegram user-ID allow-list gate (settings.searcharr_allowed_user_ids), fail-closed.
   #   2. SEARCHARR_DATA_DIR / SEARCHARR_SETTINGS env vars, since the source tree is read-only.
+  #   3. Arr tag is always searcharr-<telegram user id> (digits, Radarr-safe).
+  #   4. bot/notify.py: 127.0.0.1 webhook listener; arr import of a bot-requested item -> group message.
+  #   5. lang/be-by.yml (plus notify_* keys in en-us.yml).
   searcharr = pkgs.python3Packages.buildPythonApplication rec {
     pname = "searcharr";
     version = "3.4.0";
@@ -44,6 +47,12 @@
     '';
   };
 
+  notify = cfg.notify;
+  pyBool = b:
+    if b
+    then "True"
+    else "False";
+
   pyList = l: "[" + lib.concatMapStringsSep ", " builtins.toJSON l + "]";
 
   # Secret-free settings (lives in the nix store). Secrets are read from systemd credentials.
@@ -71,7 +80,7 @@
     sonarr_quality_profile_id = ${pyList cfg.qualityProfiles}
     sonarr_add_monitored = True
     sonarr_search_on_add = True
-    sonarr_tag_with_username = False  # Radarr rejects tags with chars outside a-z0-9- (Telegram usernames have _ and capitals)
+    sonarr_tag_with_username = True  # tag is searcharr-<telegram user id> (./searcharr.patch), so Radarr-safe
     sonarr_forced_tags = []
     sonarr_allow_user_to_select_tags = False
     sonarr_user_selectable_tags = []
@@ -85,23 +94,36 @@
     radarr_quality_profile_id = ${pyList cfg.qualityProfiles}
     radarr_add_monitored = True
     radarr_search_on_add = True
-    radarr_tag_with_username = False  # Radarr rejects tags with chars outside a-z0-9- (Telegram usernames have _ and capitals)
+    radarr_tag_with_username = True  # tag is searcharr-<telegram user id> (./searcharr.patch), so Radarr-safe
     radarr_forced_tags = []
     radarr_allow_user_to_select_tags = False
     radarr_user_selectable_tags = []
     radarr_min_availability = "released"
     radarr_movie_command_aliases = ["movie"]
     radarr_movie_paths = []  # all root folders: user picks Regular or Kids
+
+    # "available in Plex" group notifications (bot/notify.py; arr Webhook -> 127.0.0.1:<port>)
+    searcharr_notify_enabled = ${pyBool notify.enable}
+    searcharr_notify_port = ${toString notify.port}
+    ${lib.optionalString notify.enable ''
+      searcharr_notify_chat_id = ${toString notify.chatId}
+      searcharr_notify_secret = _cred("webhook-secret")
+    ''}
   '';
 
-  secrets = {
-    searcharr-token = "token";
-    searcharr-password = "password";
-    searcharr-admin-password = "admin-password";
-    # Shared with declarr (declarr.nix), which pins these across reinstalls.
-    arr-radarr-apikey = "radarr-api-key";
-    arr-sonarr-apikey = "sonarr-api-key";
-  };
+  secrets =
+    {
+      searcharr-token = "token";
+      searcharr-password = "password";
+      searcharr-admin-password = "admin-password";
+      # Shared with declarr (declarr.nix), which pins these across reinstalls.
+      arr-radarr-apikey = "radarr-api-key";
+      arr-sonarr-apikey = "sonarr-api-key";
+    }
+    // lib.optionalAttrs notify.enable {
+      # Shared with declarr.nix (X-Searcharr-Secret header of the arr Webhook connections).
+      searcharr-webhook-secret = "webhook-secret";
+    };
 in {
   options.local.searcharr = {
     enable = lib.mkEnableOption "Searcharr Telegram request bot (needs the sops keys below first)";
@@ -115,6 +137,20 @@ in {
       default = ["HD - 720p/1080p"];
       description = "Radarr/Sonarr quality profile names offered to requesters.";
     };
+    notify = {
+      enable = lib.mkEnableOption ''
+        "available in Plex" messages in a Telegram group, naming who requested the item
+        (needs sops key searcharr-webhook-secret; declarr.nix adds the arr Webhook connections)'';
+      chatId = lib.mkOption {
+        type = lib.types.int;
+        description = "Telegram group chat id for the notifications (negative, e.g. -100...).";
+      };
+      port = lib.mkOption {
+        type = lib.types.port;
+        default = 8086;
+        description = "Listener port, bound on 127.0.0.1 only.";
+      };
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -123,6 +159,7 @@ in {
     #   searcharr-password         shared user password (members send `/start <password>` in a DM with the bot)
     #   searcharr-admin-password   admin password (DM only, never in the group)
     #   arr-radarr-apikey / arr-sonarr-apikey   already declared by declarr.nix, nothing to add
+    #   searcharr-webhook-secret   only with notify.enable: random string, e.g. `openssl rand -hex 32`
     sops.secrets = lib.mapAttrs (_: _: {}) secrets;
 
     systemd.services.searcharr = {
@@ -143,7 +180,8 @@ in {
         WorkingDirectory = "/var/lib/searcharr";
         LoadCredential = lib.mapAttrsToList (k: v: "${v}:${config.sops.secrets.${k}.path}") secrets;
 
-        # Hardening. Outbound to api.telegram.org + localhost arr only.
+        # Hardening. Outbound to api.telegram.org + localhost arr; with notify.enable also listens on
+        # 127.0.0.1:notify.port (AF_INET allowed, no IPAddressDeny, port > 1024 so no capability needed).
         NoNewPrivileges = true;
         PrivateTmp = true;
         PrivateDevices = true;

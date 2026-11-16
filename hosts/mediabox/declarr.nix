@@ -6,20 +6,27 @@
   ...
 }: let
   cfg = config.mediabox.declarr;
+  notify = config.local.searcharr.notify;
+  hookOn = notify.enable && config.local.searcharr.enable;
   declarr = inputs.declarr.packages.${pkgs.stdenv.hostPlatform.system}.declarr;
 
   # sops keys (secrets/mediabox.yaml), each a single plain value; set from your own terminal
   # (see docs/mediabox-step17-declarr.md). The *-apikey ones are the CURRENT keys from config.xml.
-  secretNames = {
-    "arr-radarr-apikey" = "RADARR_APIKEY";
-    "arr-sonarr-apikey" = "SONARR_APIKEY";
-    "arr-prowlarr-apikey" = "PROWLARR_APIKEY";
-    "transmission-username" = "TRANSMISSION_USER";
-    "transmission-password" = "TRANSMISSION_PASS";
-    "rutracker-username" = "RUTRACKER_USER";
-    "rutracker-password" = "RUTRACKER_PASS";
-    "plex-token" = "PLEX_TOKEN";
-  };
+  secretNames =
+    {
+      "arr-radarr-apikey" = "RADARR_APIKEY";
+      "arr-sonarr-apikey" = "SONARR_APIKEY";
+      "arr-prowlarr-apikey" = "PROWLARR_APIKEY";
+      "transmission-username" = "TRANSMISSION_USER";
+      "transmission-password" = "TRANSMISSION_PASS";
+      "rutracker-username" = "RUTRACKER_USER";
+      "rutracker-password" = "RUTRACKER_PASS";
+      "plex-token" = "PLEX_TOKEN";
+    }
+    // lib.optionalAttrs hookOn {
+      # Shared with telegram-requests.nix (Searcharr checks it as X-Searcharr-Secret).
+      "searcharr-webhook-secret" = "SEARCHARR_WEBHOOK_SECRET";
+    };
   # declarr resolves "DECLARR_SECRET_FILE_<X>" to the contents of the file named by env var <that>.
   sec = key: "DECLARR_SECRET_FILE_${secretNames.${key}}";
 
@@ -33,6 +40,27 @@
     authToken = sec "plex-token";
     signIn = "startOAuth";
     updateLibrary = true;
+  };
+
+  # Searcharr "available in Plex" listener (telegram-requests.nix). Fires on first import only.
+  # Radarr/Sonarr send a Test event to it when the connection is saved, so Searcharr must be up.
+  searcharrHook = lib.optionalAttrs hookOn {
+    "Searcharr" = {
+      name = "Searcharr";
+      implementation = "Webhook";
+      fields = {
+        url = "http://127.0.0.1:${toString notify.port}/hook";
+        method = 1; # POST
+        headers = [
+          {
+            key = "X-Searcharr-Secret";
+            value = sec "searcharr-webhook-secret";
+          }
+        ];
+      };
+      onDownload = true;
+      onUpgrade = false;
+    };
   };
 
   transmission = categoryField: {
@@ -105,17 +133,21 @@
         "/srv/media/Media/Movies/Regular"
         "/srv/media/Media/Movies/Kids"
       ];
-      notification."Plex Media Server" = {
-        name = "Plex Media Server";
-        implementation = "PlexServer";
-        fields = plexFields;
-        onDownload = true;
-        onUpgrade = true;
-        onRename = true;
-        onMovieDelete = true;
-        onMovieFileDelete = true;
-        onMovieFileDeleteForUpgrade = true;
-      };
+      notification =
+        searcharrHook
+        // {
+          "Plex Media Server" = {
+            name = "Plex Media Server";
+            implementation = "PlexServer";
+            fields = plexFields;
+            onDownload = true;
+            onUpgrade = true;
+            onRename = true;
+            onMovieDelete = true;
+            onMovieFileDelete = true;
+            onMovieFileDeleteForUpgrade = true;
+          };
+        };
     };
 
     sonarr = {
@@ -132,19 +164,23 @@
         "/srv/media/Media/TV Shows/Regular"
         "/srv/media/Media/TV Shows/Kids"
       ];
-      notification."Plex Media Server" = {
-        name = "Plex Media Server";
-        implementation = "PlexServer";
-        fields = plexFields;
-        onDownload = true;
-        onUpgrade = true;
-        onImportComplete = true;
-        onRename = true;
-        onSeriesAdd = true;
-        onSeriesDelete = true;
-        onEpisodeFileDelete = true;
-        onEpisodeFileDeleteForUpgrade = true;
-      };
+      notification =
+        searcharrHook
+        // {
+          "Plex Media Server" = {
+            name = "Plex Media Server";
+            implementation = "PlexServer";
+            fields = plexFields;
+            onDownload = true;
+            onUpgrade = true;
+            onImportComplete = true;
+            onRename = true;
+            onSeriesAdd = true;
+            onSeriesDelete = true;
+            onEpisodeFileDelete = true;
+            onEpisodeFileDeleteForUpgrade = true;
+          };
+        };
     };
 
     prowlarr = {
@@ -240,8 +276,8 @@ in {
         then "sync"
         else "diff (read-only)"
       } Radarr/Sonarr/Prowlarr config";
-      after = ["radarr.service" "sonarr.service" "prowlarr.service" "network.target"];
-      wants = ["radarr.service" "sonarr.service" "prowlarr.service"];
+      after = ["radarr.service" "sonarr.service" "prowlarr.service" "network.target"] ++ lib.optional hookOn "searcharr.service";
+      wants = ["radarr.service" "sonarr.service" "prowlarr.service"] ++ lib.optional hookOn "searcharr.service";
       wantedBy = ["multi-user.target"];
       serviceConfig = {
         Type = "oneshot";
