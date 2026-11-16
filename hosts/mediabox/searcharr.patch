@@ -609,10 +609,10 @@ diff --git a/bot/searcharr_bot.py b/bot/searcharr_bot.py
 +                    f"Dropped update from non-allow-listed user id={getattr(user, 'id', None)}"
 +                )
 +                raise ApplicationHandlerStop
-+            # NIX PATCH: remember first names, so /status and group messages can use them
++            # NIX PATCH: remember display names (first + last), so /status and group messages can use them
 +            from bot.notify import remember_name
 +
-+            remember_name(user.id, user.first_name)
++            remember_name(user.id, user.full_name)
 +
 +        application.add_handler(TypeHandler(Update, _allow_list_gate), group=-1)
 +
