@@ -39,6 +39,12 @@
       failures.enable = true; # nothing found / download failed / import stuck
     };
     status.enable = true; # /status: requests with live download state
+    # Users from Nix, requests from the arr searcharr-<id> tags. Rollback: declarative.enable = false.
+    declarative.enable = true;
+    users = {
+      "680033455".username = "girl_has_n0_name";
+      "657340029".username = "olgabrnvsk";
+    };
   };
 
   # Tailnet: reach Plex/SSH over tailscale0 without opening them on LAN/WAN.

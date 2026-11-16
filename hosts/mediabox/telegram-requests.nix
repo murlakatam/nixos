@@ -16,6 +16,7 @@
   #   5. lang/be-by.yml (plus notify_* keys in en-us.yml).
   #   6. notify.failures: add callbacks record requests (notify_requests table), history checker thread.
   #   7. status: /status command (bot/status.py), live state of tracked requests + Transmission speed.
+  #   8. declarative (bot/declarative.py): users from local.searcharr.users, requests from arr tags.
   searcharr = pkgs.python3Packages.buildPythonApplication rec {
     pname = "searcharr";
     version = "3.4.0";
@@ -117,6 +118,12 @@
       transmission_username = _cred("transmission-username")
       transmission_password = _cred("transmission-password")
     ''}
+    # Declarative mode: users from Nix (users table ignored), requests from the searcharr-<id> arr tags
+    searcharr_declarative = ${pyBool cfg.declarative.enable}
+    ${lib.optionalString cfg.declarative.enable ''
+      import json
+      searcharr_users = json.loads(${builtins.toJSON (builtins.toJSON cfg.users)})
+    ''}
     ${lib.optionalString notify.enable ''
       searcharr_notify_chat_id = ${toString notify.chatId}
       searcharr_notify_secret = _cred("webhook-secret")
@@ -176,9 +183,53 @@ in {
       the /status command: requests made through the bot (since tracking began) with their state:
       searching, downloading (% / speed / time left, from Transmission) or ready in Plex.
       Reads the Transmission credentials (sops transmission-username / transmission-password)'';
+    declarative.enable = lib.mkEnableOption ''
+      declarative mode: users (and admins) come only from local.searcharr.users, and requests are
+      read from the searcharr-<telegram id> tags in Radarr/Sonarr instead of the database. The
+      database is then only a cache ("already sent" markers, Telegram names); deleting it loses
+      nothing (the first check after that marks everything already due as sent, sends nothing)'';
+    users = lib.mkOption {
+      type = lib.types.attrsOf (lib.types.submodule {
+        options = {
+          username = lib.mkOption {
+            type = lib.types.nullOr lib.types.str;
+            default = null;
+            description = "Telegram @username (without @), used for @-mentions when no name is known.";
+          };
+          name = lib.mkOption {
+            type = lib.types.nullOr lib.types.str;
+            default = null;
+            description = "Display name in messages and /status (default: the user's Telegram name).";
+          };
+          admin = lib.mkOption {
+            type = lib.types.bool;
+            default = false;
+            description = "Bot admin (/users shows the list; editing happens here).";
+          };
+        };
+      });
+      default = {};
+      example = {
+        "680033455" = {
+          username = "someone";
+          admin = true;
+        };
+      };
+      description = "Bot users by Telegram user ID (used only with declarative.enable; must match allowedUserIds).";
+    };
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion =
+          !cfg.declarative.enable
+          || lib.sort lib.lessThan (lib.attrNames cfg.users)
+          == lib.sort lib.lessThan (map toString cfg.allowedUserIds);
+        message = "local.searcharr.users must list exactly the allowedUserIds when declarative.enable is set";
+      }
+    ];
+
     # sops keys (secrets/mediabox.yaml), each a single plain value; set from your own terminal:
     #   searcharr-token            BotFather token
     #   searcharr-password         shared user password (members send `/start <password>` in a DM with the bot)
