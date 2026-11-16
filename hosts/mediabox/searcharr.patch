@@ -1092,7 +1092,7 @@ diff --git a/lang/be-by.yml b/lang/be-by.yml
 +status_empty: Пакуль няма запытаў. Дадайце фільм ці серыял, і тут з'явіцца іх стан.
 +status_downloading: "<b>Спампоўваецца</b>"
 +status_searching: "<b>Дададзена ў сістэму, шукаю</b>"
-+status_ready: "<b>Гатова ў Plex</b>"
++status_ready: "<b>Ужо ў Plex</b>"
 +status_gone: "<b>Выдалена з сістэмы</b>"
 +status_col_title: Назва
 +status_col_speed: Хутк
