@@ -558,7 +558,7 @@ diff --git a/bot/searcharr_bot.py b/bot/searcharr_bot.py
 diff --git a/bot/status.py b/bot/status.py
 --- a/bot/status.py
 +++ b/bot/status.py
-@@ -0,0 +1,308 @@
+@@ -0,0 +1,312 @@
 +"""
 +NIX PATCH: /status command. Shows the family's bot requests (notify_requests table, see
 +bot/notify.py) with their live state: still searching, downloading (table with %, speed, time
@@ -572,6 +572,7 @@ diff --git a/bot/status.py b/bot/status.py
 +"""
 +import asyncio
 +import html
++import textwrap
 +import time
 +
 +import arrow
@@ -811,7 +812,10 @@ diff --git a/bot/status.py b/bot/status.py
 +                if note
 +                else f"{pct:>3} {_fmt_speed(speed):>5} {_fmt_eta(eta):>6}"
 +            )
-+            lines.append(f"{_cut(title, TITLE_W):<{TITLE_W}} {right}")
++            # NIX PATCH: word-wrap long titles inside the title column instead of cutting them
++            wrapped = textwrap.wrap(title, TITLE_W) or ["?"]
++            lines.append(f"{wrapped[0]:<{TITLE_W}} {right}")
++            lines.extend(wrapped[1:])
 +            lines.append(f" └ {_cut(who, TITLE_W + 14)}")
 +        parts.append(
 +            translate("status_downloading")
