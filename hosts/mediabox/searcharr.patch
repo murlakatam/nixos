@@ -38,10 +38,50 @@ diff --git a/bot/callbacks/sonarr_callbacks.py b/bot/callbacks/sonarr_callbacks.
          delete_conversation(cid)
          await query.message.reply_text(translate("added", title=r["title"]))
          await query.message.delete()
+diff --git a/bot/commands/help.py b/bot/commands/help.py
+--- a/bot/commands/help.py
++++ b/bot/commands/help.py
+@@ -70,6 +70,17 @@
+             )
+         )
+     
++    # NIX PATCH: /status help line
++    if getattr(settings, "searcharr_status_enabled", False):
++        help_text.append(
++            translate(
++                "help_status",
++                commands=" OR ".join(
++                    [f"`/{c}`" for c in getattr(settings, "searcharr_status_command_aliases", ["status"])]
++                ),
++            )
++        )
++
+     # Add admin help if the user is an admin
+     if auth_level == 2:
+         help_text.append(
+diff --git a/bot/commands/__init__.py b/bot/commands/__init__.py
+--- a/bot/commands/__init__.py
++++ b/bot/commands/__init__.py
+@@ -54,6 +54,15 @@
+                 CommandHandler(cmd, lambda update, context: movie_command(update, context, bot))
+             )
+     
++    # NIX PATCH: /status (family request states); only when searcharr_status_enabled
++    if getattr(settings, "searcharr_status_enabled", False):
++        from bot.status import status_command
++        for cmd in getattr(settings, "searcharr_status_command_aliases", ["status"]):
++            logger.debug(f"Registering [/{cmd}] as a status command")
++            application.add_handler(
++                CommandHandler(cmd, lambda update, context: status_command(update, context, bot))
++            )
++
+     # Register users management commands
+     for cmd in settings.searcharr_users_command_aliases:
+         logger.debug(f"Registering [/{cmd}] as a users command")
 diff --git a/bot/notify.py b/bot/notify.py
 --- a/bot/notify.py
 +++ b/bot/notify.py
-@@ -0,0 +1,381 @@
+@@ -0,0 +1,421 @@
 +"""
 +NIX PATCH: "available in Plex" notifications.
 +
@@ -92,6 +132,7 @@ diff --git a/bot/notify.py b/bot/notify.py
 +FIRST_CHECK_DELAY = 60
 +FAILURE_NOT_FOUND_AFTER = 30 * 60
 +TRACK_MAX_AGE = 14 * 24 * 3600
++KEEP_MAX_AGE = 30 * 24 * 3600
 +APP_KIND = {"radarr": "movie", "sonarr": "series"}
 +KIND_APP = {v: k for k, v in APP_KIND.items()}
 +IMPORTED_EVENTS = {"downloadFolderImported", "movieFolderImported", "seriesFolderImported"}
@@ -110,6 +151,14 @@ diff --git a/bot/notify.py b/bot/notify.py
 +            return False
 +        _sent[key] = now
 +        return True
++
++
++def _status_enabled():
++    return bool(getattr(settings, "searcharr_status_enabled", False))
++
++
++def _tracking_enabled():
++    return _failures_enabled() or _status_enabled()
 +
 +
 +def _failures_enabled():
@@ -134,12 +183,33 @@ diff --git a/bot/notify.py b/bot/notify.py
 +    execute_query(
 +        "CREATE TABLE IF NOT EXISTS notify_sent (key text primary key, sent_at real not null);"
 +    )
++    # /status keeps finished requests (done=1) so it can list what is ready
++    cols = {c.get("name") for c in execute_query("PRAGMA table_info(notify_requests);") or []}
++    if "done" not in cols:
++        execute_query("ALTER TABLE notify_requests ADD COLUMN done integer not null default 0;")
++    if "imported_at" not in cols:
++        execute_query("ALTER TABLE notify_requests ADD COLUMN imported_at real;")
++
++
++def prune():
++    """Forget requests older than KEEP_MAX_AGE (finished or not)."""
++    execute_query("DELETE FROM notify_requests WHERE requested_at < ?;", (time.time() - KEEP_MAX_AGE,))
++
++
++def requester_name(user_id):
++    """Plain display name (no mention/link), for /status."""
++    for u in get_users():
++        if int(u.get("id", -1)) == user_id:
++            name = u.get("username")
++            if name and name not in ("None", ""):
++                return name
++    return str(user_id)
 +
 +
 +def record_request(app, added, user_id, title):
 +    """Remember a successful bot add (called from the radarr/sonarr add callbacks). Never raises."""
 +    try:
-+        if not _failures_enabled():
++        if not _tracking_enabled():
 +            return
 +        item_id = added.get("id") if isinstance(added, dict) else None
 +        if item_id is None:
@@ -156,8 +226,15 @@ diff --git a/bot/notify.py b/bot/notify.py
 +        logger.error(f"Could not record {app} request: {type(e).__name__}: {e}")
 +
 +
-+def _stop_tracking(app, item_id, why):
-+    execute_query("DELETE FROM notify_requests WHERE app=? AND item_id=?;", (app, int(item_id)))
++def _stop_tracking(app, item_id, why, imported=False):
++    if _status_enabled():
++        execute_query(
++            "UPDATE notify_requests SET done=1, imported_at=COALESCE(imported_at, ?) "
++            "WHERE app=? AND item_id=? AND IFNULL(done,0)=0;",
++            (time.time() if imported else None, app, int(item_id)),
++        )
++    else:
++        execute_query("DELETE FROM notify_requests WHERE app=? AND item_id=?;", (app, int(item_id)))
 +    logger.info(f"Stopped tracking {app} id={item_id}: {why}")
 +
 +
@@ -285,7 +362,7 @@ diff --git a/bot/notify.py b/bot/notify.py
 +            out.append(f"download-failed(history id {e.get('id')}):{'sent' if _send(text) else 'failed'}")
 +
 +    if any(t in IMPORTED_EVENTS for t in types):
-+        _stop_tracking(app, item_id, "imported")
++        _stop_tracking(app, item_id, "imported", imported=True)
 +        out.append("imported")
 +    elif "grabbed" not in types and age >= FAILURE_NOT_FOUND_AFTER and not row.get("not_found_sent"):
 +        execute_query(
@@ -298,7 +375,9 @@ diff --git a/bot/notify.py b/bot/notify.py
 +
 +
 +def check_all():
-+    rows = execute_query("SELECT * FROM notify_requests;") or []
++    init_tables()
++    prune()
++    rows = execute_query("SELECT * FROM notify_requests WHERE IFNULL(done,0)=0;") or []
 +    for row in rows:
 +        try:
 +            logger.info(f"Failure check: {check_request(row)}")
@@ -357,8 +436,9 @@ diff --git a/bot/notify.py b/bot/notify.py
 +    if event == "ManualInteractionRequired":
 +        return _handle_manual_interaction(kind, item, title, requesters, payload)
 +
-+    if _failures_enabled() and item.get("id") is not None:
-+        _stop_tracking(KIND_APP[kind], item["id"], "imported (webhook)")
++    if _tracking_enabled() and item.get("id") is not None:
++        init_tables()
++        _stop_tracking(KIND_APP[kind], item["id"], "imported (webhook)", imported=True)
 +
 +    sent = []
 +    for uid in requesters:
@@ -475,6 +555,318 @@ diff --git a/bot/searcharr_bot.py b/bot/searcharr_bot.py
          # Start the bot
          application.run_polling()
 \ No newline at end of file
+diff --git a/bot/status.py b/bot/status.py
+--- a/bot/status.py
++++ b/bot/status.py
+@@ -0,0 +1,308 @@
++"""
++NIX PATCH: /status command. Shows the family's bot requests (notify_requests table, see
++bot/notify.py) with their live state: still searching, downloading (table with %, speed, time
++left), or ready in Plex. Text never names Radarr/Sonarr.
++
++Settings:
++  searcharr_status_enabled           bool
++  searcharr_status_command_aliases   list[str]
++  transmission_url                   str   (RPC endpoint, e.g. http://127.0.0.1:9091/transmission/rpc)
++  transmission_username / transmission_password   str (optional; without them no speed column data)
++"""
++import asyncio
++import html
++import time
++
++import arrow
++import requests
++
++import settings
++from bot.notify import init_tables, prune, requester_name
++from bot.utils.auth import authenticated
++from bot.utils.database import execute_query
++from bot.utils.log import set_up_logger
++from config.language import translate
++
++logger = set_up_logger("status")
++
++READY_MAX = 5
++READY_MAX_AGE = 14 * 24 * 3600
++TABLE_MAX = 15
++SEARCH_MAX = 15
++TITLE_W = 14
++
++
++def _arr(app):
++    if app == "radarr":
++        return settings.radarr_url, settings.radarr_api_key
++    return settings.sonarr_url, settings.sonarr_api_key
++
++
++def _get(app, endpoint, params=None):
++    url, key = _arr(app)
++    r = requests.get(
++        f"{url}/api/v3/{endpoint}", params=params or {}, headers={"X-Api-Key": key}, timeout=15
++    )
++    if r.status_code == 404:
++        return None
++    r.raise_for_status()
++    return r.json()
++
++
++def _queue(app):
++    """{item id: [queue records]} for one arr."""
++    data = _get(app, "queue", {"pageSize": 500}) or {}
++    out = {}
++    id_key = "movieId" if app == "radarr" else "seriesId"
++    for rec in data.get("records", []):
++        if rec.get(id_key) is not None:
++            out.setdefault(int(rec[id_key]), []).append(rec)
++    return out
++
++
++def _transmission(hashes):
++    """{lowercase hash: torrent dict} or {} if Transmission is unreachable/unset."""
++    url = getattr(settings, "transmission_url", None)
++    if not url or not hashes:
++        return {}
++    auth = None
++    if getattr(settings, "transmission_username", None):
++        auth = (settings.transmission_username, settings.transmission_password)
++    body = {
++        "method": "torrent-get",
++        "arguments": {
++            "ids": sorted(hashes),
++            "fields": ["hashString", "rateDownload", "percentDone", "eta", "status"],
++        },
++    }
++    try:
++        headers = {}
++        for _ in range(2):  # first call returns 409 with the session id
++            r = requests.post(url, json=body, auth=auth, headers=headers, timeout=10)
++            if r.status_code == 409:
++                headers = {"X-Transmission-Session-Id": r.headers.get("X-Transmission-Session-Id", "")}
++                continue
++            r.raise_for_status()
++            torrents = r.json().get("arguments", {}).get("torrents", [])
++            return {t["hashString"].lower(): t for t in torrents if t.get("hashString")}
++    except Exception as e:
++        logger.warning(f"Transmission unreachable, no speed data: {type(e).__name__}")
++    return {}
++
++
++def _timeleft_secs(s):
++    """arr timeleft '1.02:03:04' / '02:03:04' -> seconds."""
++    if not s:
++        return None
++    try:
++        days = 0
++        if "." in s.split(":")[0]:
++            d, s = s.split(".", 1)
++            days = int(d)
++        h, m, sec = (int(float(x)) for x in s.split(":"))
++        return days * 86400 + h * 3600 + m * 60 + sec
++    except Exception:
++        return None
++
++
++def _fmt_speed(bps):
++    if bps is None:
++        return "-"
++    if bps >= 1024 * 1024:
++        return f"{bps / 1048576:.1f}M"
++    if bps >= 1024:
++        return f"{bps // 1024}K"
++    return "0"
++
++
++def _fmt_eta(secs):
++    if secs is None or secs < 0:
++        return "-"
++    if secs < 3600:
++        return f"{max(1, secs // 60)}{translate('status_min')}"
++    if secs < 86400:
++        return f"{secs // 3600}:{(secs % 3600) // 60:02d}"
++    return f"{secs // 86400}{translate('status_days')}"
++
++
++def _cut(text, width):
++    return text if len(text) <= width else text[: width - 1] + "…"
++
++
++def _ago(ts):
++    try:
++        return arrow.get(ts).humanize(locale=translate("status_locale"))
++    except Exception:
++        return arrow.get(ts).humanize()
++
++
++def _download_row(app, item, recs, torrents):
++    """Aggregate queue records of one item (season packs have one record per episode)."""
++    by_dl = {}
++    for rec in recs:
++        by_dl.setdefault(rec.get("downloadId") or f"r{rec.get('id')}", rec)
++    size = sum(float(r.get("size") or 0) for r in by_dl.values())
++    left = sum(float(r.get("sizeleft") or 0) for r in by_dl.values())
++    pct = int(100 * (1 - left / size)) if size else 0
++    speed, eta, note = None, None, None
++    tor = [torrents.get(str(d).lower()) for d in by_dl if torrents.get(str(d).lower())]
++    if tor:
++        speed = sum(t.get("rateDownload") or 0 for t in tor)
++        etas = [t.get("eta") for t in tor if (t.get("eta") or -1) >= 0]
++        eta = max(etas) if etas else None
++        if all(t.get("status") in (0,) for t in tor):
++            note = translate("status_paused")
++        elif all(t.get("status") in (1, 2, 3) for t in tor):
++            note = translate("status_queued")
++        elif not speed and eta is None:
++            note = translate("status_stalled")
++        if len(tor) == len(by_dl):
++            pct = int(100 * sum(t.get("percentDone") or 0 for t in tor) / len(tor))
++    else:
++        secs = [x for x in (_timeleft_secs(r.get("timeleft")) for r in by_dl.values()) if x is not None]
++        eta = max(secs) if secs else None
++    states = {r.get("trackedDownloadState") for r in by_dl.values()}
++    if states & {"importPending", "importing", "importBlocked"} or pct >= 100:
++        note = translate("status_importing")
++    return pct, speed, eta, note
++
++
++def build_status():
++    """Return the HTML status message (blocking: call in a thread)."""
++    init_tables()
++    now = time.time()
++    prune()
++    rows = execute_query(
++        "SELECT * FROM notify_requests WHERE IFNULL(done,0)=0 OR IFNULL(imported_at,requested_at)>=? "
++        "ORDER BY requested_at DESC;",
++        (now - READY_MAX_AGE,),
++    ) or []
++    if not rows:
++        return translate("status_empty")
++
++    queues, items = {}, {}
++    for app in {r["app"] for r in rows}:
++        try:
++            queues[app] = _queue(app)
++        except Exception as e:
++            logger.error(f"Queue fetch failed for {app}: {type(e).__name__}")
++            queues[app] = {}
++    seen = set()
++    for r in rows:
++        k = (r["app"], int(r["item_id"]))
++        if k in seen:
++            continue
++        seen.add(k)
++        try:
++            items[k] = _get(r["app"], f"{'movie' if r['app'] == 'radarr' else 'series'}/{k[1]}")
++        except Exception as e:
++            logger.error(f"Item fetch failed for {k}: {type(e).__name__}")
++            items[k] = "error"
++    hashes = {
++        str(rec.get("downloadId")).lower()
++        for q in queues.values()
++        for recs in q.values()
++        for rec in recs
++        if rec.get("downloadId")
++    }
++    torrents = _transmission(hashes)
++
++    downloading, searching, ready, gone = [], [], [], []
++    shown = set()
++    for r in rows:
++        app, iid = r["app"], int(r["item_id"])
++        k = (app, iid)
++        if k in shown:  # same item requested by two people: list once
++            continue
++        shown.add(k)
++        item = items.get(k)
++        who = requester_name(int(r["user_id"]))  # raw; escaped when rendered
++        title = r.get("title") or (item.get("title") if isinstance(item, dict) else None) or "?"
++        if item is None:
++            gone.append((title, who))
++            continue
++        if item == "error":
++            searching.append((title, who, translate("status_unknown")))
++            continue
++        files = None
++        if app == "sonarr":
++            st = item.get("statistics") or {}
++            have, total = int(st.get("episodeFileCount") or 0), int(st.get("episodeCount") or 0)
++            files = translate("status_episodes", have=have, total=total) if total else None
++            has = have > 0
++        else:
++            has = bool(item.get("hasFile"))
++        if iid in queues.get(app, {}):
++            downloading.append((title, who, _download_row(app, item, queues[app][iid], torrents)))
++        elif has:
++            ready.append((title, who, files, r.get("imported_at") or r.get("requested_at")))
++        else:
++            searching.append((title, who, _ago(float(r["requested_at"]))))
++
++    parts = [translate("status_header")]
++    if downloading:
++        lines = [
++            f"{translate('status_col_title'):<{TITLE_W}} {'%':>3} {translate('status_col_speed'):>5} {translate('status_col_left'):>6}"
++        ]
++        for title, who, (pct, speed, eta, note) in downloading[:TABLE_MAX]:
++            right = (
++                f"{pct:>3} {_cut(note, 12):>12}"
++                if note
++                else f"{pct:>3} {_fmt_speed(speed):>5} {_fmt_eta(eta):>6}"
++            )
++            lines.append(f"{_cut(title, TITLE_W):<{TITLE_W}} {right}")
++            lines.append(f" └ {_cut(who, TITLE_W + 14)}")
++        parts.append(
++            translate("status_downloading")
++            + "\n<pre>"
++            + html.escape("\n".join(lines))
++            + "</pre>"
++        )
++    if searching:
++        parts.append(
++            translate("status_searching")
++            + "\n"
++            + "\n".join(
++                f"• {html.escape(t)}: {html.escape(w)}, {html.escape(a)}"
++                for t, w, a in searching[:SEARCH_MAX]
++            )
++        )
++    if ready:
++        ready.sort(key=lambda x: -float(x[3] or 0))
++        parts.append(
++            translate("status_ready")
++            + "\n"
++            + "\n".join(
++                f"• {html.escape(t)}{f' ({html.escape(f)})' if f else ''}: {html.escape(w)}"
++                for t, w, f, _ in ready[:READY_MAX]
++            )
++        )
++    if gone:
++        parts.append(
++            translate("status_gone")
++            + "\n"
++            + "\n".join(f"• {html.escape(t)}: {html.escape(w)}" for t, w in gone[:SEARCH_MAX])
++        )
++    return "\n\n".join(parts)
++
++
++async def status_command(update, context, bot):
++    """Handle /status (passes the allow-list gate like every other handler)."""
++    user = update.message.from_user
++    if not authenticated(user.id):
++        await update.message.reply_text(
++            translate(
++                "auth_required",
++                commands=" OR ".join(
++                    [f"`/{c} <{translate('password')}>`" for c in settings.searcharr_start_command_aliases]
++                ),
++            )
++        )
++        return
++    try:
++        text = await asyncio.to_thread(build_status)
++    except Exception as e:
++        logger.error(f"/status failed: {type(e).__name__}: {e}")
++        text = translate("unexpected_error")
++    logger.info(f"/status for user id={user.id}: {len(text)} chars")
++    await update.message.reply_text(text, parse_mode="HTML", disable_web_page_preview=True)
 diff --git a/bot/utils/database.py b/bot/utils/database.py
 --- a/bot/utils/database.py
 +++ b/bot/utils/database.py
@@ -536,7 +928,7 @@ diff --git a/config/settings_loader.py b/config/settings_loader.py
 diff --git a/lang/be-by.yml b/lang/be-by.yml
 --- a/lang/be-by.yml
 +++ b/lang/be-by.yml
-@@ -0,0 +1,66 @@
+@@ -0,0 +1,85 @@
 +language_ietf: be-by
 +language_label: Беларуская
 +
@@ -603,10 +995,29 @@ diff --git a/lang/be-by.yml b/lang/be-by.yml
 +notify_not_found: "{user}, пакуль не знайшоў {title}. Буду шукаць далей."
 +notify_download_failed: "{user}, не атрымалася спампаваць {title}. Паспрабую знайсці іншую раздачу."
 +notify_manual_import: "{user}, {title} спампавана, але не трапіла ў Plex: патрэбна дапамога адміністратара."
++help_status: Выкарыстоўвайце {commands}, каб паглядзець, што спампоўваецца і што ўжо гатова.
++status_header: "<b>Стан запытаў</b>"
++status_empty: Пакуль няма запытаў. Дадайце фільм ці серыял, і тут з'явіцца іх стан.
++status_downloading: "<b>Спампоўваецца</b>"
++status_searching: "<b>Дададзена ў сістэму, шукаю</b>"
++status_ready: "<b>Гатова ў Plex</b>"
++status_gone: "<b>Выдалена з сістэмы</b>"
++status_col_title: Назва
++status_col_speed: Хутк
++status_col_left: Заст.
++status_min: хв
++status_days: д
++status_paused: спынена
++status_queued: у чарзе
++status_stalled: стаіць
++status_importing: дадаю ў Plex
++status_unknown: стан невядомы
++status_episodes: "{have}/{total} серый"
++status_locale: be
 diff --git a/lang/en-us.yml b/lang/en-us.yml
 --- a/lang/en-us.yml
 +++ b/lang/en-us.yml
-@@ -59,3 +59,8 @@
+@@ -59,3 +59,27 @@
  help_radarr: Use {movie_commands} to add a movie to Radarr.
  no_features: Sorry, but all of my features are currently disabled.
  admin_help: Since you are an admin, you can also use {commands} to manage users.
@@ -615,3 +1026,22 @@ diff --git a/lang/en-us.yml b/lang/en-us.yml
 +notify_not_found: "{user}, I have not found {title} yet. I will keep looking."
 +notify_download_failed: "{user}, downloading {title} failed. I will try another release."
 +notify_manual_import: "{user}, {title} downloaded but did not make it into Plex: an admin needs to help."
++help_status: Use {commands} to see what is downloading and what is ready.
++status_header: "<b>Request status</b>"
++status_empty: No requests yet. Add a movie or series and its status will show up here.
++status_downloading: "<b>Downloading</b>"
++status_searching: "<b>Added, searching</b>"
++status_ready: "<b>Ready in Plex</b>"
++status_gone: "<b>Removed</b>"
++status_col_title: Title
++status_col_speed: Speed
++status_col_left: Left
++status_min: m
++status_days: d
++status_paused: paused
++status_queued: queued
++status_stalled: stalled
++status_importing: adding to Plex
++status_unknown: status unknown
++status_episodes: "{have}/{total} episodes"
++status_locale: en

@@ -15,6 +15,7 @@
   #   4. bot/notify.py: 127.0.0.1 webhook listener; arr import of a bot-requested item -> group message.
   #   5. lang/be-by.yml (plus notify_* keys in en-us.yml).
   #   6. notify.failures: add callbacks record requests (notify_requests table), history checker thread.
+  #   7. status: /status command (bot/status.py), live state of tracked requests + Transmission speed.
   searcharr = pkgs.python3Packages.buildPythonApplication rec {
     pname = "searcharr";
     version = "3.4.0";
@@ -107,6 +108,15 @@
     searcharr_notify_enabled = ${pyBool notify.enable}
     searcharr_notify_port = ${toString notify.port}
     searcharr_notify_failures_enabled = ${pyBool (notify.enable && notify.failures.enable)}
+
+    # /status: family requests (notify_requests table) with live download state
+    searcharr_status_enabled = ${pyBool cfg.status.enable}
+    searcharr_status_command_aliases = ["status"]
+    ${lib.optionalString cfg.status.enable ''
+      transmission_url = "http://127.0.0.1:9091/transmission/rpc"
+      transmission_username = _cred("transmission-username")
+      transmission_password = _cred("transmission-password")
+    ''}
     ${lib.optionalString notify.enable ''
       searcharr_notify_chat_id = ${toString notify.chatId}
       searcharr_notify_secret = _cred("webhook-secret")
@@ -125,6 +135,11 @@
     // lib.optionalAttrs notify.enable {
       # Shared with declarr.nix (X-Searcharr-Secret header of the arr Webhook connections).
       searcharr-webhook-secret = "webhook-secret";
+    }
+    // lib.optionalAttrs cfg.status.enable {
+      # Shared with declarr.nix (Transmission download client); /status reads speed and ETA.
+      transmission-username = "transmission-username";
+      transmission-password = "transmission-password";
     };
 in {
   options.local.searcharr = {
@@ -157,6 +172,10 @@ in {
         request, download failed (arr history, checked every 10 min), import stuck
         (ManualInteractionRequired webhook). Requests are tracked in /var/lib/searcharr/searcharr.db'';
     };
+    status.enable = lib.mkEnableOption ''
+      the /status command: requests made through the bot (since tracking began) with their state:
+      searching, downloading (% / speed / time left, from Transmission) or ready in Plex.
+      Reads the Transmission credentials (sops transmission-username / transmission-password)'';
   };
 
   config = lib.mkIf cfg.enable {
