@@ -42,7 +42,10 @@
     # Users from Nix, requests from the arr searcharr-<id> tags. Rollback: declarative.enable = false.
     declarative.enable = true;
     users = {
-      "680033455".username = "girl_has_n0_name";
+      "680033455" = {
+        username = "girl_has_n0_name";
+        admin = true;
+      };
       "657340029".username = "olgabrnvsk";
     };
   };
