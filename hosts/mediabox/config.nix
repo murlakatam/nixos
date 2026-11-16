@@ -24,6 +24,10 @@
   mediabox.declarr.enable = true;
   mediabox.declarr.sync = true;
 
+  # baravik.org (Belarusian) indexer, guest search, preferred over RuTracker (prowlarr.nix, declarr.nix).
+  # Login is a separate step: mediabox.baravik.login = true after sops baravik-username/-password.
+  mediabox.baravik.enable = true;
+
   # Telegram request bot (Searcharr). IDs are not secret. Add Olga's ID here when known.
   local.searcharr = {
     enable = true;
