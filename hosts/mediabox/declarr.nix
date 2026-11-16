@@ -60,6 +60,8 @@
       };
       onDownload = true;
       onUpgrade = false;
+      # import stuck (failure messages, telegram-requests.nix notify.failures)
+      onManualInteractionRequired = notify.failures.enable;
     };
   };
 

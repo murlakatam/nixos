@@ -12,10 +12,36 @@ diff --git a/bot/callbacks/base/tag_selection.py b/bot/callbacks/base/tag_select
          if tag_id := service.get_tag_id(tag):
              tags.append(str(tag_id))
          else:
+diff --git a/bot/callbacks/radarr_callbacks.py b/bot/callbacks/radarr_callbacks.py
+--- a/bot/callbacks/radarr_callbacks.py
++++ b/bot/callbacks/radarr_callbacks.py
+@@ -153,6 +153,9 @@
+     
+     # Step 6: Handle the result
+     if added:
++        # NIX PATCH: remember the request for failure notifications (no-op unless enabled)
++        from bot.notify import record_request
++        record_request("radarr", added, query.from_user.id, f"{r['title']} ({r['year']})" if r.get("year") else r["title"])
+         delete_conversation(cid)
+         await query.message.reply_text(translate("added", title=r["title"]))
+         await query.message.delete()
+diff --git a/bot/callbacks/sonarr_callbacks.py b/bot/callbacks/sonarr_callbacks.py
+--- a/bot/callbacks/sonarr_callbacks.py
++++ b/bot/callbacks/sonarr_callbacks.py
+@@ -183,6 +183,9 @@
+     
+     # Step 7: Handle the result
+     if added:
++        # NIX PATCH: remember the request for failure notifications (no-op unless enabled)
++        from bot.notify import record_request
++        record_request("sonarr", added, query.from_user.id, r["title"])
+         delete_conversation(cid)
+         await query.message.reply_text(translate("added", title=r["title"]))
+         await query.message.delete()
 diff --git a/bot/notify.py b/bot/notify.py
 --- a/bot/notify.py
 +++ b/bot/notify.py
-@@ -0,0 +1,202 @@
+@@ -0,0 +1,381 @@
 +"""
 +NIX PATCH: "available in Plex" notifications.
 +
@@ -24,11 +50,21 @@ diff --git a/bot/notify.py b/bot/notify.py
 +searcharr-<telegram user id> (set by the bot when that user requested it), it posts a message
 +naming the requester into settings.searcharr_notify_chat_id.
 +
++Failure messages (only when searcharr_notify_failures_enabled is also True):
++  - nothing found: no grab in arr history FAILURE_NOT_FOUND_AFTER after the request (once)
++  - download failed: a downloadFailed history event (once per history event)
++  - import stuck: webhook eventType ManualInteractionRequired (once per item and download id)
++Bot requests are remembered in the notify_requests table (written by the add callbacks, see
++record_request); sent messages are remembered in notify_sent, so restarts never repeat them.
++A daemon thread checks the history of each tracked request every CHECK_INTERVAL; tracking ends
++on import (Download webhook or import seen in history) or after TRACK_MAX_AGE.
++
 +Settings (all optional; listener only starts when searcharr_notify_enabled is True):
-+  searcharr_notify_enabled  bool
-+  searcharr_notify_port     int   (bind 127.0.0.1:<port>)
-+  searcharr_notify_chat_id  int   (group chat id)
-+  searcharr_notify_secret   str   (required value of the X-Searcharr-Secret header)
++  searcharr_notify_enabled           bool
++  searcharr_notify_port              int   (bind 127.0.0.1:<port>)
++  searcharr_notify_chat_id           int   (group chat id)
++  searcharr_notify_secret            str   (required value of the X-Searcharr-Secret header)
++  searcharr_notify_failures_enabled  bool
 +"""
 +import hmac
 +import html
@@ -38,10 +74,12 @@ diff --git a/bot/notify.py b/bot/notify.py
 +import time
 +from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 +
++import arrow
 +import requests
 +
 +import settings
 +from bot.utils.auth import get_users
++from bot.utils.database import execute_query
 +from bot.utils.log import set_up_logger
 +from config.language import translate
 +
@@ -50,6 +88,13 @@ diff --git a/bot/notify.py b/bot/notify.py
 +TAG_RE = re.compile(r"^searcharr-(\d+)$")
 +DEBOUNCE_SECONDS = 600
 +MAX_BODY = 1024 * 1024
++CHECK_INTERVAL = 600
++FIRST_CHECK_DELAY = 60
++FAILURE_NOT_FOUND_AFTER = 30 * 60
++TRACK_MAX_AGE = 14 * 24 * 3600
++APP_KIND = {"radarr": "movie", "sonarr": "series"}
++KIND_APP = {v: k for k, v in APP_KIND.items()}
++IMPORTED_EVENTS = {"downloadFolderImported", "movieFolderImported", "seriesFolderImported"}
 +
 +_sent = {}  # (kind, item id, requester id) -> monotonic time of last message
 +_sent_lock = threading.Lock()
@@ -65,6 +110,63 @@ diff --git a/bot/notify.py b/bot/notify.py
 +            return False
 +        _sent[key] = now
 +        return True
++
++
++def _failures_enabled():
++    return bool(getattr(settings, "searcharr_notify_enabled", False)) and bool(
++        getattr(settings, "searcharr_notify_failures_enabled", False)
++    )
++
++
++def init_tables():
++    """Create the notify tables if missing (idempotent)."""
++    execute_query(
++        """CREATE TABLE IF NOT EXISTS notify_requests (
++            app text not null,
++            item_id integer not null,
++            user_id integer not null,
++            title text,
++            requested_at real not null,
++            not_found_sent integer not null default 0,
++            primary key (app, item_id, user_id)
++        );"""
++    )
++    execute_query(
++        "CREATE TABLE IF NOT EXISTS notify_sent (key text primary key, sent_at real not null);"
++    )
++
++
++def record_request(app, added, user_id, title):
++    """Remember a successful bot add (called from the radarr/sonarr add callbacks). Never raises."""
++    try:
++        if not _failures_enabled():
++            return
++        item_id = added.get("id") if isinstance(added, dict) else None
++        if item_id is None:
++            logger.warning(f"Not tracking {app} request by {user_id}: add result has no id")
++            return
++        init_tables()
++        execute_query(
++            "INSERT OR IGNORE INTO notify_requests (app, item_id, user_id, title, requested_at) "
++            "VALUES (?, ?, ?, ?, ?);",
++            (app, int(item_id), int(user_id), str(title), time.time()),
++        )
++        logger.info(f"Tracking {app} id={item_id} requested by {user_id}")
++    except Exception as e:
++        logger.error(f"Could not record {app} request: {type(e).__name__}: {e}")
++
++
++def _stop_tracking(app, item_id, why):
++    execute_query("DELETE FROM notify_requests WHERE app=? AND item_id=?;", (app, int(item_id)))
++    logger.info(f"Stopped tracking {app} id={item_id}: {why}")
++
++
++def _claim(key):
++    """Persistent once-only marker. True if this call claimed key (message should be sent)."""
++    if execute_query("SELECT key FROM notify_sent WHERE key=?;", (key,)):
++        return False
++    execute_query("INSERT OR IGNORE INTO notify_sent (key, sent_at) VALUES (?, ?);", (key, time.time()))
++    return True
 +
 +
 +def _arr_settings(kind):
@@ -137,12 +239,105 @@ diff --git a/bot/notify.py b/bot/notify.py
 +    return True
 +
 +
++def _history(app, item_id):
++    url, key = _arr_settings(APP_KIND[app])
++    endpoint, param = ("movie", "movieId") if app == "radarr" else ("series", "seriesId")
++    r = requests.get(
++        f"{url}/api/v3/history/{endpoint}",
++        params={param: int(item_id)},
++        headers={"X-Api-Key": key},
++        timeout=20,
++    )
++    r.raise_for_status()
++    data = r.json()
++    return data if isinstance(data, list) else data.get("records", [])
++
++
++def _parse_date(d):
++    try:
++        return arrow.get(d).timestamp()
++    except Exception:
++        return 0.0
++
++
++def check_request(row, now=None):
++    """Decide nothing-found / download-failed for one tracked request. Returns a decision string."""
++    now = time.time() if now is None else now
++    app, item_id, uid = row["app"], int(row["item_id"]), int(row["user_id"])
++    title = row.get("title") or "?"
++    age = now - float(row["requested_at"])
++    if age > TRACK_MAX_AGE:
++        _stop_tracking(app, item_id, "older than 14 days")
++        return f"{app} id={item_id}: expired"
++
++    events = [
++        e for e in _history(app, item_id) if _parse_date(e.get("date")) >= float(row["requested_at"]) - 120
++    ]
++    types = [e.get("eventType") for e in events]
++    out = []
++    for e in events:
++        if e.get("eventType") != "downloadFailed":
++            continue
++        # one message per failed download (a season pack logs one downloadFailed per episode)
++        ref = e.get("downloadId") or f"h{e.get('id')}"
++        if _claim(f"failed:{app}:{item_id}:{ref}:{uid}"):
++            text = translate("notify_download_failed", user=_mention(uid), title=html.escape(title))
++            out.append(f"download-failed(history id {e.get('id')}):{'sent' if _send(text) else 'failed'}")
++
++    if any(t in IMPORTED_EVENTS for t in types):
++        _stop_tracking(app, item_id, "imported")
++        out.append("imported")
++    elif "grabbed" not in types and age >= FAILURE_NOT_FOUND_AFTER and not row.get("not_found_sent"):
++        execute_query(
++            "UPDATE notify_requests SET not_found_sent=1 WHERE app=? AND item_id=? AND user_id=?;",
++            (app, item_id, uid),
++        )
++        text = translate("notify_not_found", user=_mention(uid), title=html.escape(title))
++        out.append(f"not-found:{'sent' if _send(text) else 'failed'}")
++    return f"{app} id={item_id} user={uid}: " + (",".join(out) or "nothing to do")
++
++
++def check_all():
++    rows = execute_query("SELECT * FROM notify_requests;") or []
++    for row in rows:
++        try:
++            logger.info(f"Failure check: {check_request(row)}")
++        except Exception as e:
++            logger.error(
++                f"Failure check error for {row.get('app')} id={row.get('item_id')}: {type(e).__name__}"
++            )
++
++
++def _checker_loop():
++    time.sleep(FIRST_CHECK_DELAY)
++    while True:
++        try:
++            check_all()
++        except Exception as e:
++            logger.error(f"Failure checker error: {type(e).__name__}: {e}")
++        time.sleep(CHECK_INTERVAL)
++
++
++def _handle_manual_interaction(kind, item, title, requesters, payload):
++    if not _failures_enabled():
++        return "ignored ManualInteractionRequired (failures disabled)"
++    download = payload.get("downloadId") or (payload.get("downloadInfo") or {}).get("downloadId") or "?"
++    sent = []
++    for uid in requesters:
++        if not _claim(f"manual:{KIND_APP[kind]}:{item.get('id')}:{download}:{uid}"):
++            sent.append(f"{uid}:already-sent")
++            continue
++        text = translate("notify_manual_import", user=_mention(uid), title=html.escape(title))
++        sent.append(f"{uid}:{'sent' if _send(text) else 'failed'}")
++    return f"manual-interaction {kind} id={item.get('id')} requesters " + ",".join(sent)
++
++
 +def handle_event(payload):
 +    """Process one webhook payload. Returns a short decision string (logged and returned)."""
 +    event = payload.get("eventType")
-+    if event != "Download":
++    if event not in ("Download", "ManualInteractionRequired"):
 +        return f"ignored eventType={event}"
-+    if payload.get("isUpgrade"):
++    if event == "Download" and payload.get("isUpgrade"):
 +        return "ignored upgrade"
 +    if isinstance(payload.get("movie"), dict):
 +        kind, item = "movie", payload["movie"]
@@ -158,6 +353,12 @@ diff --git a/bot/notify.py b/bot/notify.py
 +    requesters = _requester_ids(_resolve_tag_labels(kind, item))
 +    if not requesters:
 +        return f"no searcharr-<id> tag on {kind} id={item.get('id')}: not requested via bot"
++
++    if event == "ManualInteractionRequired":
++        return _handle_manual_interaction(kind, item, title, requesters, payload)
++
++    if _failures_enabled() and item.get("id") is not None:
++        _stop_tracking(KIND_APP[kind], item["id"], "imported (webhook)")
 +
 +    sent = []
 +    for uid in requesters:
@@ -213,6 +414,10 @@ diff --git a/bot/notify.py b/bot/notify.py
 +    server = ThreadingHTTPServer(("127.0.0.1", port), _Handler)
 +    server.daemon_threads = True
 +    threading.Thread(target=server.serve_forever, name="notify", daemon=True).start()
++    if _failures_enabled():
++        init_tables()
++        threading.Thread(target=_checker_loop, name="notify-check", daemon=True).start()
++        logger.info(f"Failure notifications on: history check every {CHECK_INTERVAL}s")
 +    logger.info(
 +        f"Plex-available notification listener on 127.0.0.1:{port}, "
 +        f"chat id {settings.searcharr_notify_chat_id}"
@@ -318,7 +523,7 @@ diff --git a/config/settings_loader.py b/config/settings_loader.py
 diff --git a/lang/be-by.yml b/lang/be-by.yml
 --- a/lang/be-by.yml
 +++ b/lang/be-by.yml
-@@ -0,0 +1,63 @@
+@@ -0,0 +1,66 @@
 +language_ietf: be-by
 +language_label: Беларуская
 +
@@ -382,12 +587,18 @@ diff --git a/lang/be-by.yml b/lang/be-by.yml
 +admin_help: У вас ёсць правы адміністратара, таму вы можаце выкарыстоўваць {commands} для кіравання карыстальнікамі.
 +notify_movie_available: "{user}, фільм {title} ужо ў Plex!"
 +notify_series_available: "{user}, серыял {title} ужо ў Plex!"
++notify_not_found: "{user}, пакуль не знайшоў {title}. Буду шукаць далей."
++notify_download_failed: "{user}, не атрымалася спампаваць {title}. Паспрабую знайсці іншую раздачу."
++notify_manual_import: "{user}, {title} спампавана, але не трапіла ў Plex: патрэбна дапамога адміністратара."
 diff --git a/lang/en-us.yml b/lang/en-us.yml
 --- a/lang/en-us.yml
 +++ b/lang/en-us.yml
-@@ -59,3 +59,5 @@
+@@ -59,3 +59,8 @@
  help_radarr: Use {movie_commands} to add a movie to Radarr.
  no_features: Sorry, but all of my features are currently disabled.
  admin_help: Since you are an admin, you can also use {commands} to manage users.
 +notify_movie_available: "{user}, the movie {title} is now in Plex!"
 +notify_series_available: "{user}, the series {title} is now in Plex!"
++notify_not_found: "{user}, I have not found {title} yet. I will keep looking."
++notify_download_failed: "{user}, downloading {title} failed. I will try another release."
++notify_manual_import: "{user}, {title} downloaded but did not make it into Plex: an admin needs to help."

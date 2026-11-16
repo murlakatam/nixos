@@ -14,6 +14,7 @@
   #   3. Arr tag is always searcharr-<telegram user id> (digits, Radarr-safe).
   #   4. bot/notify.py: 127.0.0.1 webhook listener; arr import of a bot-requested item -> group message.
   #   5. lang/be-by.yml (plus notify_* keys in en-us.yml).
+  #   6. notify.failures: add callbacks record requests (notify_requests table), history checker thread.
   searcharr = pkgs.python3Packages.buildPythonApplication rec {
     pname = "searcharr";
     version = "3.4.0";
@@ -105,6 +106,7 @@
     # "available in Plex" group notifications (bot/notify.py; arr Webhook -> 127.0.0.1:<port>)
     searcharr_notify_enabled = ${pyBool notify.enable}
     searcharr_notify_port = ${toString notify.port}
+    searcharr_notify_failures_enabled = ${pyBool (notify.enable && notify.failures.enable)}
     ${lib.optionalString notify.enable ''
       searcharr_notify_chat_id = ${toString notify.chatId}
       searcharr_notify_secret = _cred("webhook-secret")
@@ -150,6 +152,10 @@ in {
         default = 8086;
         description = "Listener port, bound on 127.0.0.1 only.";
       };
+      failures.enable = lib.mkEnableOption ''
+        failure messages naming the requester (needs notify.enable): nothing found 30 min after a
+        request, download failed (arr history, checked every 10 min), import stuck
+        (ManualInteractionRequired webhook). Requests are tracked in /var/lib/searcharr/searcharr.db'';
     };
   };
 
