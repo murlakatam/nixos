@@ -59,6 +59,46 @@ diff --git a/bot/commands/help.py b/bot/commands/help.py
      # Add admin help if the user is an admin
      if auth_level == 2:
          help_text.append(
+@@ -82,7 +93,37 @@
+         )
+     
+     # Format and send the help message
+-    if help_text:
++    # NIX PATCH: render help as a monospace two-column table (one command per row) instead of
++    # a run-on paragraph; descriptions word-wrap in their column to fit a phone screen.
++    rows = []
++    title = translate("title")
++    if settings.sonarr_enabled:
++        rows += [(f"/{c} {title}", translate("help_desc_series")) for c in settings.sonarr_series_command_aliases]
++    if settings.radarr_enabled:
++        rows += [(f"/{c} {title}", translate("help_desc_movie")) for c in settings.radarr_movie_command_aliases]
++    if getattr(settings, "searcharr_status_enabled", False):
++        rows += [(f"/{c}", translate("help_desc_status")) for c in getattr(settings, "searcharr_status_command_aliases", ["status"])]
++    if auth_level == 2:
++        rows += [(f"/{c}", translate("help_desc_users")) for c in settings.searcharr_users_command_aliases]
++    if rows:
++        import html
++        import textwrap
++
++        cmd_w = max(len(c) for c, _ in rows)
++        desc_w = max(12, 31 - cmd_w - 1)
++        lines = []
++        for cmd, desc in rows:
++            wrapped = textwrap.wrap(desc, desc_w) or [""]
++            lines.append(f"{cmd:<{cmd_w}} {wrapped[0]}")
++            lines += [f"{'':<{cmd_w}} {w}" for w in wrapped[1:]]
++            lines.append("")
++        await update.message.reply_text(
++            f"<b>{html.escape(translate('help_header'))}</b>\n<pre>"
++            + html.escape("\n".join(lines).rstrip())
++            + "</pre>",
++            parse_mode="HTML",
++        )
++    elif help_text:
+         await update.message.reply_text(" ".join(help_text))
+     else:
+         await update.message.reply_text(translate("no_features"))
+\ No newline at end of file
 diff --git a/bot/commands/__init__.py b/bot/commands/__init__.py
 --- a/bot/commands/__init__.py
 +++ b/bot/commands/__init__.py
@@ -980,7 +1020,7 @@ diff --git a/config/settings_loader.py b/config/settings_loader.py
 diff --git a/lang/be-by.yml b/lang/be-by.yml
 --- a/lang/be-by.yml
 +++ b/lang/be-by.yml
-@@ -0,0 +1,86 @@
+@@ -0,0 +1,91 @@
 +language_ietf: be-by
 +language_label: Беларуская
 +
@@ -1067,10 +1107,15 @@ diff --git a/lang/be-by.yml b/lang/be-by.yml
 +status_episodes: "{have}/{total} серый"
 +status_locale: be
 +status_just_now: толькі што
++help_header: Каманды
++help_desc_movie: дадаць фільм у Plex
++help_desc_series: дадаць серыял у Plex
++help_desc_status: што спампоўваецца і што ўжо гатова
++help_desc_users: кіраванне карыстальнікамі
 diff --git a/lang/en-us.yml b/lang/en-us.yml
 --- a/lang/en-us.yml
 +++ b/lang/en-us.yml
-@@ -59,3 +59,28 @@
+@@ -59,3 +59,33 @@
  help_radarr: Use {movie_commands} to add a movie to Radarr.
  no_features: Sorry, but all of my features are currently disabled.
  admin_help: Since you are an admin, you can also use {commands} to manage users.
@@ -1099,3 +1144,8 @@ diff --git a/lang/en-us.yml b/lang/en-us.yml
 +status_episodes: "{have}/{total} episodes"
 +status_locale: en
 +status_just_now: just now
++help_header: Commands
++help_desc_movie: add a movie to Plex
++help_desc_series: add a series to Plex
++help_desc_status: what is downloading and what is ready
++help_desc_users: manage users
