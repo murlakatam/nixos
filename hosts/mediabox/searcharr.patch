@@ -488,6 +488,19 @@ diff --git a/bot/utils/database.py b/bot/utils/database.py
  DBFILE = "searcharr.db"
  DBLOCK = Lock()
  
+diff --git a/bot/utils/formatting.py b/bot/utils/formatting.py
+--- a/bot/utils/formatting.py
++++ b/bot/utils/formatting.py
+@@ -136,7 +136,8 @@
+                 keyboard.append(
+                     [
+                         InlineKeyboardButton(
+-                            translate("add_path_button", path=p["path"]),
++                            # NIX PATCH: show only the last folder (Kids / Regular), full paths overflow phone screens
++                            translate("add_path_button", path=p["path"].rstrip("/").rsplit("/", 1)[-1]),
+                             callback_data=f"{cid}^^^{i}^^^add^^^p={p['id']}",
+                         )
+                     ],
 diff --git a/bot/utils/log.py b/bot/utils/log.py
 --- a/bot/utils/log.py
 +++ b/bot/utils/log.py
