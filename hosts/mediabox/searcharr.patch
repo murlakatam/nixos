@@ -38,6 +38,69 @@ diff --git a/bot/callbacks/sonarr_callbacks.py b/bot/callbacks/sonarr_callbacks.
          delete_conversation(cid)
          await query.message.reply_text(translate("added", title=r["title"]))
          await query.message.delete()
+diff --git a/bot/command_menu.py b/bot/command_menu.py
+--- a/bot/command_menu.py
++++ b/bot/command_menu.py
+@@ -0,0 +1,59 @@
++"""
++NIX PATCH: Telegram command menu (setMyCommands), registered once at startup when
++settings.searcharr_command_menu is True. Descriptions are the same strings /help uses
++(help_desc_*). First alias of each command only.
++
++  default scope + all group chats: series, movie, status, help (whichever are enabled)
++  each admin's private chat:       the same + users
++
++Any failure is logged and ignored: the bot always starts.
++"""
++from telegram import BotCommand, BotCommandScopeAllGroupChats, BotCommandScopeChat, BotCommandScopeDefault
++
++import settings
++from bot.utils.auth import get_users
++from bot.utils.log import set_up_logger
++from config.language import translate
++
++logger = set_up_logger("command_menu")
++
++
++def _first(name, default):
++    aliases = getattr(settings, name, None) or [default]
++    return aliases[0]
++
++
++def menu_commands():
++    """(everyone, admins) lists of (command, description)."""
++    base = []
++    if getattr(settings, "sonarr_enabled", False):
++        base.append((_first("sonarr_series_command_aliases", "series"), translate("help_desc_series")))
++    if getattr(settings, "radarr_enabled", False):
++        base.append((_first("radarr_movie_command_aliases", "movie"), translate("help_desc_movie")))
++    if getattr(settings, "searcharr_status_enabled", False):
++        base.append((_first("searcharr_status_command_aliases", "status"), translate("help_desc_status")))
++    base.append((_first("searcharr_help_command_aliases", "help"), translate("help_desc_help")))
++    admin = base + [(_first("searcharr_users_command_aliases", "users"), translate("help_desc_users"))]
++    return base, admin
++
++
++async def register_menu(application):
++    """post_init hook. Never raises."""
++    if not getattr(settings, "searcharr_command_menu", False):
++        return
++    try:
++        base, admin = menu_commands()
++        everyone = [BotCommand(c, d) for c, d in base]
++        admins = [BotCommand(c, d) for c, d in admin]
++        admin_ids = [int(u["id"]) for u in get_users(admin=True)]
++    except Exception as e:
++        logger.warning(f"Command menu not registered: {type(e).__name__}: {e}")
++        return
++    targets = [("default", BotCommandScopeDefault(), everyone), ("all groups", BotCommandScopeAllGroupChats(), everyone)]
++    targets += [(f"admin chat {i}", BotCommandScopeChat(chat_id=i), admins) for i in admin_ids]
++    for label, scope, cmds in targets:
++        try:
++            await application.bot.set_my_commands(cmds, scope=scope)
++            logger.info(f"Command menu set for {label}: {', '.join('/' + c.command for c in cmds)}")
++        except Exception as e:  # e.g. an admin who never opened a private chat with the bot
++            logger.warning(f"Command menu for {label} failed: {type(e).__name__}: {e}")
 diff --git a/bot/commands/help.py b/bot/commands/help.py
 --- a/bot/commands/help.py
 +++ b/bot/commands/help.py
@@ -865,9 +928,16 @@ diff --git a/bot/searcharr_bot.py b/bot/searcharr_bot.py
  
  from api.sonarr import Sonarr
  from api.radarr import Radarr
-@@ -117,6 +123,26 @@
+@@ -115,8 +121,32 @@
+         self.logger.info("Starting Searcharr bot...")
+         
          # Build the application
-         application = ApplicationBuilder().token(self.token).job_queue(None).build()
+-        application = ApplicationBuilder().token(self.token).job_queue(None).build()
++        # NIX PATCH: post_init registers the Telegram command menu (bot/command_menu.py; no-op unless
++        # searcharr_command_menu, never raises)
++        from bot.command_menu import register_menu
++
++        application = ApplicationBuilder().token(self.token).job_queue(None).post_init(register_menu).build()
          
 +        # NIX PATCH (security): Telegram user-ID allow-list, checked BEFORE every other handler
 +        # (handler group -1) for all updates: commands, callbacks, everything. An update from
@@ -892,7 +962,7 @@ diff --git a/bot/searcharr_bot.py b/bot/searcharr_bot.py
          # Register command handlers from each module
          register_commands(application, self)
          
-@@ -129,5 +155,9 @@
+@@ -129,5 +159,9 @@
          else:
              self.logger.info("Developer mode is enabled; skipping registration of error handler--exceptions will be raised.")
          
@@ -1338,7 +1408,7 @@ diff --git a/config/settings_loader.py b/config/settings_loader.py
 diff --git a/lang/be-by.yml b/lang/be-by.yml
 --- a/lang/be-by.yml
 +++ b/lang/be-by.yml
-@@ -0,0 +1,94 @@
+@@ -0,0 +1,95 @@
 +language_ietf: be-by
 +language_label: Беларуская
 +
@@ -1433,10 +1503,11 @@ diff --git a/lang/be-by.yml b/lang/be-by.yml
 +users_declarative: Карыстальнікі задаюцца ў канфігурацыі сервера, тут іх нельга змяніць.
 +start_declarative_admin: Адміністратары задаюцца ў канфігурацыі сервера (Nix). Пароль тут нічога не змяняе.
 +start_declarative_admin_ok: Вы ўжо адміністратар. Адміністратары задаюцца ў канфігурацыі сервера (Nix).
++help_desc_help: спіс каманд
 diff --git a/lang/en-us.yml b/lang/en-us.yml
 --- a/lang/en-us.yml
 +++ b/lang/en-us.yml
-@@ -59,3 +59,36 @@
+@@ -59,3 +59,37 @@
  help_radarr: Use {movie_commands} to add a movie to Radarr.
  no_features: Sorry, but all of my features are currently disabled.
  admin_help: Since you are an admin, you can also use {commands} to manage users.
@@ -1473,3 +1544,4 @@ diff --git a/lang/en-us.yml b/lang/en-us.yml
 +users_declarative: Users are set in the server configuration and cannot be changed here.
 +start_declarative_admin: Admins are set in the server configuration (Nix). The password changes nothing here.
 +start_declarative_admin_ok: You are already an admin. Admins are set in the server configuration (Nix).
++help_desc_help: list of commands

@@ -39,6 +39,7 @@
       failures.enable = true; # nothing found / download failed / import stuck
     };
     status.enable = true; # /status: requests with live download state
+    commandMenu.enable = true; # Telegram "/" menu (/users only in admins' private chats)
     # Users from Nix, requests from the arr searcharr-<id> tags. Rollback: declarative.enable = false.
     declarative.enable = true;
     users = {

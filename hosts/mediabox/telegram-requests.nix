@@ -17,6 +17,7 @@
   #   6. notify.failures: add callbacks record requests (notify_requests table), history checker thread.
   #   7. status: /status command (bot/status.py), live state of tracked requests + Transmission speed.
   #   8. declarative (bot/declarative.py): users from local.searcharr.users, requests from arr tags.
+  #   9. commandMenu (bot/command_menu.py): Telegram command menu set at startup (setMyCommands).
   searcharr = pkgs.python3Packages.buildPythonApplication rec {
     pname = "searcharr";
     version = "3.4.0";
@@ -120,6 +121,8 @@
     ''}
     # Declarative mode: users from Nix (users table ignored), requests from the searcharr-<id> arr tags
     searcharr_declarative = ${pyBool cfg.declarative.enable}
+    # Telegram command menu at startup: /series /movie /status /help everywhere, + /users in admins' DMs
+    searcharr_command_menu = ${pyBool cfg.commandMenu.enable}
     ${lib.optionalString cfg.declarative.enable ''
       import json
       searcharr_users = json.loads(${builtins.toJSON (builtins.toJSON cfg.users)})
@@ -183,6 +186,10 @@ in {
       the /status command: requests made through the bot (since tracking began) with their state:
       searching, downloading (% / speed / time left, from Transmission) or ready in Plex.
       Reads the Transmission credentials (sops transmission-username / transmission-password)'';
+    commandMenu.enable = lib.mkEnableOption ''
+      the Telegram command menu, set at every start (setMyCommands, same texts as /help):
+      series/movie/status/help for all chats and groups, plus users in each admin's private chat.
+      Failures are only logged'';
     declarative.enable = lib.mkEnableOption ''
       declarative mode: users (and admins) come only from local.searcharr.users, and requests are
       read from the searcharr-<telegram id> tags in Radarr/Sonarr instead of the database. The
