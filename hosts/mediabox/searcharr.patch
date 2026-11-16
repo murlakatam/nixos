@@ -59,39 +59,29 @@ diff --git a/bot/commands/help.py b/bot/commands/help.py
      # Add admin help if the user is an admin
      if auth_level == 2:
          help_text.append(
-@@ -82,7 +93,37 @@
+@@ -82,7 +93,27 @@
          )
      
      # Format and send the help message
 -    if help_text:
-+    # NIX PATCH: render help as a monospace two-column table (one command per row) instead of
-+    # a run-on paragraph; descriptions word-wrap in their column to fit a phone screen.
++    # NIX PATCH: render help as one line per command ("/cmd назва — what it does") instead of a
++    # run-on paragraph. Plain text (not <pre>), so Telegram keeps the commands tappable.
++    import html
++
 +    rows = []
-+    title = translate("title")
++    arg = f" <i>{html.escape(translate('title'))}</i>"
 +    if settings.sonarr_enabled:
-+        rows += [(f"/{c} {title}", translate("help_desc_series")) for c in settings.sonarr_series_command_aliases]
++        rows += [(f"/{c}{arg}", translate("help_desc_series")) for c in settings.sonarr_series_command_aliases]
 +    if settings.radarr_enabled:
-+        rows += [(f"/{c} {title}", translate("help_desc_movie")) for c in settings.radarr_movie_command_aliases]
++        rows += [(f"/{c}{arg}", translate("help_desc_movie")) for c in settings.radarr_movie_command_aliases]
 +    if getattr(settings, "searcharr_status_enabled", False):
 +        rows += [(f"/{c}", translate("help_desc_status")) for c in getattr(settings, "searcharr_status_command_aliases", ["status"])]
 +    if auth_level == 2:
 +        rows += [(f"/{c}", translate("help_desc_users")) for c in settings.searcharr_users_command_aliases]
 +    if rows:
-+        import html
-+        import textwrap
-+
-+        cmd_w = max(len(c) for c, _ in rows)
-+        desc_w = max(12, 31 - cmd_w - 1)
-+        lines = []
-+        for cmd, desc in rows:
-+            wrapped = textwrap.wrap(desc, desc_w) or [""]
-+            lines.append(f"{cmd:<{cmd_w}} {wrapped[0]}")
-+            lines += [f"{'':<{cmd_w}} {w}" for w in wrapped[1:]]
-+            lines.append("")
 +        await update.message.reply_text(
-+            f"<b>{html.escape(translate('help_header'))}</b>\n<pre>"
-+            + html.escape("\n".join(lines).rstrip())
-+            + "</pre>",
++            f"<b>{html.escape(translate('help_header'))}</b>\n\n"
++            + "\n\n".join(f"{cmd} — {html.escape(desc)}" for cmd, desc in rows),
 +            parse_mode="HTML",
 +        )
 +    elif help_text:
@@ -1087,7 +1077,7 @@ diff --git a/lang/be-by.yml b/lang/be-by.yml
 +notify_not_found: "{user}, пакуль не знайшоў {title}. Буду шукаць далей."
 +notify_download_failed: "{user}, не атрымалася спампаваць {title}. Паспрабую знайсці іншую раздачу."
 +notify_manual_import: "{user}, {title} спампавана, але не трапіла ў Plex: патрэбна дапамога адміністратара."
-+help_status: Выкарыстоўвайце {commands}, каб паглядзець, што спампоўваецца і што ўжо гатова.
++help_status: Выкарыстоўвайце {commands}, каб паглядзець, што спампоўваецца і што ўжо ў Plex.
 +status_header: "<b>Стан запытаў</b>"
 +status_empty: Пакуль няма запытаў. Дадайце фільм ці серыял, і тут з'явіцца іх стан.
 +status_downloading: "<b>Спампоўваецца</b>"
@@ -1110,7 +1100,7 @@ diff --git a/lang/be-by.yml b/lang/be-by.yml
 +help_header: Каманды
 +help_desc_movie: дадаць фільм у Plex
 +help_desc_series: дадаць серыял у Plex
-+help_desc_status: што спампоўваецца і што ўжо гатова
++help_desc_status: што спампоўваецца і што ўжо ў Plex
 +help_desc_users: кіраванне карыстальнікамі
 diff --git a/lang/en-us.yml b/lang/en-us.yml
 --- a/lang/en-us.yml
