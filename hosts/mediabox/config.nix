@@ -36,6 +36,7 @@
     notify = {
       enable = true;
       chatId = -5135740760;
+      failures.enable = true; # nothing found / download failed / import stuck
     };
   };
 
