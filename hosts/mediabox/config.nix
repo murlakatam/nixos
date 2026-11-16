@@ -31,6 +31,12 @@
       680033455 # Eugene
       657340029 # Olga
     ];
+    # "Available in Plex" messages to the family group. If the log says "chat not found",
+    # use -1005135740760 (supergroup form of the same id).
+    notify = {
+      enable = true;
+      chatId = -5135740760;
+    };
   };
 
   # Tailnet: reach Plex/SSH over tailscale0 without opening them on LAN/WAN.
