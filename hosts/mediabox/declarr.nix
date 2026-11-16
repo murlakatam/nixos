@@ -6,6 +6,7 @@
   ...
 }: let
   cfg = config.mediabox.declarr;
+  baravik = config.mediabox.baravik; # options in prowlarr.nix
   notify = config.local.searcharr.notify;
   hookOn = notify.enable && config.local.searcharr.enable;
   declarr = inputs.declarr.packages.${pkgs.stdenv.hostPlatform.system}.declarr;
@@ -26,6 +27,10 @@
     // lib.optionalAttrs hookOn {
       # Shared with telegram-requests.nix (Searcharr checks it as X-Searcharr-Secret).
       "searcharr-webhook-secret" = "SEARCHARR_WEBHOOK_SECRET";
+    }
+    // lib.optionalAttrs (baravik.enable && baravik.login) {
+      "baravik-username" = "BARAVIK_USER";
+      "baravik-password" = "BARAVIK_PASS";
     };
   # declarr resolves "DECLARR_SECRET_FILE_<X>" to the contents of the file named by env var <that>.
   sec = key: "DECLARR_SECRET_FILE_${secretNames.${key}}";
@@ -112,6 +117,23 @@
       ];
     };
   };
+  # baravik.org releases (Belarusian audio): the Prowlarr definition appends " Baravik" to every title
+  # (prowlarr-definitions/baravik.yml), since the arrs have neither an "indexer" spec nor Belarusian.
+  baravikFormat = lib.optionalAttrs baravik.enable {
+    Baravik = {
+      includeCustomFormatWhenRenaming = false;
+      specifications = [
+        {
+          name = "Baravik";
+          implementation = "ReleaseTitleSpecification";
+          negate = false;
+          required = false;
+          fields.value = "(?i)\\bBaravik\\b";
+        }
+      ];
+    };
+  };
+  baravikScore = 1000; # beats HEVC (+100): a Belarusian release wins within the same quality group
   # All six quality profiles, declared in full through qualityProfilePatch (fork): matched by NAME and
   # PUT to the existing id, so ids stay stable (movies/series reference qualityProfileId, Searcharr the
   # name) and nothing is ever deleted. The plain `qualityProfile` key is NOT used: it runs the profilarr
@@ -187,28 +209,75 @@
       else i // {allowed = on;})
     table;
 
+  # Merge the listed qualities/groups into ONE group (flattened: arr groups hold qualities only), placed
+  # where the last of them was, so all of them rank equal and the custom-format score decides.
+  mergeGroup = table: id: name: names: let
+    nameOf = i: i.name or i.quality.name;
+    isMember = i: lib.elem (nameOf i) names;
+    members = lib.filter isMember table;
+  in
+    lib.concatMap (
+      i:
+        if !(isMember i)
+        then [i]
+        else if nameOf i == nameOf (lib.last members)
+        then [(group id name (lib.concatMap (m: m.members or [m]) members))]
+        else []
+    )
+    table;
+  # One group for the family profile with baravik on: a Belarusian 720p beats a Russian 1080p.
+  hdGroup = {
+    id = 1004;
+    name = "HD 720p/1080p";
+  };
+
   profileBase = {
     upgradeAllowed = false;
     minFormatScore = 0;
     cutoffFormatScore = 0;
     minUpgradeFormatScore = 1;
   };
-  # Prefer HEVC/x265 within a tier only in the family profile.
+  # Prefer HEVC/x265 (and, with baravik on, Baravik releases) within a tier only in the family profile.
   mkProfiles = table: extra: profiles:
-    lib.mapAttrs (name: p:
+    lib.mapAttrs (name: p: let
+      family = name == "HD - 720p/1080p";
+    in
       profileBase
       // extra
       // {
         inherit name;
         inherit (p) cutoff;
-        items = mkItems table p.allowed;
-        formatScores.HEVC =
-          if name == "HD - 720p/1080p"
-          then 100
-          else 0;
+        items = mkItems (p.table or table) p.allowed;
+        formatScores =
+          {
+            HEVC =
+              if family
+              then 100
+              else 0;
+          }
+          // lib.optionalAttrs baravik.enable {
+            Baravik =
+              if family
+              then baravikScore
+              else 0;
+          };
       }
       // (p.extra or {}))
     profiles;
+
+  # Family profile: 480p fallback below, then either the separate HD tiers or (baravik on) one group.
+  familyProfile = table: hdNames: cutoff: extra:
+    if baravik.enable
+    then {
+      table = mergeGroup table hdGroup.id hdGroup.name hdNames;
+      cutoff = hdGroup.id;
+      allowed = fallback480 ++ [hdGroup.name];
+      inherit extra;
+    }
+    else {
+      inherit cutoff extra;
+      allowed = fallback480 ++ hdNames;
+    };
 
   # 480p fallback in the family profile (below 720p = lowest priority; cutoff and sizes unchanged).
   fallback480 = ["DVD" "WEB 480p" "Bluray-480p"];
@@ -234,15 +303,15 @@
       cutoff = 31;
       allowed = ["HDTV-2160p" "WEB 2160p" "Bluray-2160p" "Remux-2160p"];
     };
-    "HD - 720p/1080p" = {
-      cutoff = 6;
-      allowed = fallback480 ++ ["HDTV-720p" "WEB 720p" "Bluray-720p" "HDTV-1080p" "WEB 1080p" "Bluray-1080p" "Remux-1080p"];
-      # RuTracker releases are tagged Russian; "Original" rejected them all.
-      extra.language = {
-        id = -1;
-        name = "Any";
+    # RuTracker releases are tagged Russian; "Original" rejected them all, hence language Any.
+    "HD - 720p/1080p" =
+      familyProfile radarrQualities ["HDTV-720p" "WEB 720p" "Bluray-720p" "HDTV-1080p" "WEB 1080p" "Bluray-1080p" "Remux-1080p"] 6
+      {
+        language = {
+          id = -1;
+          name = "Any";
+        };
       };
-    };
   };
   original = {
     id = -2;
@@ -270,10 +339,7 @@
       cutoff = 16;
       allowed = ["HDTV-2160p" "WEB 2160p" "Bluray-2160p"];
     };
-    "HD - 720p/1080p" = {
-      cutoff = 4;
-      allowed = fallback480 ++ ["HDTV-720p" "HDTV-1080p" "WEB 720p" "Bluray-720p" "WEB 1080p" "Bluray-1080p"];
-    };
+    "HD - 720p/1080p" = familyProfile sonarrQualities ["HDTV-720p" "HDTV-1080p" "WEB 720p" "Bluray-720p" "WEB 1080p" "Bluray-1080p"] 4 {};
   };
 
   # Absent top-level keys are left untouched by declarr; present ones are made EXACT (extras deleted).
@@ -291,7 +357,7 @@
       };
       config.host.apiKey = sec "arr-radarr-apikey";
       qualityDefinition = radarrSizes;
-      customFormatSet = hevcFormat;
+      customFormatSet = hevcFormat // baravikFormat;
       qualityProfilePatch = radarrProfiles;
       downloadClient = transmission {movieImportedCategory = "radarr";};
       rootFolder = [
@@ -322,7 +388,7 @@
       };
       config.host.apiKey = sec "arr-sonarr-apikey";
       qualityDefinition = sonarrSizes;
-      customFormatSet = hevcFormat;
+      customFormatSet = hevcFormat // baravikFormat;
       qualityProfilePatch = sonarrProfiles;
       downloadClient = transmission {tvImportedCategory = "sonarr";};
       rootFolder = [
@@ -357,18 +423,38 @@
       inherit tags;
       downloadClient = {};
       appProfile.Standard = {};
-      indexer."RuTracker.org" = {
-        indexerName = "RuTracker.org";
-        appProfileId = "Standard";
-        tags = ["flare"];
-        fields = {
-          baseUrl = "https://rutracker.org/";
-          username = sec "rutracker-username";
-          password = sec "rutracker-password";
-          useMagnetLinks = true;
-          addRussianToTitle = true;
+      indexer =
+        {
+          "RuTracker.org" = {
+            indexerName = "RuTracker.org";
+            appProfileId = "Standard";
+            tags = ["flare"];
+            fields = {
+              baseUrl = "https://rutracker.org/";
+              username = sec "rutracker-username";
+              password = sec "rutracker-password";
+              useMagnetLinks = true;
+              addRussianToTitle = true;
+            };
+          };
+        }
+        // lib.optionalAttrs baravik.enable {
+          # Custom definition shipped by prowlarr.nix. Priority 10 beats RuTracker (default 25) on ties;
+          # Prowlarr copies it to the Radarr/Sonarr indexers it pushes (same app profile as RuTracker).
+          "Baravik" = {
+            indexerName = "Baravik";
+            appProfileId = "Standard";
+            priority = 10;
+            fields =
+              {
+                baseUrl = "https://baravik.org/";
+              }
+              // lib.optionalAttrs baravik.login {
+                username = sec "baravik-username";
+                password = sec "baravik-password";
+              };
+          };
         };
-      };
       applications = {
         Radarr = {
           name = "Radarr";

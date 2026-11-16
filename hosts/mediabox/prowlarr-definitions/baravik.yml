@@ -1,0 +1,300 @@
+---
+# Custom Prowlarr (Cardigann v11) definition for baravik.org, a Belarusian-language PunBB 1.4 forum.
+# Shipped declaratively by hosts/mediabox/prowlarr.nix (mediabox.baravik.enable) into
+# /var/lib/private/prowlarr/Definitions/Custom/. Not in Prowlarr/Indexers or Jackett (checked 2026-11-17).
+# - Search: guest-capable /search/ in "posts" view (first post of each topic, gives size/quality/imdb).
+#   The site allows one search per 30 s, so requestDelay is 31 s (applies to every request).
+# - RSS (no keywords): "recent active topics" list (titles only, no size).
+# - Login: none by default (guest search). baravik-login.yml adds it when mediabox.baravik.login is on.
+# - Download: the topic page; the magnet is set by an inline <script>. Magnets are public.
+# - Seeders/leechers: the forum shows none, so seeders are a fixed 1 (passes Radarr/Sonarr's default
+#   minimum of 1; lowest possible, so it never wins a peer-count tie-break).
+# - Titles: rewritten to Latin for the Radarr/Sonarr parser (Belarusian segment dropped when an
+#   original-language Latin title exists, otherwise transliterated), quality/resolution appended from
+#   the post body when missing, and " Baravik" appended for the "Baravik" custom format.
+id: baravik
+name: Baravik
+description: "Baravik is a BELARUSIAN forum tracker for movies, TV and cartoons dubbed in Belarusian"
+language: be-BY
+type: semi-private
+encoding: UTF-8
+requestDelay: 31
+followredirect: true
+testlinktorrent: false
+links:
+  - https://baravik.org/
+
+caps:
+  categorymappings:
+    - {id: 8, cat: Movies, desc: "Фільмы на роднай мове"}
+    - {id: 9, cat: Movies, desc: "Беларусьфільм"}
+    - {id: 21, cat: Movies, desc: "Мультфільмы"}
+    - {id: 21, cat: TV/Other, desc: "Мультфільмы (серыялы)"}
+    - {id: 26, cat: TV, desc: "Серыялы"}
+    - {id: 11, cat: Movies/Other, desc: "Дакументалістыка"}
+    - {id: 11, cat: TV/Documentary, desc: "Дакументалістыка (серыялы)"}
+    - {id: 31, cat: Movies/Foreign, desc: "Фільмы з беларускімі субтытрамі"}
+    - {id: 31, cat: TV/Foreign, desc: "Серыялы з беларускімі субтытрамі"}
+    - {id: 30, cat: Other, desc: "Тэатр"}
+
+  modes:
+    search: [q]
+    tv-search: [q, season, ep]
+    movie-search: [q]
+  allowrawsearch: true
+
+settings:
+  - name: username
+    type: text
+    label: Username
+  - name: password
+    type: password
+    label: Password
+  - name: info_seeders
+    type: info
+    label: Seeders
+    default: "baravik.org shows no seeders or leechers; every result reports 1 seeder."
+
+
+search:
+  paths:
+    - path: search/
+      followredirect: true
+  inputs:
+    $raw: "{{ if .Keywords }}action=search&keywords={{ .Keywords }}&search_in=-1&show_as=posts{{ range .Categories }}&forum[]={{.}}{{end}}{{ else }}action=show_recent{{ end }}"
+  keywordsfilters:
+    # Sonarr appends S01 / S01E02; titles carry seasons in many spellings, so search the show name only.
+    - name: re_replace
+      args: ['(?i)\b(?:[SE]\d{1,4}){1,2}\b', '']
+    - name: re_replace
+      args: ['\s{2,}', ' ']
+    - name: trim
+  error:
+    # "Прынамсі 30 секунд павінна прайсці між пошукамі" (flood limit) and other forum messages;
+    # "Ваш пошук не даў вынікаў" is a normal empty result.
+    - selector: 'div.main-message:not(:contains("не даў вынікаў"))'
+
+  rows:
+    selector: "{{ if .Keywords }}div.resultpost{{ else }}div.main-item:has(li.info-forum a[href$=\"/forum/8/\"], li.info-forum a[href$=\"/forum/9/\"], li.info-forum a[href$=\"/forum/11/\"], li.info-forum a[href$=\"/forum/21/\"], li.info-forum a[href$=\"/forum/26/\"], li.info-forum a[href$=\"/forum/30/\"], li.info-forum a[href$=\"/forum/31/\"]){{ end }}"
+
+  fields:
+    category:
+      selector: "{{ if .Keywords }}h4.post-title small a[href*=\"/forum/\"]{{ else }}li.info-forum a{{ end }}"
+      attribute: href
+      filters:
+        - name: regexp
+          args: '/forum/(\d+)/'
+    details:
+      selector: "{{ if .Keywords }}h4.post-title a[href*=\"/topic/\"]{{ else }}div.item-subject h3 a[href*=\"/topic/\"]{{ end }}"
+      attribute: href
+    download:
+      selector: "{{ if .Keywords }}h4.post-title a[href*=\"/topic/\"]{{ else }}div.item-subject h3 a[href*=\"/topic/\"]{{ end }}"
+      attribute: href
+    # --- title pipeline ---------------------------------------------------------------------------
+    title_raw:
+      selector: "{{ if .Keywords }}h4.post-title a[href*=\"/topic/\"]{{ else }}div.item-subject h3 a[href*=\"/topic/\"]{{ end }}"
+      filters:
+        - name: re_replace
+          args: ['^\s*Тэма:\s*', '']
+        - name: re_replace
+          args: ['[—–]', ' - ']
+    # season words -> S01 (Belarusian, Russian and English spellings)
+    title_season:
+      text: "{{ .Result.title_raw }}"
+      filters:
+        - name: re_replace
+          args: ['(?i)\b(?:сезон|season)\s*(\d)\b', 'S0$1']
+        - name: re_replace
+          args: ['(?i)\b(?:сезон|season)\s*(\d\d)\b', 'S$1']
+        - name: re_replace
+          args: ['(?i)\b(\d)(?:-?[йі])?\s*(?:сезон|season)\b', 'S0$1']
+        - name: re_replace
+          args: ['(?i)\b(\d\d)(?:-?[йі])?\s*(?:сезон|season)\b', 'S$1']
+        # keep a season marker that sits inside (...) before (...) groups are dropped
+        - name: re_replace
+          args: ['\(([^()]*?)\b(S\d\d)\b([^()]*)\)', '$2 ($1$3)']
+        # partial season "(9 з 10)" / "(9 from 10)"
+        - name: re_replace
+          args: ['(?i)\(\s*\d+\s*(?:з|из|from|of)\s*\d+\s*\)', '']
+    # (director / Director) and other (...) groups with Cyrillic
+    title_noparen:
+      text: "{{ .Result.title_season }}"
+      filters:
+        - name: re_replace
+          args: ['\([^()]*\p{IsCyrillic}[^()]*\)', '']
+    # non-empty when some " / " segment is a Latin (original-language) title
+    title_haslatin:
+      text: "{{ .Result.title_noparen }}"
+      filters:
+        - name: regexp
+          # (a segment of only quality/codec tokens like "/ WEB-DL / H.265" is not a title)
+          args: '(?i)(?:^|/)\s*(?!(?:(?:WEB|HD|BD|DVD|SAT|TV|H\.?26|x26|AVC|HEVC|4k|\d)\S*\s*)+(?:/|$))([a-z][^/\p{IsCyrillic}]*[a-z])'
+    title_lat:
+      text: "{{ .Result.title_noparen }}"
+      filters:
+        # drop the leading Belarusian title segment(s) up to the first Latin one
+        - name: re_replace
+          args: ['^(?:[^/]*\p{IsCyrillic}[^/]*/\s*)+?(?=[A-Za-z])', '']
+        # "Title / Alt Title (" or "Title / Alt Title [" -> keep the first Latin title only
+        - name: re_replace
+          args: ['^([^/(\[]+?)\s*/\s*[^/(\[\d]+(?=[(\[])', '$1 ']
+        # remaining Cyrillic words (countries, genres, studios)
+        - name: re_replace
+          args: ['[\p{IsCyrillic}́’ʼ]+', '']
+    title_tr:
+      text: "{{ .Result.title_noparen }}"
+      filters:
+        - name: tolower
+        - {name: replace, args: ["щ", "shch"]}
+        - {name: replace, args: ["ё", "yo"]}
+        - {name: replace, args: ["ж", "zh"]}
+        - {name: replace, args: ["х", "kh"]}
+        - {name: replace, args: ["ц", "ts"]}
+        - {name: replace, args: ["ч", "ch"]}
+        - {name: replace, args: ["ш", "sh"]}
+        - {name: replace, args: ["ю", "yu"]}
+        - {name: replace, args: ["я", "ya"]}
+        - {name: replace, args: ["є", "ye"]}
+        - {name: replace, args: ["ї", "yi"]}
+        - {name: replace, args: ["а", "a"]}
+        - {name: replace, args: ["б", "b"]}
+        - {name: replace, args: ["в", "v"]}
+        - {name: replace, args: ["г", "h"]}
+        - {name: replace, args: ["ґ", "g"]}
+        - {name: replace, args: ["д", "d"]}
+        - {name: replace, args: ["е", "e"]}
+        - {name: replace, args: ["з", "z"]}
+        - {name: replace, args: ["і", "i"]}
+        - {name: replace, args: ["и", "i"]}
+        - {name: replace, args: ["й", "y"]}
+        - {name: replace, args: ["к", "k"]}
+        - {name: replace, args: ["л", "l"]}
+        - {name: replace, args: ["м", "m"]}
+        - {name: replace, args: ["н", "n"]}
+        - {name: replace, args: ["о", "o"]}
+        - {name: replace, args: ["п", "p"]}
+        - {name: replace, args: ["р", "r"]}
+        - {name: replace, args: ["с", "s"]}
+        - {name: replace, args: ["т", "t"]}
+        - {name: replace, args: ["у", "u"]}
+        - {name: replace, args: ["ў", "u"]}
+        - {name: replace, args: ["ф", "f"]}
+        - {name: replace, args: ["ы", "y"]}
+        - {name: replace, args: ["э", "e"]}
+        - {name: replace, args: ["ъ", ""]}
+        - {name: replace, args: ["ь", ""]}
+        - {name: replace, args: ["’", ""]}
+        - {name: replace, args: ["ʼ", ""]}
+        - {name: replace, args: ["́", ""]}
+    title_pick:
+      text: "{{ if .Result.title_haslatin }}{{ .Result.title_lat }}{{ else }}{{ .Result.title_tr }}{{ end }}"
+      filters:
+        - name: re_replace
+          args: ['(?i)\bWEB-?DL-?Rip\b', 'WEB-DL']
+        - name: re_replace
+          args: ['(?i)\b(?:HDTV|SAT|TV)-?Rip\b', 'HDTV']
+        - name: re_replace
+          args: ['[\[\](){}/,;+|«»"]', ' ']
+        - name: re_replace
+          args: ['\s+[-:.]+(?=\s)', ' ']
+        - name: re_replace
+          args: ['^[\s\-:.]+|[\s\-:.]+$', '']
+        - name: re_replace
+          args: ['\s{2,}', ' ']
+    title_src:
+      text: "{{ .Result.title_pick }}"
+      filters:
+        - name: regexp
+          args: '(?i)\b(BD-?Rip|Blu-?Ray|BDRemux|Remux|WEB-?DL|WEB-?Rip|HDTV|HDRip|DVD\w*|CAMRip|TS)\b'
+    title_res:
+      text: "{{ .Result.title_pick }}"
+      filters:
+        - name: regexp
+          args: '(?i)\b(\d{3,4}[pi]|4k|uhd)\b'
+    # "Якасьць відэа: BDRip-1080p" (posts view only)
+    title_qbody:
+      selector: div.entry-content
+      optional: true
+      filters:
+        - name: regexp
+          args: 'Якасьць\s+відэа\s*:\s*([A-Za-z0-9][A-Za-z0-9 .\-]*[A-Za-z0-9])'
+        - name: re_replace
+          args: ['(?i)\bWEB-?DL-?Rip\b', 'WEB-DL']
+        - name: re_replace
+          args: ['(?i)\b(?:HDTV|SAT|TV)-?Rip\b', 'HDTV']
+    # "Відэа: 1920x1040 ..." -> 1080p
+    title_resbody:
+      selector: div.entry-content
+      optional: true
+      filters:
+        - name: regexp
+          args: 'Відэа\s*:\s*(\d{3,4})\s*[xх×]\s*\d{3,4}'
+        - name: re_replace
+          args: ['^(?:3[6-9]\d\d|40\d\d)$', '2160p']
+        - name: re_replace
+          args: ['^(?:1[7-9]\d\d|20\d\d)$', '1080p']
+        - name: re_replace
+          args: ['^(?:1[1-5]\d\d)$', '720p']
+        - name: re_replace
+          args: ['^\d+$', '']
+    title:
+      text: "{{ .Result.title_pick }}{{ if .Result.title_src }}{{ else }} {{ .Result.title_qbody }}{{ end }}{{ if .Result.title_res }}{{ else }} {{ .Result.title_resbody }}{{ end }} Baravik"
+      filters:
+        - name: re_replace
+          args: ['\s{2,}', ' ']
+        - name: trim
+    # --- the rest ---------------------------------------------------------------------------------
+    description:
+      selector: "{{ if .Keywords }}h4.post-title a[href*=\"/topic/\"]{{ else }}div.item-subject h3 a[href*=\"/topic/\"]{{ end }}"
+      filters:
+        - name: re_replace
+          args: ['^\s*Тэма:\s*', '']
+    imdbid:
+      selector: div.entry-content a[href*="imdb.com/title/tt"]
+      attribute: href
+      optional: true
+      filters:
+        - name: regexp
+          args: '(tt\d+)'
+    size:
+      selector: div.entry-content
+      optional: true
+      default: 0
+      filters:
+        - name: regexp
+          # one total size only; "800 Mb - серыя" (per episode) and "606 Mb - 1.3 Gb" ranges stay 0 (unknown)
+          args: '(?i)Памер\s*:\s*~?\s*(\d+(?:[.,]\d+)?\s*(?:[kmgt]i?b|[кмгт][іi]?б))(?!\s*-\s*(?:\d|сер|эп))'
+        - name: replace
+          args: [",", "."]
+        - name: re_replace
+          args: ['(?i)[гg][iі]?[бb]', 'GB']
+        - name: re_replace
+          args: ['(?i)[мm][iі]?[бb]', 'MB']
+        - name: re_replace
+          args: ['(?i)[тt][iі]?[бb]', 'TB']
+    date_posted:
+      selector: "{{ if .Keywords }}h3.post-ident span.post-link a{{ else }}div.no-such-element{{ end }}"
+      optional: true
+      filters:
+        - name: append
+          args: " +03:00" # Minsk
+        - name: dateparse
+          args: "yyyy-MM-dd HH:mm:ss zzz"
+    date:
+      text: "{{ if .Result.date_posted }}{{ .Result.date_posted }}{{ else }}now{{ end }}"
+    seeders:
+      text: 1
+    leechers:
+      text: 0
+    downloadvolumefactor:
+      text: 0
+    uploadvolumefactor:
+      text: 1
+
+download:
+  selectors:
+    - selector: 'script:contains("magnet:?")'
+      filters:
+        - name: regexp
+          args: "'(magnet:\\?[^']+)'"
+# engine n/a (PunBB 1.4)

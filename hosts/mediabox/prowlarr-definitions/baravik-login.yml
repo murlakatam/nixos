@@ -1,0 +1,17 @@
+# Login block for baravik.yml, inserted before "search:" by hosts/mediabox/prowlarr.nix only when
+# mediabox.baravik.login = true (sops keys baravik-username / baravik-password). Guest search needs no
+# account; this is for when the site closes anonymous search. Untested against a real account.
+# Prowlarr logs in when a page lacks the logout link, and keeps the cookie for 30 days.
+login:
+  path: login/
+  method: form
+  form: form#afocus
+  inputs:
+    req_username: "{{ .Config.username }}"
+    req_password: "{{ .Config.password }}"
+    save_pass: 1
+  error:
+    - selector: div.error-box ul.error-list
+  test:
+    path: search/
+    selector: a[href*="/logout/"]
