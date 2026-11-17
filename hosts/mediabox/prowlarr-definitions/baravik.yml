@@ -4,7 +4,7 @@
 # /var/lib/private/prowlarr/Definitions/Custom/. Not in Prowlarr/Indexers or Jackett (checked 2026-11-17).
 # - Search: guest-capable /search/ in "posts" view (first post of each topic, gives size/quality/imdb).
 #   The site allows one search per 30 s, so requestDelay is 31 s (applies to every request).
-# - RSS (no keywords): "recent active topics" list (titles only, no size).
+# - RSS (no keywords): topics active in the last year (one page, titles only, no size).
 # - Login: none by default (guest search). baravik-login.yml adds it when mediabox.baravik.login is on.
 # - Download: the topic page; the magnet is set by an inline <script>. Magnets are public.
 # - Seeders/leechers: the forum shows none, so seeders are a fixed 1 (passes Radarr/Sonarr's default
@@ -61,7 +61,16 @@ search:
     - path: search/
       followredirect: true
   inputs:
-    $raw: "{{ if .Keywords }}action=search&keywords={{ .Keywords }}&search_in=-1&show_as=posts{{ range .Categories }}&forum[]={{.}}{{end}}{{ else }}action=show_recent{{ end }}"
+    # Plain inputs, not $raw: Prowlarr URL-encodes $raw twice (Cyrillic keywords became %25D0...).
+    # Empty values are dropped, so keywordless requests send only action/value.
+    action: "{{ if .Keywords }}search{{ else }}show_recent{{ end }}"
+    keywords: "{{ .Keywords }}"
+    search_in: "{{ if .Keywords }}-1{{ else }}{{ end }}"
+    show_as: "{{ if .Keywords }}posts{{ else }}{{ end }}"
+    # RSS / app tests: topics active in the last year, newest first (one page, ~30 rows, all forums),
+    # so the Sonarr test finds TV rows as well as films.
+    value: "{{ if .Keywords }}{{ else }}31536000{{ end }}"
+    $raw: "{{ range .Categories }}forum[]={{.}}&{{end}}"
   keywordsfilters:
     # Sonarr appends S01 / S01E02; titles carry seasons in many spellings, so search the show name only.
     - name: re_replace
@@ -211,13 +220,13 @@ search:
       filters:
         - name: regexp
           args: '(?i)\b(\d{3,4}[pi]|4k|uhd)\b'
-    # "Якасьць відэа: BDRip-1080p" (posts view only)
+    # "Якасьць відэа: BDRip-1080p" / "Якасць: BDRip-AVC" (posts view only)
     title_qbody:
       selector: div.entry-content
       optional: true
       filters:
         - name: regexp
-          args: 'Якасьць\s+відэа\s*:\s*([A-Za-z0-9][A-Za-z0-9 .\-]*[A-Za-z0-9])'
+          args: 'Якас(?:ьць|ць)(?:\s+відэа)?\s*:\s*([A-Za-z0-9][A-Za-z0-9 .\-]*[A-Za-z0-9])'
         - name: re_replace
           args: ['(?i)\bWEB-?DL-?Rip\b', 'WEB-DL']
         - name: re_replace
@@ -228,7 +237,8 @@ search:
       optional: true
       filters:
         - name: regexp
-          args: 'Відэа\s*:\s*(\d{3,4})\s*[xх×]\s*\d{3,4}'
+          # WxH anywhere in the line ("Відэа: x264 AVC 960x540 ...")
+          args: 'Відэа\s*:[^:]{0,60}?\b(\d{3,4})\s*[xх×]\s*\d{3,4}'
         - name: re_replace
           args: ['^(?:3[6-9]\d\d|40\d\d)$', '2160p']
         - name: re_replace
