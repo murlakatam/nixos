@@ -53,6 +53,10 @@ Co-Authored-By trailer this way when one is required:
 - `FAILED (exit N)` with a nix error → fix the config and re-run with a fresh
   message (nothing was committed). To save tokens, focus on the first `error:`
   and its trace; don't echo the whole log back to the user.
+- Exit **75** with "A nix rebuild is already running" → another agent holds the
+  per-host rebuild lock. Nothing was built or committed. Wait, then re-run:
+  `until nix-rebuild-status -q; do sleep 15; done` (`nix-rebuild-status` alone
+  prints `free` or who holds it).
 - `sudo: a password is required` → the NOPASSWD rule for
   `nixos-rebuild-ai-root` (`modules/nixosModules/yubikey.nix`) isn't active on
   the running system. Don't retry or look for another way to get root. Stop and

@@ -1,0 +1,86 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "palette": {
+    "os": "#ACB0BE",
+    "pink": "#F5BDE6",
+    "lavender": "#B7BDF8",
+    "blue": "#8AADF4",
+    "green": "#A6E3A1",
+    "peach": "#FAB387",
+    "wight": "#FFFFFF",
+    "text": "#494D64"
+  },
+  "blocks": [
+    {
+      "alignment": "left",
+      "segments": [
+        {
+          "background": "p:blue",
+          "foreground": "p:wight",
+          "leading_diamond": "",
+          "style": "diamond",
+          "template": "{{.Icon}} ",
+          "type": "os"
+        },
+        {
+          "background": "p:blue",
+          "foreground": "p:text",
+          "powerline_symbol": "",
+          "style": "powerline",
+          "template": " {{ .Name }} ",
+          "type": "shell"
+        },
+        {
+          "background": "p:pink",
+          "foreground": "p:text",
+          "properties": {
+            "folder_icon": "....",
+            "home_icon": "~",
+            "style": "agnoster_short"
+          },
+          "powerline_symbol": "",
+          "style": "powerline",
+          "template": " {{ .Path }}",
+          "type": "path"
+        },
+        {
+          "background": "p:green",
+          "foreground": "p:text",
+          "properties": {
+            "display_mode": "context",
+            "fetch_virtual_env": true,
+            "home_enabled": false
+          },
+          "powerline_symbol": "",
+          "style": "powerline",
+          "template": "  {{ if .Venv }}{{ .Venv }}{{ end }}",
+          "type": "python"
+        },
+        {
+          "background": "p:lavender",
+          "foreground": "p:text",
+          "properties": {
+            "branch_icon": " ",
+            "cherry_pick_icon": " ",
+            "commit_icon": " ",
+            "fetch_status": false,
+            "fetch_upstream_icon": false,
+            "merge_icon": " ",
+            "no_commits_icon": " ",
+            "rebase_icon": " ",
+            "revert_icon": " ",
+            "tag_icon": " "
+          },
+          "powerline_symbol": "",
+          "trailing_diamond": "",
+          "style": "diamond",
+          "template": " {{ .HEAD }}",
+          "type": "git"
+        }
+      ],
+      "type": "prompt"
+    }
+  ],
+  "final_space": true,
+  "version": 3
+}

@@ -34,11 +34,6 @@ in {
     #   };
     # };
     home-manager.enable = true;
-    oh-my-posh = {
-      enable = true;
-      enableZshIntegration = true;
-      useTheme = "catppuccin";
-    };
     # nix-ld = {
     #   enable = true;
     #   libraries = with pkgs; [

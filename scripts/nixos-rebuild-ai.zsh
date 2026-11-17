@@ -9,6 +9,9 @@
 #   - On SUCCESS: prints one terse line. No diff, no logs, no notifications.
 #   - On FAILURE: prints the FULL captured output, then exits non-zero.
 #   - Commit happens UNPRIVILEGED (as you), only after a successful build.
+#   - One rebuild at a time: runs under the shared nix rebuild lock (_nix_locked,
+#     sourced by the bin wrapper). If another rebuild holds it, exits 75 at once
+#     and prints the holder (same report as `nix-rebuild-status`).
 #
 # Usage:
 #   nixos-rebuild-ai "feat: add foo module"
@@ -20,6 +23,13 @@ nixos-rebuild-ai() {
     print -ru2 -- "ERROR: commit message required. Usage: nixos-rebuild-ai \"<commit message>\""
     return 2
   fi
+
+  _nix_locked nixos-rebuild-ai "$msg" _nixos_rebuild_ai_core "$msg"
+}
+
+_nixos_rebuild_ai_core() {
+  local configDir="@dotfilesPath@"
+  local msg="$1"
 
   # NB: do NOT name this `status` — that's a read-only special var in zsh.
   local log rc

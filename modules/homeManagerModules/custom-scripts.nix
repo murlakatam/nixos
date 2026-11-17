@@ -36,6 +36,8 @@
   home.packages = [
     (pkgs.writeScriptBin "nixos-rebuild-ai" ''
       #!${pkgs.zsh}/bin/zsh
+      # one rebuild at a time per host (shared lock: dotfiles.shells, nix-rebuild-status)
+      source ${config.dotfiles.shells.rebuildLock.script}
       ${builtins.replaceStrings ["@dotfilesPath@"] [dotfilesPath]
         (builtins.readFile ../../scripts/nixos-rebuild-ai.zsh)}
       nixos-rebuild-ai "$@"

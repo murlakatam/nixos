@@ -9,7 +9,10 @@ zinit load hlissner/zsh-autopair
 zinit load ptavares/zsh-direnv
 # git aliases
 # some aliases are overriden by forgit
-zinit snippet https://github.com/ohmyzsh/ohmyzsh/raw/master/lib/git.zsh
+# re-download if source file is missing (stale .zwc-only cache)
+local _omz_git="$HOME/.local/share/zinit/snippets/OMZ::lib/git.zsh/git.zsh"
+[[ -d "${_omz_git:h}" && ! -f "$_omz_git" ]] && rm -rf "${_omz_git:h}"
+zinit snippet OMZ::lib/git.zsh
 
 # add colors to `man`
 zinit light ael-code/zsh-colored-man-pages

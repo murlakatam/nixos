@@ -15,10 +15,12 @@
 {inputs}: {
   system-monitors = ./system-monitors;
   cli-tools = ./cli-tools;
+  shells = ./shells;
   default = {
     imports = [
       ./system-monitors
       ./cli-tools
+      ./shells
     ];
   };
 }

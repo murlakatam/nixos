@@ -102,6 +102,7 @@ in {
   # Shared HM modules from this repo (modules/shared/home).
   dotfiles.system-monitors.enable = true;
   dotfiles.cli-tools.enable = true;
+  dotfiles.shells.enable = true;
 
   # herdr flavours (private herdr-nix flake; setup skills: herdr-nix-app/-tui/-core).
   herdr-nix = {
