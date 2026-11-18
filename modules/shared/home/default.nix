@@ -16,11 +16,13 @@
   system-monitors = ./system-monitors;
   cli-tools = ./cli-tools;
   shells = ./shells;
+  terminals = ./terminals;
   default = {
     imports = [
       ./system-monitors
       ./cli-tools
       ./shells
+      ./terminals
     ];
   };
 }

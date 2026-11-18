@@ -12,13 +12,8 @@
   getTerminalExe = terminalName:
     if terminalName == "ghostty"
     then lib.getExe pkgs.ghostty
-    #else if terminalName == "alacritty" then lib.getExe pkgs.alacritty
-    else if terminalName == "kitty"
-    then lib.getExe pkgs.kitty
     else if terminalName == "gnome-terminal"
     then lib.getExe pkgs.gnome-terminal
-    #else if terminalName == "wezterm" then lib.getExe pkgs.wezterm
-    #else if builtins.hasAttr terminalName pkgs then lib.getExe pkgs.${terminalName}
     else terminalName; # Fallback to the name itself if not found
 
   terminalExe = getTerminalExe terminal;
@@ -93,7 +88,6 @@ in {
   # Import Program Configurations
   imports = [
     ../../modules/shells
-    ../../modules/terms
     ../../modules/homeManagerModules
     inputs.herdr-nix.homeManagerModules.default
     outputs.homeManagerModules.default
@@ -103,6 +97,7 @@ in {
   dotfiles.system-monitors.enable = true;
   dotfiles.cli-tools.enable = true;
   dotfiles.shells.enable = true;
+  dotfiles.terminals.enable = true;
 
   # herdr flavours (private herdr-nix flake; setup skills: herdr-nix-app/-tui/-core).
   herdr-nix = {
