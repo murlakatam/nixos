@@ -7,7 +7,6 @@
     ./custom-scripts.nix
     ./git.nix
     ./flatpak.nix
-    ./tmux.nix
     ./emoji.nix
     ./zed.nix
     # ./opencode.nix

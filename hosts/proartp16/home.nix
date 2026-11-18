@@ -98,6 +98,13 @@ in {
   dotfiles.cli-tools.enable = true;
   dotfiles.shells.enable = true;
   dotfiles.terminals.enable = true;
+  dotfiles.file-managers = {
+    enable = true;
+    krusader = {
+      enable = true;
+      mountCommand = "/run/wrappers/bin/mount";
+    };
+  };
 
   # herdr flavours (private herdr-nix flake; setup skills: herdr-nix-app/-tui/-core).
   herdr-nix = {

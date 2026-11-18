@@ -42,7 +42,6 @@
     #silver-searcher # ag
     kubectl # kubernetes cli
     kubelogin # azure kube login
-    krusader # total commander alternative
     k9s # k8s management
     lazydocker
     lazygit
@@ -57,7 +56,6 @@
     figlet # better banners
     toilet # even better banners
     dust # disk usage for humans
-    #yazi # file explorer
     sd # sed for humans
     tor-browser # tor browser
     plex-desktop

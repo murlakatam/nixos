@@ -17,12 +17,14 @@
   cli-tools = ./cli-tools;
   shells = ./shells;
   terminals = ./terminals;
+  file-managers = ./file-managers;
   default = {
     imports = [
       ./system-monitors
       ./cli-tools
       ./shells
       ./terminals
+      ./file-managers
     ];
   };
 }

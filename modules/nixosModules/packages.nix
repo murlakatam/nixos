@@ -10,8 +10,6 @@
     # herdr TUI: installed shell-wrapped by the herdr-nix home-manager module
     inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.herdr-app # herdr GUI (bundles herdr-core)
     inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.ccstatusline # claude code statusline
-    yazi
-    yaziPlugins.wl-clipboard
     #inputs.nix-inspect.packages.${pkgs.system}.default
 
     #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
