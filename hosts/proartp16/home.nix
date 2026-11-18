@@ -110,6 +110,13 @@ in {
     enable = true;
     whisper.acceleration = "vulkan";
   };
+  dotfiles.knowledge-base = {
+    enable = true;
+    vaults.brain = {
+      path = "/home/${username}/docs/brain";
+      remote = "git@github.com:murlakatam/brain.git";
+    };
+  };
 
   # herdr flavours (private herdr-nix flake; setup skills: herdr-nix-app/-tui/-core).
   herdr-nix = {

@@ -20,6 +20,7 @@
   file-managers = ./file-managers;
   dev-tools = ./dev-tools;
   meeting-recorder = ./meeting-recorder;
+  knowledge-base = ./knowledge-base;
   default = {
     imports = [
       ./system-monitors
@@ -29,6 +30,7 @@
       ./file-managers
       ./dev-tools
       ./meeting-recorder
+      ./knowledge-base
     ];
   };
 }
