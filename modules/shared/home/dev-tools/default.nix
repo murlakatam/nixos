@@ -54,7 +54,10 @@ in {
       };
     };
     direnv.enable = enabledByDefault "direnv with nix-direnv";
-    lsps.enable = enabledByDefault "language servers (nix, bash, yaml, json/html/css, lua, markdown, C#, TypeScript, Python)";
+    lsps = {
+      enable = enabledByDefault "language servers (nix, bash, yaml, json/html/css, lua, markdown, C#, TypeScript, Python)";
+      python.enable = enabledByDefault "pylsp (python-lsp-server, low priority: a host's own pylsp env with plugins wins)";
+    };
     data-tools = {
       enable = enabledByDefault "data tools (visidata, tennis, pandoc)";
       csvDefault = {
@@ -105,6 +108,10 @@ in {
       };
     })
 
+    (lib.mkIf (cfg.lsps.enable && cfg.lsps.python.enable) {
+      home.packages = [(lib.lowPrio pkgs.python3Packages.python-lsp-server)];
+    })
+
     (lib.mkIf cfg.lsps.enable {
       home.packages = with pkgs; [
         nixd
@@ -116,7 +123,6 @@ in {
         csharp-ls
         typescript-language-server
         typescript # tsserver, needed by typescript-language-server
-        python3Packages.python-lsp-server # pylsp
       ];
     })
 
