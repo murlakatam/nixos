@@ -62,17 +62,17 @@
         "systems": "systems"
       },
       "locked": {
-        "lastModified": 1794722018,
-        "narHash": "sha256-U/Eb6F2I+m6U7c/HkXZc/yGb66KnTTtcaUfCwr+mRfY=",
+        "lastModified": 1794984061,
+        "narHash": "sha256-6FsGV2P4qwO82vxjzPtQiQeQ4pAeA3Re1Yx0Jk50CoU=",
         "owner": "murlakatam",
         "repo": "declarr",
-        "rev": "dc734ef250929b680a30797fc9fbad682d935213",
+        "rev": "7033b96befd4bb90566eab208c766e73ea6047be",
         "type": "github"
       },
       "original": {
         "owner": "murlakatam",
         "repo": "declarr",
-        "rev": "dc734ef250929b680a30797fc9fbad682d935213",
+        "rev": "7033b96befd4bb90566eab208c766e73ea6047be",
         "type": "github"
       }
     },

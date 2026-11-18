@@ -511,11 +511,22 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    sops.secrets = lib.mapAttrs (_: _: {}) secretNames;
+    # A changed value restarts its readers on deploy, so a rotation applies without manual restarts:
+    # declarr re-syncs every key it reads; Searcharr re-reads the arr keys and the webhook secret.
+    sops.secrets = lib.mapAttrs (k: _: {
+      restartUnits =
+        ["declarr.service"]
+        ++ lib.optional (config.local.searcharr.enable
+          && builtins.elem k ["arr-radarr-apikey" "arr-sonarr-apikey" "searcharr-webhook-secret"])
+        "searcharr.service";
+    })
+    secretNames;
 
     # Pin the API keys to the current values so existing links (Prowlarr apps, Searcharr) keep working.
+    # The arr reads its key from this env file at start, so a new key restarts that arr.
     sops.templates = lib.genAttrs ["radarr" "sonarr" "prowlarr"] (n: {
       content = "${lib.toUpper n}__AUTH__APIKEY=${config.sops.placeholder."arr-${n}-apikey"}\n";
+      restartUnits = ["${n}.service"];
     });
     services.radarr.environmentFiles = [config.sops.templates.radarr.path];
     services.sonarr.environmentFiles = [config.sops.templates.sonarr.path];

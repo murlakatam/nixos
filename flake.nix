@@ -48,7 +48,7 @@
     herdr-nix.url = "git+ssh://git@github.com/murlakatam/herdr-nix";
     # Declarative Radarr/Sonarr/Prowlarr config (fork of upidapi/declarr; adds --diff, bug fixes).
     declarr = {
-      url = "github:murlakatam/declarr/dc734ef250929b680a30797fc9fbad682d935213";
+      url = "github:murlakatam/declarr/7033b96befd4bb90566eab208c766e73ea6047be";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
