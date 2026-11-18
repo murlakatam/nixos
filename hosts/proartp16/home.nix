@@ -105,6 +105,7 @@ in {
       mountCommand = "/run/wrappers/bin/mount";
     };
   };
+  dotfiles.dev-tools.enable = true;
 
   # herdr flavours (private herdr-nix flake; setup skills: herdr-nix-app/-tui/-core).
   herdr-nix = {

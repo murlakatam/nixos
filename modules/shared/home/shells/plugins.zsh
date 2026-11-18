@@ -5,8 +5,6 @@ zinit load belak/zsh-utils
 # autopair delimiters for zsh
 zinit ice wait lucid pick'autopair.zsh'
 zinit load hlissner/zsh-autopair
-# direnv
-zinit load ptavares/zsh-direnv
 # git aliases
 # some aliases are overriden by forgit
 # re-download if source file is missing (stale .zwc-only cache)

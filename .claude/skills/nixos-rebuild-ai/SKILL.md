@@ -6,11 +6,13 @@ allowed-tools: Bash(nixos-rebuild-ai:*)
 
 # nixos-rebuild-ai — how Claude rebuilds this machine
 
-Wrapper source: `scripts/nixos-rebuild-ai.zsh`. It runs `alejandra .`, then
+Wrapper source: `scripts/nixos-rebuild-ai.zsh` (scoped-commit helpers
+`_nix_scope_*` live in `modules/shared/home/shells/nix-rebuild-lock.zsh`). It
+stages the paths you name, formats them with alejandra, runs
 `nixos-rebuild switch --flake .#proartp16` via `sudo nixos-rebuild-ai-root`,
-then on success `git commit -am "<msg>"`. Success prints exactly one line
-`OK: rebuilt + committed "<msg>"`. Failure dumps the full log to stderr and exits
-non-zero.
+then on success commits **only those paths** (`git commit -- <paths>`; the body
+lists the files). Success prints `OK: rebuilt + committed "<subject>"`, plus
+warning lines if any. Failure dumps the full log to stderr and exits non-zero.
 
 ## The exact invocation
 
@@ -18,8 +20,19 @@ non-zero.
 `modules/homeManagerModules/custom-scripts.nix`), so call it directly:
 
 ```bash
-nixos-rebuild-ai "<commit message>"
+nixos-rebuild-ai "<commit message>" <path>...
 ```
+
+**Always pass every path you changed** (files or dirs, relative to your cwd or
+absolute; new and deleted files included, an optional `--` before them is fine).
+Other agents edit this repo concurrently; naming paths keeps their edits out of
+your commit. Without paths it falls back to committing every tracked change and
+warns `no paths given: committed every tracked change ...`.
+
+The build itself always includes every uncommitted change in the tree (flakes
+read the work tree). With paths, tracked changes outside them are listed as
+`also in this build, NOT committed: ...`. That's informational: they're someone
+else's WIP. Mention them to the user if they could affect your result.
 
 Use `timeout: 600000`. If you expect a long local build (see pre-flight), use
 `run_in_background: true` and wait for the completion notification instead of
@@ -27,12 +40,10 @@ polling.
 
 ## Pre-flight (cheap, no root)
 
-1. **New files must be git-tracked** or the flake can't see them, and `commit -a`
-   won't include them: `git add <new files>`.
-2. **Check what will get committed.** `commit -am` sweeps in *every* tracked
-   modification, including the user's unrelated WIP. Run `git status --short`;
-   if there are changes you didn't make, mention them and write a message that
-   covers them (or ask).
+1. **Name your paths** (see above); the wrapper `git add`s them, so new files
+   are tracked for the flake. A typo'd path fails before building (exit 2).
+2. **Check the tree.** Run `git status --short`; changes you didn't make are
+   someone else's: leave them alone (don't name them, don't commit them).
 3. **Evaluate first** to catch eval errors and see what will compile:
    ```bash
    nix build --dry-run .#nixosConfigurations.proartp16.config.system.build.toplevel 2>&1 | grep -E 'error|will be built' -A15 | head -40
@@ -49,7 +60,7 @@ Co-Authored-By trailer this way when one is required:
 
 ## Reading the result
 
-- `OK: ...` → done. Don't re-run or "verify" with another rebuild.
+- `OK: ...` → done. Read any `⚠️` lines above it. Don't re-run or "verify" with another rebuild.
 - `FAILED (exit N)` with a nix error → fix the config and re-run with a fresh
   message (nothing was committed). To save tokens, focus on the first `error:`
   and its trace; don't echo the whole log back to the user.

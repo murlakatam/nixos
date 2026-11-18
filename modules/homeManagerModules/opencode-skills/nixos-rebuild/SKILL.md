@@ -11,7 +11,7 @@ Apply NixOS/home-manager config changes on this machine.
 ## The ONLY command you may use
 
 ```
-nixos-rebuild-ai "<git commit message>"
+nixos-rebuild-ai "<git commit message>" <paths you changed>...
 ```
 
 That's it. This wrapper is:
@@ -19,7 +19,7 @@ That's it. This wrapper is:
 - **Non-interactive** — never opens an editor, never prompts for a password, never blocks on stdin.
 - **Token-efficient** — prints nothing but a single `OK:` line on success.
 - **Loud on failure** — dumps the full build log to stderr and exits non-zero.
-- **Auto-committing** — formats with alejandra, does the privileged switch, then `git commit -am "<message>"` on success.
+- **Auto-committing** — formats with alejandra, does the privileged switch, then commits only the named paths on success (without paths: every tracked change, with a warning). The build still includes all uncommitted changes in the tree.
 
 ## IMPORTANT: requires a physical YubiKey touch
 

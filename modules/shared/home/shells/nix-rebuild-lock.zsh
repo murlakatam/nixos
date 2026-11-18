@@ -13,6 +13,9 @@
 # Re-entrant within one shell: nix-update-ai holds the lock and calls nix-rebuild,
 # which must not fight its own caller. Only the outermost call takes and drops the
 # lock. NIX_REBUILD_LOCK overrides the path (the tests use it).
+#
+# Also here: the scoped-commit helpers (_nix_scope_*, at the end) that rebuild
+# commands use to commit only their caller's paths.
 
 zmodload zsh/system zsh/datetime 2>/dev/null
 
@@ -128,4 +131,82 @@ _nix_locked() {
         _nix_rebuild_post
     fi
     return $rc
+}
+
+# ── Scoped commits ─────────────────────────────────────────────────────────────
+# Rebuild commands that commit take the paths their caller changed, so a rebuild
+# commits only those and never another agent's edits. Run these inside the repo.
+# The BUILD still reads the whole work tree (flakes do), so _nix_scope_foreign
+# lists what the build includes but the commit leaves out.
+#
+#   _nix_scope_args <args...>      sets reply=(absolute paths), dropping a leading --
+#   _nix_scope_stage <paths...>    git add -A them (new/deleted files too); fails on a typo
+#   _nix_scope_foreign <paths...>  tracked changes outside the paths, one per line
+#   _nix_scope_commit <msg> [paths...]
+#       with paths: commit only them (git commit -- paths), body lists the files;
+#       without:   commit every tracked change (old behaviour), body lists the files,
+#                  and print a warning naming them on stderr.
+
+_nix_scope_args() {
+    [[ "${1:-}" == "--" ]] && shift
+    reply=()
+    local p
+    for p in "$@"; do reply+=("${p:a}"); done
+}
+
+_nix_scope_stage() {
+    (( $# )) || return 0
+    git add -A -- "$@"
+}
+
+# Repo-relative form of each path (absolute or relative to $PWD).
+_nix_scope_rel() {
+    local top p
+    top=$(git rev-parse --show-toplevel) || return 1
+    for p in "$@"; do
+        p=${p:a}
+        p=${p#$top}
+        p=${p#/}
+        print -r -- "${p%/}"
+    done
+}
+
+_nix_scope_foreign() {
+    local -a mine
+    mine=("${(@f)$(_nix_scope_rel "$@")}")
+    local line f p hit
+    git status --porcelain=v1 --untracked-files=no | while IFS= read -r line; do
+        f=${line:3}
+        f=${f##* -> }
+        hit=0
+        for p in "${mine[@]}"; do
+            if [[ -z "$p" || "$f" == "$p" || "$f" == "$p"/* ]]; then
+                hit=1
+                break
+            fi
+        done
+        (( hit )) || print -r -- "$f"
+    done
+}
+
+_nix_scope_commit() {
+    local msg="$1"
+    shift
+    local files
+    if (( $# )); then
+        files=$(git diff --cached --name-only -- "$@")
+        if [[ -z "$files" ]]; then
+            print -r -- "nothing to commit in the named paths"
+            return 0
+        fi
+        git commit -q -m "$msg" -m "Files:"$'\n'"$files" -- "$@"
+    else
+        files=$( { git diff --cached --name-only; git diff --name-only; } | sort -u)
+        if [[ -z "$files" ]]; then
+            print -r -- "nothing to commit"
+            return 0
+        fi
+        git commit -q -am "$msg" -m "Files:"$'\n'"$files" || return $?
+        print -ru2 -- "⚠️  no paths given: committed every tracked change, maybe other sessions' too: ${(j:, :)${(f)files}}"
+    fi
 }

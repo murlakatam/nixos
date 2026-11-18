@@ -1,28 +1,13 @@
-{
-  pkgs,
-  lib,
-  host,
-  ...
-}: let
+# proartp16 git bits. Generic git config (aliases, ignores, lazygit/gh/pre-commit) is
+# dotfiles.dev-tools in modules/shared/home/dev-tools.
+{host, ...}: let
   inherit (import ../../hosts/${host}/variables.nix) gitUsername gitEmail;
 in {
-  programs = {
-    git = {
-      enable = true;
-
-      settings = {
-        alias = {
-          pushup = "!git push --set-upstream origin `git symbolic-ref --short HEAD`";
-        };
-        user = {
-          name = "${gitUsername}";
-          email = "${gitEmail}";
-        };
-        core = {
-          autocrlf = "input";
-          editor = "code --wait";
-        };
-      };
+  programs.git.settings = {
+    user = {
+      name = "${gitUsername}";
+      email = "${gitEmail}";
     };
+    core.editor = "code --wait";
   };
 }

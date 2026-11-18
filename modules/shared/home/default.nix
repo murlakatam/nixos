@@ -18,6 +18,7 @@
   shells = ./shells;
   terminals = ./terminals;
   file-managers = ./file-managers;
+  dev-tools = ./dev-tools;
   default = {
     imports = [
       ./system-monitors
@@ -25,6 +26,7 @@
       ./shells
       ./terminals
       ./file-managers
+      ./dev-tools
     ];
   };
 }

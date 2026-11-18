@@ -15,7 +15,6 @@
     #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     #  wget
     age # modern key gen
-    alejandra
     azure-artifacts-credprovider
     azure-cli
     bat # Cat clone with syntax highlighting
@@ -23,7 +22,6 @@
     brightnessctl # command line tool to adjust brightness
     cabextract # needed by winetricks
     cloudflared # cloudflare client
-    csharp-ls # C# Language Server
     dconf-editor # Configuration editor for dconf
     dconf2nix # Convert dconf settings to Nix
     docker
@@ -64,7 +62,6 @@
     lutris # A game manager that simplifies installing and running games from various sources (Steam, GOG, etc.).
     mosh # remote ssh
     nerd-fonts.jetbrains-mono
-    nixd # nix lsp for editors
     nixfmt # nix formatter
     # nodejs_22 #node
     # nodePackages.prettier #node d
@@ -95,7 +92,6 @@
     tree-sitter-grammars.tree-sitter-python
     tree-sitter-grammars.tree-sitter-c-sharp
     turbo # High-performance build system for JavaScript and TypeScript codebases
-    typescript # TypeScript language support
     vscode
     vulkan-tools # Provides tools for testing and debugging the Vulkan graphics API, often used by modern games.
     udiskie # removable disk automounter (usb sticks)

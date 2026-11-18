@@ -6,12 +6,6 @@
   inherit (import ../../hosts/${host}/variables.nix) gitUsername gitEmail;
 in {
   programs = {
-    direnv = {
-      enable = true;
-      enableZshIntegration = true;
-      enableBashIntegration = true;
-      nix-direnv.enable = true;
-    };
     firefox = {
       enable = true;
       # keep the legacy profile location (new default is XDG, needs a manual move)

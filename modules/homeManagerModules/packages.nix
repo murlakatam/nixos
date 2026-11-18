@@ -20,7 +20,6 @@
     #diff-so-fancy
     cod # turn any --help into completion
     devenv
-    gh # GitHub CLI (forks, PRs)
     glab # GitLab CLI
     (lib.hiPrio (with dotnetCorePackages; #dotnet sdk versions
       
@@ -44,7 +43,6 @@
     kubelogin # azure kube login
     k9s # k8s management
     lazydocker
-    lazygit
     lazysql
     mc
     mono # .net dev framework
