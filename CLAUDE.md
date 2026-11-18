@@ -26,7 +26,7 @@ hold one (download URLs with `apikey=`, indexer `fields`, `config.xml`, sqlite t
   copies stdout through (multios), so use `>/dev/null 2>&1`.
 - **Don't decrypt sops to look at a value.** Check key names and lengths only.
 - **The user enters secrets, not agents.** Write a script that reads hidden input (`read -rs`),
-  pipes it into `sops set --value-stdin` and prints lengths only (see `scripts/sops-set.sh`). The
+  pipes it into `sops set --value-stdin` and prints lengths only, then delete the script. The
   user runs it in their own terminal. Random keys can be generated straight into sops.
 - **Tools log too.** Before running a tool that may fail, check whether its error output dumps
   request bodies. If it does, fix or redact it first (declarr did this once).
