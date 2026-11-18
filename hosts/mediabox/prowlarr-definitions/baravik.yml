@@ -70,7 +70,8 @@ search:
     # RSS / app tests: topics active in the last year, newest first (one page, ~30 rows, all forums),
     # so the Sonarr test finds TV rows as well as films.
     value: "{{ if .Keywords }}{{ else }}31536000{{ end }}"
-    $raw: "{{ range .Categories }}forum[]={{.}}&{{end}}"
+    # No category chosen (manual Prowlarr search): the mapped media forums only, not music/books/chat.
+    $raw: "{{ if .Categories }}{{ range .Categories }}forum[]={{.}}&{{end}}{{ else }}forum[]=8&forum[]=9&forum[]=11&forum[]=21&forum[]=26&forum[]=30&forum[]=31&{{ end }}"
   keywordsfilters:
     # Sonarr appends S01 / S01E02; titles carry seasons in many spellings, so search the show name only.
     - name: re_replace
