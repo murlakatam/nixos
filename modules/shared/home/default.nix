@@ -19,6 +19,7 @@
   terminals = ./terminals;
   file-managers = ./file-managers;
   dev-tools = ./dev-tools;
+  meeting-recorder = ./meeting-recorder;
   default = {
     imports = [
       ./system-monitors
@@ -27,6 +28,7 @@
       ./terminals
       ./file-managers
       ./dev-tools
+      ./meeting-recorder
     ];
   };
 }

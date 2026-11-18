@@ -106,6 +106,10 @@ in {
     };
   };
   dotfiles.dev-tools.enable = true;
+  dotfiles.meeting-recorder = {
+    enable = true;
+    whisper.acceleration = "vulkan";
+  };
 
   # herdr flavours (private herdr-nix flake; setup skills: herdr-nix-app/-tui/-core).
   herdr-nix = {
