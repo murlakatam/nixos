@@ -69,7 +69,6 @@
       name = "kb-sync-${name}";
       runtimeInputs = [pkgs.git pkgs.openssh pkgs.coreutils pkgs.gnused pkgs.util-linux pkgs.libnotify];
       text = ''
-        export GIT_SSH_COMMAND=${lib.escapeShellArg gitSsh}
         vault=${lib.escapeShellArg v.path}
         maxBytes=$(( ${toString v.sync.maxFileSizeMB} * 1024 * 1024 ))
 
@@ -91,6 +90,10 @@
           exit 1
         fi
         cd "$vault"
+        # Non-interactive ssh, unless the repo pins its own (e.g. a per-repo key).
+        if ! git config core.sshCommand >/dev/null; then
+          export GIT_SSH_COMMAND=${lib.escapeShellArg gitSsh}
+        fi
 
         exec 9>".git/kb-sync.lock"
         flock -n 9 || { echo "kb-sync-${name}: already running"; exit 0; }
