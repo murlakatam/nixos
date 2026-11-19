@@ -162,6 +162,13 @@
         {nixpkgs.config.allowUnfree = true;}
         ./hosts/mediabox/config.nix
       ];
+
+      nuc = mkHost "nuc" [
+        inputs.disko.nixosModules.disko
+        inputs.nixos-facter-modules.nixosModules.facter
+        {nixpkgs.config.allowUnfree = true;}
+        ./hosts/nuc/config.nix
+      ];
     };
   };
 }
