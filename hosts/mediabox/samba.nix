@@ -20,8 +20,11 @@
           "server string" = "mediabox";
           "server role" = "standalone server";
           "map to guest" = "never";
-          "interfaces" = "enp3s0 tailscale0 lo";
-          "bind interfaces only" = "yes";
+          # No "bind interfaces only": smbd starts before tailscale0 has its IP and never binds it.
+          # Access is limited by "hosts allow" (LAN, tailnet, localhost) plus the firewall instead,
+          # which also keeps out the global IPv6 addresses on enp3s0.
+          "hosts allow" = "192.168.0.0/24 100.64.0.0/10 fd7a:115c:a1e0::/48 127.0.0.1 ::1";
+          "hosts deny" = "ALL";
           "disable netbios" = "yes"; # SMB over 445 only; discovery via wsdd/avahi
           "smb ports" = "445";
           "load printers" = "no";
