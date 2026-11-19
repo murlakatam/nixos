@@ -10,6 +10,17 @@
     ];
   };
   programs.zsh.enable = true;
+  # Write deploy key for murlakatam/nixos only (private key generated on this box, never copied).
+  # A separate alias, so plain github.com (forwarded agent, private flake inputs) is unaffected.
+  # The dotfiles checkout's origin is git@github-nixos:murlakatam/nixos.git.
+  programs.ssh.extraConfig = ''
+    Host github-nixos
+      HostName github.com
+      HostKeyAlias github.com
+      User git
+      IdentityFile ~/.ssh/id_ed25519_github_nixos
+      IdentitiesOnly yes
+  '';
   # sudo is authenticated by the forwarded SSH agent (key must be in the root-owned
   # /etc/ssh/authorized_keys.d/%u). No agent forwarded => no sudo.
   security.pam.sshAgentAuth.enable = true;
