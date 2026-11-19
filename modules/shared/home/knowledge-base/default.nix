@@ -11,7 +11,8 @@
 #     an empty remote is skipped). An existing repo and its origin are never rewritten.
 #   - `kb-sync-<name>` (also run by the timer): commit local changes, fetch, rebase onto the
 #     remote, push. A rebase conflict aborts the rebase, notifies and pushes nothing; files over
-#     sync.maxFileSizeMB stop the sync before committing. An unreachable remote is a no-op.
+#     sync.maxFileSizeMB stop the sync before committing. Network errors are retried quietly
+#     (alert after sync.staleAfterHours); auth/ssh-config errors alert and fail at once.
 #   - managed ignores (Obsidian workspace/cache, trash, tool caches) go to .git/info/exclude, so
 #     nothing is committed into the vault by Nix.
 # The vault's own .obsidian settings and plugins stay in the vault; host-specific plugins and GPU
@@ -144,10 +145,29 @@
         fi
         branch="$(git symbolic-ref --short HEAD)"
 
-        if ! timeout 120 git fetch --quiet origin; then
-          echo "kb-sync-${name}: remote unreachable; will retry" >&2
-          exit 0
+        # Network trouble (offline, DNS, timeout) is retried quietly until the last good fetch is
+        # older than sync.staleAfterHours; anything else (auth, ssh config, missing repo) can't fix
+        # itself, so it alerts and fails the unit at once.
+        okFile=.git/kb-sync-last-ok
+        if ! fetchErr="$(timeout 120 git fetch --quiet origin 2>&1)"; then
+          echo "$fetchErr" >&2
+          case "$fetchErr" in
+            *"Could not resolve hostname"*|*"Temporary failure in name resolution"*|*"Network is unreachable"*|*"Connection timed out"*|*"Operation timed out"*|*"No route to host"*|*"Connection refused"*|*"Connection reset"*|*"Connection closed by"*|"")
+              last="$(cat "$okFile" 2>/dev/null || echo 0)"
+              if [ $(( $(date +%s) - last )) -gt $(( ${toString v.sync.staleAfterHours} * 3600 )) ] && [ "$last" != 0 ]; then
+                alert "remote unreachable for over ${toString v.sync.staleAfterHours} h (last good sync $(date -d "@$last" '+%F %R'))"
+                exit 1
+              fi
+              echo "kb-sync-${name}: remote unreachable (network); will retry" >&2
+              exit 0
+              ;;
+            *)
+              alert "fetch from origin failed (not a network error): $(printf '%s' "$fetchErr" | head -n 1)"
+              exit 1
+              ;;
+          esac
         fi
+        date +%s > "$okFile"
         if git rev-parse -q --verify "refs/remotes/origin/$branch" >/dev/null; then
           if ! git "''${ident[@]}" rebase --quiet "origin/$branch"; then
             git rebase --abort || true
@@ -184,6 +204,11 @@
           type = lib.types.str;
           default = "hourly";
           description = "systemd OnCalendar for the sync timer.";
+        };
+        staleAfterHours = lib.mkOption {
+          type = lib.types.ints.positive;
+          default = 24;
+          description = "Alert when the remote has been unreachable (network errors) for this long.";
         };
         maxFileSizeMB = lib.mkOption {
           type = lib.types.ints.positive;
