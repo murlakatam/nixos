@@ -89,7 +89,7 @@ in {
   imports = [
     ../../modules/shells
     ../../modules/homeManagerModules
-    inputs.herdr-nix.homeManagerModules.default
+    inputs.herdr-nix.homeManagerModules.nocompat # ai.permissions comes from ai-permissions below
     outputs.homeManagerModules.default
   ];
 
@@ -117,6 +117,9 @@ in {
       remote = "git@github.com:murlakatam/brain.git";
     };
   };
+
+  # ai.permissions.* (herdr, skills) merged into ~/.claude/settings.json.
+  dotfiles.ai-permissions.enable = true;
 
   # herdr flavours (private herdr-nix flake; setup skills: herdr-nix-app/-tui/-core).
   herdr-nix = {

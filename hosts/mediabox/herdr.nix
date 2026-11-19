@@ -23,9 +23,12 @@
     extraSpecialArgs = {inherit inputs;};
     users.eugene = {
       imports = [
-        inputs.herdr-nix.homeManagerModules.default
+        inputs.herdr-nix.homeManagerModules.nocompat
         outputs.homeManagerModules.knowledge-base
+        outputs.homeManagerModules.ai-permissions
       ];
+      # ai.permissions.* (herdr hooks + allow list) merged into ~/.claude/settings.json.
+      dotfiles.ai-permissions.enable = true;
       home.stateVersion = "26.05";
       # Resume runs from zsh's initContent, so HM must own ~/.zshrc.
       programs.zsh.enable = true;

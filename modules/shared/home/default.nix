@@ -21,6 +21,7 @@
   dev-tools = ./dev-tools;
   meeting-recorder = ./meeting-recorder;
   knowledge-base = ./knowledge-base;
+  ai-permissions = ./ai-permissions;
   default = {
     imports = [
       ./system-monitors
@@ -31,6 +32,7 @@
       ./dev-tools
       ./meeting-recorder
       ./knowledge-base
+      ./ai-permissions
     ];
   };
 }
