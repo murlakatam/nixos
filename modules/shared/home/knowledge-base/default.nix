@@ -44,8 +44,11 @@
   mkClone = name: v:
     pkgs.writeShellApplication {
       name = "kb-clone-${name}";
-      runtimeInputs = [pkgs.git pkgs.openssh pkgs.coreutils];
+      runtimeInputs = [pkgs.git pkgs.coreutils];
       text = ''
+        # Prefer the host's ssh (it accepts the host's ~/.ssh/config, which nix's openssh rejects
+        # on some non-NixOS setups with "Bad owner or permissions"); nix openssh is the fallback.
+        export PATH="$PATH:${pkgs.openssh}/bin"
         export GIT_SSH_COMMAND=${lib.escapeShellArg gitSsh}
         vault=${lib.escapeShellArg v.path}
         remote=${lib.escapeShellArg (toString v.remote)}
@@ -67,8 +70,11 @@
   mkSync = name: v:
     pkgs.writeShellApplication {
       name = "kb-sync-${name}";
-      runtimeInputs = [pkgs.git pkgs.openssh pkgs.coreutils pkgs.gnused pkgs.util-linux pkgs.libnotify];
+      runtimeInputs = [pkgs.git pkgs.coreutils pkgs.gnused pkgs.util-linux pkgs.libnotify];
       text = ''
+        # Prefer the host's ssh (it accepts the host's ~/.ssh/config, which nix's openssh rejects
+        # on some non-NixOS setups with "Bad owner or permissions"); nix openssh is the fallback.
+        export PATH="$PATH:${pkgs.openssh}/bin"
         vault=${lib.escapeShellArg v.path}
         maxBytes=$(( ${toString v.sync.maxFileSizeMB} * 1024 * 1024 ))
 
