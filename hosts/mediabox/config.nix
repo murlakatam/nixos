@@ -18,6 +18,9 @@
     ./declarr.nix
     ./telegram-requests.nix
     ./herdr.nix
+    ./postgres.nix
+    ./samba.nix
+    ./vault-backup.nix
   ];
 
   # declarr: sync (WRITES) after a verified-zero --diff; backups in /srv/backup/arr/2026-11-15, restore: docs/arr-restore.md.
