@@ -107,6 +107,13 @@
           exit 1
         fi
 
+        # Headless hosts may have no git identity: fall back to a per-host sync author.
+        ident=()
+        if [ -z "$(git config user.email || true)" ]; then
+          h="$(uname -n)"
+          ident=(-c "user.name=kb-sync ($h)" -c "user.email=kb-sync@$h")
+        fi
+
         if [ -n "$(git status --porcelain)" ]; then
           git add -A
           big=""
@@ -119,7 +126,7 @@
             alert "files over ${toString v.sync.maxFileSizeMB} MB, not syncing:$big"
             exit 1
           fi
-          git commit --quiet -m "Auto-sync: $(date '+%Y-%m-%d %H:%M:%S')"
+          git "''${ident[@]}" commit --quiet -m "Auto-sync: $(date '+%Y-%m-%d %H:%M:%S')"
         fi
 
         if ! git rev-parse -q --verify HEAD >/dev/null; then
@@ -133,7 +140,7 @@
           exit 0
         fi
         if git rev-parse -q --verify "refs/remotes/origin/$branch" >/dev/null; then
-          if ! git rebase --quiet "origin/$branch"; then
+          if ! git "''${ident[@]}" rebase --quiet "origin/$branch"; then
             git rebase --abort || true
             alert "conflict rebasing $vault onto origin/$branch; local commits kept, nothing pushed"
             exit 1

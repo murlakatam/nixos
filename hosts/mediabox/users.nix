@@ -10,8 +10,8 @@
     ];
   };
   programs.zsh.enable = true;
-  # Write deploy key for murlakatam/nixos only (private key generated on this box, never copied).
-  # A separate alias, so plain github.com (forwarded agent, private flake inputs) is unaffected.
+  # Per-repo write deploy keys (private keys generated on this box, never copied); GitHub
+  # allows a deploy key on one repo only, hence one alias each. Separate aliases, so plain github.com (forwarded agent, private flake inputs) is unaffected.
   # The dotfiles checkout's origin is git@github-nixos:murlakatam/nixos.git.
   programs.ssh.extraConfig = ''
     Host github-nixos
@@ -19,6 +19,13 @@
       HostKeyAlias github.com
       User git
       IdentityFile ~/.ssh/id_ed25519_github_nixos
+      IdentitiesOnly yes
+    # Write deploy key for murlakatam/brain only (knowledge-base vault sync, see herdr.nix).
+    Host github-brain
+      HostName github.com
+      HostKeyAlias github.com
+      User git
+      IdentityFile ~/.ssh/id_ed25519_github_brain
       IdentitiesOnly yes
   '';
   # sudo is authenticated by the forwarded SSH agent (key must be in the root-owned

@@ -3,6 +3,7 @@
 # from the laptop's Herdr app. Home-manager exists here only for this.
 {
   inputs,
+  outputs,
   pkgs,
   ...
 }: {
@@ -21,7 +22,10 @@
     backupFileExtension = "backup";
     extraSpecialArgs = {inherit inputs;};
     users.eugene = {
-      imports = [inputs.herdr-nix.homeManagerModules.default];
+      imports = [
+        inputs.herdr-nix.homeManagerModules.default
+        outputs.homeManagerModules.knowledge-base
+      ];
       home.stateVersion = "26.05";
       # Resume runs from zsh's initContent, so HM must own ~/.zshrc.
       programs.zsh.enable = true;
@@ -30,6 +34,16 @@
       herdr-nix.evacuate.appHost = "proartp16.tail328048.ts.net";
       # Claude Code for sessions moved here (herd-evacuate) and for resume after
       # reboot. Login is manual, once: `ssh mediabox`, then `claude /login`.
+      # Brain vault as local files for agent sessions here (headless: no Obsidian). Synced
+      # hourly through the github-brain deploy key alias (users.nix).
+      dotfiles.knowledge-base = {
+        enable = true;
+        obsidian.enable = false;
+        vaults.brain = {
+          path = "/home/eugene/docs/brain";
+          remote = "git@github-brain:murlakatam/brain.git";
+        };
+      };
       home.packages = [inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.claude-code];
     };
   };
