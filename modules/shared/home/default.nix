@@ -22,6 +22,7 @@
   meeting-recorder = ./meeting-recorder;
   knowledge-base = ./knowledge-base;
   ai-permissions = ./ai-permissions;
+  claude-code = ./claude-code;
   default = {
     imports = [
       ./system-monitors
@@ -33,6 +34,7 @@
       ./meeting-recorder
       ./knowledge-base
       ./ai-permissions
+      ./claude-code
     ];
   };
 }

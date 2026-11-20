@@ -120,6 +120,13 @@ in {
 
   # ai.permissions.* (herdr, skills) merged into ~/.claude/settings.json.
   dotfiles.ai-permissions.enable = true;
+  # Shared Claude Code setup: CLAUDE.md, deny baseline, notify + model-label hooks.
+  dotfiles.claude-code = {
+    enable = true;
+    notify.enable = true;
+    modelLabel.enable = true;
+    statusLine.enable = true;
+  };
 
   # herdr flavours (private herdr-nix flake; setup skills: herdr-nix-app/-tui/-core).
   herdr-nix = {
