@@ -71,9 +71,36 @@
       };
     };
 
-    # media: no dedicated disk yet. Add one as a "media" disk like "backup" above, with the
-    # new drive's by-id, btrfs, mountpoint /srv/media, options compress=zstd:1 noatime nofail,
-    # then format just that disk with disko (not a full reinstall). Until then /srv/media is a
-    # TEMPORARY subvolume on the backup HDD (see config.nix).
+    # Toshiba 1TB (ex-NUC): primary copy of the important data (photos, NUC archive, nightly
+    # service backups). Subvolumes so the vault-backup read-only snapshots work.
+    # Media stays on the backup HDD (@media, see config.nix): the 4 TB media-disk plan is shelved.
+    vault = {
+      type = "disk";
+      device = "/dev/disk/by-id/ata-TOSHIBA_MQ01ABD100_Z664S2D2S";
+      content = {
+        type = "gpt";
+        partitions.vault = {
+          size = "100%";
+          content = {
+            type = "btrfs";
+            extraArgs = ["-f" "-L" "vault"];
+            mountpoint = "/srv/vault";
+            mountOptions = ["compress=zstd" "noatime" "nofail"];
+            subvolumes = let
+              opts = ["compress=zstd" "noatime" "nofail"];
+            in {
+              "@photos" = {
+                mountpoint = "/srv/vault/photos";
+                mountOptions = opts;
+              };
+              "@nuc" = {
+                mountpoint = "/srv/vault/nuc";
+                mountOptions = opts;
+              };
+            };
+          };
+        };
+      };
+    };
   };
 }

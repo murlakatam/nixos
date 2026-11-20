@@ -85,9 +85,12 @@
   systemd.tmpfiles.rules = [
     "z /srv/backup 0755 root root -"
     "d /srv/backup/arr 0700 root root -"
+    "z /srv/vault 0755 root root -"
+    "z /srv/vault/photos 2775 root media -"
+    "z /srv/vault/nuc 0700 root root -"
   ];
 
-  # TEMPORARY until a dedicated media disk is added: /srv/media is a btrfs
+  # TEMPORARY (the 4 TB media-disk plan is shelved; media stays on the HDD): /srv/media is a btrfs
   # subvolume @media on the backup HDD.
   # The subvolume was created once by hand: `btrfs subvolume create /srv/backup/@media`.
   # The NUC keeps its copy of the media meanwhile, so /srv/backup is not a backup of it.
