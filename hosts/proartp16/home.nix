@@ -50,6 +50,11 @@ in {
         HostName 192.168.0.81
         User eugene
         ForwardAgent yes
+
+      Host nuc 192.168.0.52
+        HostName 192.168.0.52
+        User eugene
+        ForwardAgent yes
     '';
   };
 
@@ -138,6 +143,7 @@ in {
     hcMachines = {
       work = "work";
       mediabox = "mediabox";
+      nuc = "nuc";
     };
   };
 
