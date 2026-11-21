@@ -24,7 +24,22 @@
         inputs.herdr-nix.homeManagerModules.nocompat
         outputs.homeManagerModules.ai-permissions
         outputs.homeManagerModules.claude-code
+        outputs.homeManagerModules.system-monitors
+        outputs.homeManagerModules.cli-tools
+        outputs.homeManagerModules.shells
+        outputs.homeManagerModules.file-managers
+        outputs.homeManagerModules.dev-tools
       ];
+      # Shared CLI modules. file-managers is yazi only (Krusader stays off).
+      dotfiles.system-monitors.enable = true;
+      dotfiles.cli-tools.enable = true;
+      dotfiles.shells.enable = true;
+      dotfiles.file-managers.enable = true;
+      dotfiles.dev-tools = {
+        enable = true;
+        lsps.enable = false;
+        data-tools.enable = false;
+      };
       # ai.permissions.* (herdr hooks + allow list) merged into ~/.claude/settings.json.
       dotfiles.ai-permissions.enable = true;
       # Shared Claude Code setup; headless, so no notifications or status line.

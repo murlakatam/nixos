@@ -110,6 +110,5 @@
     pciutils
     usbutils
     rsync
-    tmux
   ];
 }
