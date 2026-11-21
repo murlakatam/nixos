@@ -26,9 +26,15 @@
         inputs.herdr-nix.homeManagerModules.nocompat
         outputs.homeManagerModules.knowledge-base
         outputs.homeManagerModules.ai-permissions
+        outputs.homeManagerModules.claude-code
       ];
       # ai.permissions.* (herdr hooks + allow list) merged into ~/.claude/settings.json.
       dotfiles.ai-permissions.enable = true;
+      # Shared Claude Code setup; headless, so no notifications or status line.
+      dotfiles.claude-code = {
+        enable = true;
+        modelLabel.enable = true;
+      };
       home.stateVersion = "26.05";
       # Resume runs from zsh's initContent, so HM must own ~/.zshrc.
       programs.zsh.enable = true;
