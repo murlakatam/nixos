@@ -41,6 +41,8 @@
       herdr-nix.core.enable = true;
       # No Herdr app here: herd-evacuate runs on the laptop over Tailscale SSH.
       herdr-nix.evacuate.appHost = "proartp16.tail328048.ts.net";
+      # FQDN: the short name fails host key checking (knownHosts above).
+      herdr-nix.hcMachines.proartp16 = "proartp16.tail328048.ts.net";
       # Claude Code for sessions moved here (herd-evacuate) and for resume after
       # reboot. Login is manual, once: `ssh mediabox`, then `claude /login`.
       # Brain vault as local files for agent sessions here (headless: no Obsidian). Synced
