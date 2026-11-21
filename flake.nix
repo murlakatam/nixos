@@ -51,6 +51,10 @@
       url = "github:murlakatam/declarr/7033b96befd4bb90566eab208c766e73ea6047be";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    obsidian-second-brain = {
+      url = "github:eugeniughelbur/obsidian-second-brain/86f77d0115bf4a64d4e79ac5ec85bc9a2c03b8e4";
+      flake = false;
+    };
   };
   outputs = {
     self,

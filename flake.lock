@@ -243,6 +243,23 @@
         "type": "github"
       }
     },
+    "obsidian-second-brain": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1794997637,
+        "narHash": "sha256-aihLRrSFhU0kWVlG+51BxbqtK1ccja9LjXmTBhhjquo=",
+        "owner": "eugeniughelbur",
+        "repo": "obsidian-second-brain",
+        "rev": "86f77d0115bf4a64d4e79ac5ec85bc9a2c03b8e4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "eugeniughelbur",
+        "repo": "obsidian-second-brain",
+        "rev": "86f77d0115bf4a64d4e79ac5ec85bc9a2c03b8e4",
+        "type": "github"
+      }
+    },
     "ohMyOpencodeSrc": {
       "flake": false,
       "locked": {
@@ -271,6 +288,7 @@
         "nix-ld": "nix-ld",
         "nixos-facter-modules": "nixos-facter-modules",
         "nixpkgs": "nixpkgs",
+        "obsidian-second-brain": "obsidian-second-brain",
         "ohMyOpencodeSrc": "ohMyOpencodeSrc",
         "sops-nix": "sops-nix"
       }

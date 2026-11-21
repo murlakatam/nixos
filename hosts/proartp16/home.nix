@@ -137,6 +137,11 @@ in {
     enable = true;
     package = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.oh-my-claudecode;
   };
+  dotfiles.obsidian-second-brain = {
+    enable = true;
+    src = inputs.obsidian-second-brain;
+    vaultPath = "/home/${username}/docs/brain";
+  };
 
   # herdr flavours (private herdr-nix flake; setup skills: herdr-nix-app/-tui/-core).
   herdr-nix = {
