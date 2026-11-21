@@ -38,9 +38,6 @@ in {
       Host work
         User eugene
 
-      Host ssh.murfly.me
-        ProxyCommand ${pkgs.cloudflared}/bin/cloudflared access ssh --hostname %h
-
       Host ssh-mediabox.murfly.me
         User eugene
         ForwardAgent yes
