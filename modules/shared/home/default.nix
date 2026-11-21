@@ -23,6 +23,7 @@
   knowledge-base = ./knowledge-base;
   ai-permissions = ./ai-permissions;
   claude-code = ./claude-code;
+  skills = ./skills;
   default = {
     imports = [
       ./system-monitors
@@ -35,6 +36,7 @@
       ./knowledge-base
       ./ai-permissions
       ./claude-code
+      ./skills
     ];
   };
 }
