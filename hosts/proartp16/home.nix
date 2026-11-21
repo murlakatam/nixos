@@ -138,6 +138,7 @@ in {
   herdr-nix = {
     app.enable = true; # implies core: Claude resumes after reboot
     tui.enable = true;
+    tuicr.enable = true;
     machines = ["mediabox"];
     # hc machines (name -> ssh target), added on activation if missing.
     # work is forward-only: its WARP blocks connections back into the tailnet.
