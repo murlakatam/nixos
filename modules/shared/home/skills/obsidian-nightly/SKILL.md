@@ -10,7 +10,7 @@ metadata:
 
 # Skill: obsidian-nightly
 
-**Vault:** `$OBSIDIAN_VAULT_PATH`. If it is unset, stop and ask the user for the path.
+**Vault:** `$OBSIDIAN_VAULT_PATH`, given in the "Vault path" section at the end of this skill. Use that value directly. Ask the user only if the section is missing.
 
 Evening reflection workflow. Fetches the day's meetings from Google Calendar, reflects
 on each one with the user, fills in the `## 🌙 Evening Review` section of the daily note,

@@ -10,7 +10,7 @@ metadata:
 
 # Skill: obsidian-ingest-inbox
 
-**Vault:** `$OBSIDIAN_VAULT_PATH`. If it is unset, stop and ask the user for the path.
+**Vault:** `$OBSIDIAN_VAULT_PATH`, given in the "Vault path" section at the end of this skill. Use that value directly. Ask the user only if the section is missing.
 
 Sweeps `$OBSIDIAN_VAULT_PATH/Inbox/` and runs `obsidian-ingest` (via the `ingest`
 alias) over every file found there — e.g. meeting transcripts, or anything else

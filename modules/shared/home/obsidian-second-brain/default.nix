@@ -113,7 +113,7 @@
       exec ${skillRoot}/hooks/${script}
     '';
 in {
-  imports = [../ai-permissions];
+  imports = [../ai-permissions ../skills];
 
   options.dotfiles.obsidian-second-brain = {
     enable = lib.mkEnableOption "the obsidian-second-brain skill and commands";
@@ -131,6 +131,11 @@ in {
   config = lib.mkIf cfg.enable {
     home.packages = [osbRun];
     home.sessionVariables.OBSIDIAN_VAULT_PATH = cfg.vaultPath;
+
+    # Agents can't always read the environment, so the vault skills get the path as text.
+    dotfiles.skills.extraSections =
+      lib.genAttrs ["obsidian-ingest-inbox" "obsidian-nightly" "obsidian-priority-list"]
+      (_: "## Vault path\n\nOn this host, `$OBSIDIAN_VAULT_PATH` is `${cfg.vaultPath}`.\n");
 
     home.file =
       {
