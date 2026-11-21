@@ -1,5 +1,5 @@
-# herdr-core on the NUC (herdr-nix core flavour, see the herdr-nix-core skill). Copy of
-# hosts/mediabox/herdr.nix minus the brain vault / github deploy-key aliases (mediabox-only).
+# herdr-core on the NUC (herdr-nix core flavour, see the herdr-nix-core skill). Based on
+# hosts/mediabox/herdr.nix, including the brain vault (deploy-key aliases are in users.nix).
 {
   inputs,
   outputs,
@@ -22,6 +22,7 @@
     users.eugene = {
       imports = [
         inputs.herdr-nix.homeManagerModules.nocompat
+        outputs.homeManagerModules.knowledge-base
         outputs.homeManagerModules.ai-permissions
         outputs.homeManagerModules.claude-code
         outputs.homeManagerModules.system-monitors
@@ -52,6 +53,16 @@
       programs.zsh.enable = true;
       herdr-nix.core.enable = true;
       herdr-nix.evacuate.appHost = "proartp16.tail328048.ts.net";
+      # Brain vault as local files for agent sessions here (headless: no Obsidian). Synced
+      # hourly through the github-brain deploy key alias (users.nix).
+      dotfiles.knowledge-base = {
+        enable = true;
+        obsidian.enable = false;
+        vaults.brain = {
+          path = "/home/eugene/docs/brain";
+          remote = "git@github-brain:murlakatam/brain.git";
+        };
+      };
       # Claude Code for moved sessions / resume after reboot. Login is manual, once: `claude /login`.
       home.packages = [inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.claude-code];
     };
