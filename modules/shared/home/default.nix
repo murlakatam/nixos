@@ -24,6 +24,7 @@
   ai-permissions = ./ai-permissions;
   claude-code = ./claude-code;
   skills = ./skills;
+  oh-my-claudecode = ./oh-my-claudecode;
   default = {
     imports = [
       ./system-monitors
@@ -37,6 +38,7 @@
       ./ai-permissions
       ./claude-code
       ./skills
+      ./oh-my-claudecode
     ];
   };
 }

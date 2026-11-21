@@ -133,6 +133,10 @@ in {
     enable = true;
     showboatPackage = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.showboat;
   };
+  dotfiles.oh-my-claudecode = {
+    enable = true;
+    package = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.oh-my-claudecode;
+  };
 
   # herdr flavours (private herdr-nix flake; setup skills: herdr-nix-app/-tui/-core).
   herdr-nix = {
