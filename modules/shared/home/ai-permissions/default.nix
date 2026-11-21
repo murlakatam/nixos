@@ -109,11 +109,11 @@
     (lib.attrNames plainEvents ++ lib.attrNames toolEvents);
 
   # denyPaths -> Read(p), Edit(p), plus one Bash(*root*) per basename root
-  # (`**/.env` and `**/.env.*` both give `*.env*`).
+  # (`**/.env` and `**/.env.*` both give `*.env*`), except noBashDenyRoots.
   bashRoot = p: lib.removeSuffix "*" (lib.removeSuffix ".*" (lib.last (lib.splitString "/" p)));
   deny =
     lib.concatMap (p: ["Read(${p})" "Edit(${p})"]) pcfg.denyPaths
-    ++ map (r: "Bash(*${r}*)") (lib.unique (map bashRoot pcfg.denyPaths))
+    ++ map (r: "Bash(*${r}*)") (lib.subtractLists ccfg.noBashDenyRoots (lib.unique (map bashRoot pcfg.denyPaths)))
     ++ ccfg.deny;
 
   # ai.claudeCode.settings (+ extraEnv as `env`), and its leaf paths: the writer
@@ -209,6 +209,12 @@ in {
         default = [];
         example = ["Read(~/.ssh/id_*)"];
         description = "Raw permissions.deny rules, for paths where denyPaths' Bash(*root*) rule would be wrong.";
+      };
+      noBashDenyRoots = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [];
+        example = [".env"];
+        description = "denyPaths basename roots that get Read/Edit rules but no Bash(*root*) rule, because the substring matches too many commands.";
       };
       ownedHookPatterns = lib.mkOption {
         type = lib.types.listOf lib.types.str;

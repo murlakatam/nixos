@@ -128,6 +128,8 @@ in {
         "**/.env"
         "**/.env.*"
       ];
+      # Bash(*.env*) would also block `.envrc`, `process.env`, jq paths, ...
+      ai.permissions.claudeCode.noBashDenyRoots = [".env"];
       # No Bash(*root*) for these: `~/.ssh/**` would give Bash(***), and agents
       # legitimately run `sops set` and `ssh`.
       ai.permissions.claudeCode.deny = lib.concatMap (p: ["Read(${p})" "Edit(${p})"]) [
