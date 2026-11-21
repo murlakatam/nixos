@@ -6,7 +6,7 @@
   pkgs,
   ...
 }: {
-  options.mediabox.samba.photos.enable = lib.mkEnableOption "read-only Photos share (/srv/vault/photos); needs the vault disk";
+  options.mediabox.samba.photos.enable = lib.mkEnableOption "read-only Photos share (merged /srv/photos, see photos.nix); needs the vault disk";
 
   config = {
     sops.secrets."samba-eugene-password".restartUnits = ["samba-eugene-passwd.service"];
@@ -49,7 +49,7 @@
     # Read-only Photos share, merged into settings only when enabled.
     services.samba.settings.Photos = lib.mkIf config.mediabox.samba.photos.enable {
       comment = "photos";
-      path = "/srv/vault/photos";
+      path = "/srv/photos";
       browseable = "yes";
       "read only" = "yes";
       "guest ok" = "no";
