@@ -119,11 +119,11 @@
     },
     "herdr-nix": {
       "locked": {
-        "lastModified": 1795318000,
-        "narHash": "sha256-0hubmQXmLf2JsGFMT9YCWpSYNvMJTXBaJ24YWG6tF7Y=",
+        "lastModified": 1795318173,
+        "narHash": "sha256-+Ac3h8jvNmo5tqDooiZKzEQr7ZNn40bhxbai4EzVdnk=",
         "ref": "refs/heads/main",
-        "rev": "3f2711b62cda52c876760e2d3038b2abd10ce8c3",
-        "revCount": 18,
+        "rev": "09d64f4170e5bca37b75d74fb613b94a870f9e67",
+        "revCount": 20,
         "type": "git",
         "url": "ssh://git@github.com/murlakatam/herdr-nix"
       },
@@ -149,6 +149,23 @@
       "original": {
         "owner": "nix-community",
         "repo": "home-manager",
+        "type": "github"
+      }
+    },
+    "humanlayer-skills": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1793567589,
+        "narHash": "sha256-ZuDObFjOFAahsvrxqDbL9FHrMVWx6Lnh5dttdsW+czo=",
+        "owner": "humanlayer",
+        "repo": "skills",
+        "rev": "4d69d20f6e9b57b4fcf0d501ccfb1be961f0f329",
+        "type": "github"
+      },
+      "original": {
+        "owner": "humanlayer",
+        "repo": "skills",
+        "rev": "4d69d20f6e9b57b4fcf0d501ccfb1be961f0f329",
         "type": "github"
       }
     },
@@ -260,6 +277,23 @@
         "type": "github"
       }
     },
+    "obsidian-skills": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1794955031,
+        "narHash": "sha256-Cs33MyHM+A+++IBOeB6LzGAd+CfItbeTdWE0MuserwE=",
+        "owner": "kepano",
+        "repo": "obsidian-skills",
+        "rev": "1c3f6df5683588e39b12462a75d1d0fcf550f955",
+        "type": "github"
+      },
+      "original": {
+        "owner": "kepano",
+        "repo": "obsidian-skills",
+        "rev": "1c3f6df5683588e39b12462a75d1d0fcf550f955",
+        "type": "github"
+      }
+    },
     "ohMyOpencodeSrc": {
       "flake": false,
       "locked": {
@@ -276,6 +310,23 @@
         "type": "github"
       }
     },
+    "ponytail": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1793275171,
+        "narHash": "sha256-PhPtZbeX2wBp19GtWRy+fV93+fFYZe5S487eXPDl/us=",
+        "owner": "DietrichGebert",
+        "repo": "ponytail",
+        "rev": "96608e078b2d5ea607c5c3b8b5a54d1c1fba6846",
+        "type": "github"
+      },
+      "original": {
+        "owner": "DietrichGebert",
+        "repo": "ponytail",
+        "rev": "96608e078b2d5ea607c5c3b8b5a54d1c1fba6846",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "asus-dialpad-driver": "asus-dialpad-driver",
@@ -283,13 +334,16 @@
         "disko": "disko",
         "herdr-nix": "herdr-nix",
         "home-manager": "home-manager",
+        "humanlayer-skills": "humanlayer-skills",
         "llm-agents": "llm-agents",
         "nix-flatpak": "nix-flatpak",
         "nix-ld": "nix-ld",
         "nixos-facter-modules": "nixos-facter-modules",
         "nixpkgs": "nixpkgs",
         "obsidian-second-brain": "obsidian-second-brain",
+        "obsidian-skills": "obsidian-skills",
         "ohMyOpencodeSrc": "ohMyOpencodeSrc",
+        "ponytail": "ponytail",
         "sops-nix": "sops-nix"
       }
     },
