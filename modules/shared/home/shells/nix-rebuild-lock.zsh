@@ -156,7 +156,20 @@ _nix_scope_args() {
 
 _nix_scope_stage() {
     (( $# )) || return 0
-    git add -A -- "$@"
+    # git add rejects a path whose deletion is already staged (it is in neither
+    # the work tree nor the index), so skip those. A typo has no staged deletion
+    # and still reaches git add, which fails on it.
+    local p
+    local -a todo
+    for p in "$@"; do
+        if [[ ! -e "$p" && ! -L "$p" && -z "$(git ls-files -- "$p")" \
+            && -n "$(git diff --cached --name-only --diff-filter=D -- "$p")" ]]; then
+            continue
+        fi
+        todo+=("$p")
+    done
+    (( ${#todo} )) || return 0
+    git add -A -- "${todo[@]}"
 }
 
 # Repo-relative form of each path (absolute or relative to $PWD).
