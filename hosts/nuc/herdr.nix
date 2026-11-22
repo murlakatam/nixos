@@ -53,6 +53,8 @@
       programs.zsh.enable = true;
       herdr-nix.core.enable = true;
       herdr-nix.evacuate.appHost = "proartp16.tail328048.ts.net";
+      # FQDN: the short name fails host key checking (knownHosts above).
+      herdr-nix.hcMachines.proartp16 = "proartp16.tail328048.ts.net";
       # Brain vault as local files for agent sessions here (headless: no Obsidian). Synced
       # hourly through the github-brain deploy key alias (users.nix).
       dotfiles.knowledge-base = {
