@@ -4,6 +4,7 @@
   inputs,
   outputs,
   pkgs,
+  lib,
   ...
 }: {
   imports = [inputs.home-manager.nixosModules.home-manager];
@@ -30,6 +31,8 @@
         outputs.homeManagerModules.shells
         outputs.homeManagerModules.file-managers
         outputs.homeManagerModules.dev-tools
+        outputs.homeManagerModules.skills
+        outputs.homeManagerModules.obsidian-second-brain
       ];
       # Shared CLI modules. file-managers is yazi only (Krusader stays off).
       dotfiles.system-monitors.enable = true;
@@ -65,6 +68,65 @@
           remote = "git@github-brain:murlakatam/brain.git";
         };
       };
+      # Vault skills: only the Inbox sweep and the ingest command it calls. Everything else
+      # stays off here, including the calendar, email and paid-API research commands.
+      dotfiles.skills = {
+        enable = true;
+        exclude = [
+          "build-a-demo"
+          "gauntlet-loop"
+          "in-browser"
+          "obsidian-nightly"
+          "obsidian-priority-list"
+          "output-style"
+          "priority-list"
+          "research-router"
+          "tuicr-review"
+        ];
+      };
+      dotfiles.obsidian-second-brain = {
+        enable = true;
+        src = inputs.obsidian-second-brain;
+        vaultPath = "/home/eugene/docs/brain";
+      };
+      home.file = lib.genAttrs (map (name: ".claude/commands/${name}.md") [
+        "idea-discovery"
+        "obsidian-architect"
+        "obsidian-board"
+        "obsidian-board-hygiene"
+        "obsidian-calendar"
+        "obsidian-capture"
+        "obsidian-challenge"
+        "obsidian-checkin"
+        "obsidian-connect"
+        "obsidian-daily"
+        "obsidian-decide"
+        "obsidian-distill"
+        "obsidian-emerge"
+        "obsidian-export"
+        "obsidian-find"
+        "obsidian-graduate"
+        "obsidian-health"
+        "obsidian-init"
+        "obsidian-learn"
+        "obsidian-log"
+        "obsidian-merge"
+        "obsidian-panel"
+        "obsidian-person"
+        "obsidian-project"
+        "obsidian-projects"
+        "obsidian-recap"
+        "obsidian-reconcile"
+        "obsidian-recurring"
+        "obsidian-research-deep"
+        "obsidian-review"
+        "obsidian-save"
+        "obsidian-synthesize"
+        "obsidian-task"
+        "obsidian-visualize"
+        "obsidian-world"
+        "vault-deep-synthesis"
+      ]) (_: {enable = false;});
       # Claude Code for moved sessions / resume after reboot. Login is manual, once: `claude /login`.
       home.packages = [inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.claude-code];
     };
