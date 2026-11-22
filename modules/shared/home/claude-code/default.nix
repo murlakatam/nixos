@@ -114,6 +114,11 @@ in {
         default = 0;
         description = "statusLine.padding.";
       };
+      package = lib.mkOption {
+        type = lib.types.nullOr lib.types.package;
+        default = null;
+        description = "Pinned ccstatusline. When set, the status line runs it by store path and this module installs its config. Null runs `ccstatusline` from PATH.";
+      };
     };
   };
 
@@ -152,8 +157,14 @@ in {
     (lib.mkIf cfg.statusLine.enable {
       ai.claudeCode.settings.statusLine = {
         type = "command";
-        command = "ccstatusline";
+        command =
+          if cfg.statusLine.package != null
+          then lib.getExe cfg.statusLine.package
+          else "ccstatusline";
         inherit (cfg.statusLine) padding;
+      };
+      xdg.configFile."ccstatusline/settings.json" = lib.mkIf (cfg.statusLine.package != null) {
+        source = ../../../homeManagerModules/ccstatusline/settings.json;
       };
     })
     (lib.mkIf cfg.notify.enable {

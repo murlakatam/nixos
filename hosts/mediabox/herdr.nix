@@ -30,10 +30,14 @@
       ];
       # ai.permissions.* (herdr hooks + allow list) merged into ~/.claude/settings.json.
       dotfiles.ai-permissions.enable = true;
-      # Shared Claude Code setup; headless, so no notifications or status line.
+      # Shared Claude Code setup; headless, so no notifications.
       dotfiles.claude-code = {
         enable = true;
         modelLabel.enable = true;
+        statusLine = {
+          enable = true;
+          package = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.ccstatusline;
+        };
       };
       home.stateVersion = "26.05";
       # Resume runs from zsh's initContent, so HM must own ~/.zshrc.
