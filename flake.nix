@@ -55,6 +55,18 @@
       url = "github:eugeniughelbur/obsidian-second-brain/86f77d0115bf4a64d4e79ac5ec85bc9a2c03b8e4";
       flake = false;
     };
+    obsidian-skills = {
+      url = "github:kepano/obsidian-skills/1c3f6df5683588e39b12462a75d1d0fcf550f955";
+      flake = false;
+    };
+    humanlayer-skills = {
+      url = "github:humanlayer/skills/4d69d20f6e9b57b4fcf0d501ccfb1be961f0f329";
+      flake = false;
+    };
+    ponytail = {
+      url = "github:DietrichGebert/ponytail/96608e078b2d5ea607c5c3b8b5a54d1c1fba6846";
+      flake = false;
+    };
   };
   outputs = {
     self,

@@ -258,6 +258,11 @@ in {
       default = {};
       description = "Env vars merged into settings.json `env`, one owned leaf each.";
     };
+    pluginDirs = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [];
+      description = "Plugin directories, written colon-separated to CLAUDE_CODE_PLUGIN_DIRS.";
+    };
   };
 
   options.dotfiles.ai-permissions = {
@@ -274,7 +279,12 @@ in {
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    home.activation.aiPermissionsClaudeSettings = lib.hm.dag.entryAfter ["writeBoundary"] "${writer}";
-  };
+  config = lib.mkMerge [
+    (lib.mkIf (config.ai.claudeCode.pluginDirs != []) {
+      ai.claudeCode.extraEnv.CLAUDE_CODE_PLUGIN_DIRS = lib.concatStringsSep ":" config.ai.claudeCode.pluginDirs;
+    })
+    (lib.mkIf cfg.enable {
+      home.activation.aiPermissionsClaudeSettings = lib.hm.dag.entryAfter ["writeBoundary"] "${writer}";
+    })
+  ];
 }

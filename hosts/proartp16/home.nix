@@ -142,6 +142,13 @@ in {
     src = inputs.obsidian-second-brain;
     vaultPath = "/home/${username}/docs/brain";
   };
+  dotfiles.claude-plugins = {
+    enable = true;
+    obsidianSkills.src = inputs.obsidian-skills;
+    showMe.src = inputs.humanlayer-skills;
+    ponytail.src = inputs.ponytail;
+    lsp.enable = true;
+  };
 
   # herdr flavours (private herdr-nix flake; setup skills: herdr-nix-app/-tui/-core).
   herdr-nix = {

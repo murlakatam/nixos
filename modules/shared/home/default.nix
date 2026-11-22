@@ -26,6 +26,7 @@
   skills = ./skills;
   oh-my-claudecode = ./oh-my-claudecode;
   obsidian-second-brain = ./obsidian-second-brain;
+  claude-plugins = ./claude-plugins;
   default = {
     imports = [
       ./system-monitors
@@ -41,6 +42,7 @@
       ./skills
       ./oh-my-claudecode
       ./obsidian-second-brain
+      ./claude-plugins
     ];
   };
 }

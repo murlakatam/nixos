@@ -53,8 +53,8 @@ in {
         OMC_MODEL_HIGH = "opus";
       };
       # OMC's hooks inherit Claude Code's environment, not a login shell's.
+      ai.claudeCode.pluginDirs = [pluginDir];
       ai.claudeCode.extraEnv = {
-        CLAUDE_CODE_PLUGIN_DIRS = pluginDir;
         OMC_PLUGIN_ROOT = pluginDir;
         OMC_MODEL_HIGH = "opus";
         # Keyword matching starts modes on negated or generated prompts.
