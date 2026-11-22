@@ -7,7 +7,26 @@
   ...
 }: let
   cfg = config.dotfiles.oh-my-claudecode;
-  pluginDir = "${cfg.package}/lib/node_modules/oh-my-claude-sisyphus";
+  # The plugin runs a bare `node`, which is not on PATH. Pin the package's own.
+  node = lib.findFirst (d: lib.getName d == "nodejs") pkgs.nodejs_24 cfg.package.buildInputs;
+  package = cfg.package.overrideAttrs (old: {
+    postFixup =
+      (old.postFixup or "")
+      + ''
+        r=$out/lib/node_modules/oh-my-claude-sisyphus
+        substituteInPlace $r/hooks/hooks.json $r/.mcp.json \
+          --replace-fail '"command": "node"' '"command": "${node}/bin/node"'
+        substituteInPlace $r/dist/hud/index.js $r/dist/notifications/reply-listener.js \
+          --replace-fail 'spawn("node",' 'spawn("${node}/bin/node",'
+        substituteInPlace $r/dist/features/rate-limit-wait/daemon.js \
+          --replace-fail "spawn('node'," "spawn('${node}/bin/node',"
+        substituteInPlace $r/bridge/cli.cjs \
+          --replace-fail 'spawn)("node", ["-e", daemonScript]' 'spawn)("${node}/bin/node", ["-e", daemonScript]'
+        substituteInPlace $r/dist/utils/omc-cli-rendering.js $r/bridge/cli.cjs $r/bridge/team.js $r/bridge/runtime-cli.cjs \
+          --replace-fail 'node "$CLAUDE_PLUGIN_ROOT"/bridge/cli.cjs' '${node}/bin/node "$CLAUDE_PLUGIN_ROOT"/bridge/cli.cjs'
+      '';
+  });
+  pluginDir = "${package}/lib/node_modules/oh-my-claude-sisyphus";
 in {
   imports = [../ai-permissions ../claude-code];
 
@@ -28,7 +47,7 @@ in {
 
   config = lib.mkIf cfg.enable (lib.mkMerge [
     {
-      home.packages = [cfg.package];
+      home.packages = [package];
       home.sessionVariables = {
         OMC_PLUGIN_ROOT = pluginDir;
         OMC_MODEL_HIGH = "opus";
@@ -38,6 +57,8 @@ in {
         CLAUDE_CODE_PLUGIN_DIRS = pluginDir;
         OMC_PLUGIN_ROOT = pluginDir;
         OMC_MODEL_HIGH = "opus";
+        # Keyword matching starts modes on negated or generated prompts.
+        OMC_SKIP_HOOKS = "keyword-detector";
       };
       home.file.".claude/.omc-config.json".text = builtins.toJSON {
         taskTool = "builtin";
@@ -68,8 +89,7 @@ in {
     (lib.mkIf cfg.herdrShim.enable {
       home.packages = [
         (lib.hiPrio (import ./herdr-shim.nix {
-          inherit pkgs;
-          inherit (cfg) package;
+          inherit pkgs package;
         }))
       ];
     })
