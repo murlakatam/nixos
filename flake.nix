@@ -105,7 +105,13 @@
       NIX_LD = "${pkgs.stdenv.cc.libc_bin}/bin/ld.so";
     };
   in {
-    packages = forAllSystems (system: {});
+    packages = forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
+
+    checks = forAllSystems (system: {
+      public-pool-regtest = nixpkgs.legacyPackages.${system}.callPackage ./pkgs/public-pool/regtest-check.nix {
+        public-pool = self.packages.${system}.public-pool;
+      };
+    });
 
     formatter =
       forAllSystems (system: nixpkgs.legacyPackages.${system}.alejandra);
