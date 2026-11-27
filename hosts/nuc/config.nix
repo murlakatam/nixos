@@ -111,4 +111,10 @@
     usbutils
     rsync
   ];
+
+  fileSystems."/srv/chain" = {
+    device = "/dev/disk/by-label/chain";
+    fsType = "ext4";
+    options = ["noatime" "nofail" "x-systemd.device-timeout=10s"];
+  };
 }
