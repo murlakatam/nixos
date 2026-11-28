@@ -119,11 +119,11 @@
     },
     "herdr-nix": {
       "locked": {
-        "lastModified": 1795847169,
-        "narHash": "sha256-zYNfysfzfJk33nGHjeZlQbt65o/bOmZfYKI2ruwy/rM=",
+        "lastModified": 1795848073,
+        "narHash": "sha256-QtpjfkZfPigmA6C8qmlTevb4WuxRWvpLSSPnKWcoBHI=",
         "ref": "refs/heads/main",
-        "rev": "b5cd883f871f88890225da03c7c02b08583b86c3",
-        "revCount": 25,
+        "rev": "13920127446b4739450796ed5f7c64772bad34b0",
+        "revCount": 26,
         "type": "git",
         "url": "ssh://git@github.com/murlakatam/herdr-nix"
       },
