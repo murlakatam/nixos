@@ -182,6 +182,7 @@
       nuc = mkHost "nuc" [
         inputs.disko.nixosModules.disko
         inputs.nixos-facter-modules.nixosModules.facter
+        inputs.sops-nix.nixosModules.sops
         {nixpkgs.config.allowUnfree = true;}
         ./hosts/nuc/config.nix
       ];

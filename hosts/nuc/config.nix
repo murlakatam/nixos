@@ -10,16 +10,14 @@
   imports = [
     ./disko.nix
     ./users.nix
+    ./secrets.nix
     ./herdr.nix
   ];
 
   networking.hostName = "nuc";
   system.stateVersion = "26.05";
 
-  dotfiles.tailscale = {
-    enable = true;
-    trustTailnet = true;
-  };
+  dotfiles.tailscale.enable = true;
 
   # Boot
   boot.loader.systemd-boot.enable = true;
@@ -52,7 +50,7 @@
   services.fstrim.enable = true;
   time.timeZone = "Australia/Sydney";
 
-  # Firewall: SSH only (tailscale0 is trusted via dotfiles.tailscale)
+  # Firewall: SSH only, on every interface (tailscale0 is not trusted: explicit ports only)
   networking.firewall = {
     enable = true;
     allowedTCPPorts = [22];
