@@ -39,7 +39,8 @@
   security.sudo.wheelNeedsPassword = true;
   # Fallback: without an agent, sudo asks eugene's Unix password (pam_unix after
   # ssh_agent_auth). Its yescrypt hash lives in sops (`mkpasswd -m yescrypt`), so a reinstall
-  # gets it too. If you change it with passwd, update the sops value as well.
+  # gets it too. mutableUsers = true: activation never overwrites an existing hash, so after
+  # changing the sops value also run `sudo usermod -p "$(sudo cat <secret path>)" eugene`.
   sops.secrets.eugene-password.neededForUsers = true;
   users.users.eugene.hashedPasswordFile = config.sops.secrets.eugene-password.path;
 }
