@@ -12,6 +12,8 @@ in {
       disablewallet=1
       blocksdir=${blocksDir}
       server=1
+      # Outbound P2P only: no 8333 listener (tailscale0 is trusted, so the firewall would not stop it).
+      listen=0
       # Cookie auth (dataDir/.cookie); no rpcuser/rpcpassword.
       rpcbind=127.0.0.1
       rpcallowip=127.0.0.1
