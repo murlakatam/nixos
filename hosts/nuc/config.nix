@@ -12,6 +12,7 @@
     ./users.nix
     ./secrets.nix
     ./herdr.nix
+    ./egress.nix
   ];
 
   networking.hostName = "nuc";
@@ -43,7 +44,7 @@
   # Nix
   nix.settings = {
     experimental-features = ["nix-command" "flakes"];
-    trusted-users = ["root" "eugene"];
+    trusted-users = ["root"];
   };
 
   zramSwap.enable = true;
