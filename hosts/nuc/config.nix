@@ -13,6 +13,7 @@
     ./secrets.nix
     ./herdr.nix
     ./egress.nix
+    ./bitcoind.nix
   ];
 
   networking.hostName = "nuc";
