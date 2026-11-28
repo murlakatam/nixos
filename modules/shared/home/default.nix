@@ -27,6 +27,9 @@
   oh-my-claudecode = ./oh-my-claudecode;
   obsidian-second-brain = ./obsidian-second-brain;
   claude-plugins = ./claude-plugins;
+  gnome = ./gnome;
+  music-players = ./music-players;
+  messengers = ./messengers;
   default = {
     imports = [
       ./system-monitors
@@ -43,6 +46,9 @@
       ./oh-my-claudecode
       ./obsidian-second-brain
       ./claude-plugins
+      ./gnome
+      ./music-players
+      ./messengers
     ];
   };
 }

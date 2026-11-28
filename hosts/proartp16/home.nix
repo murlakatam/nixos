@@ -150,6 +150,14 @@ in {
     lsp.enable = true;
   };
 
+  # GNOME keybindings (terminal, rofi on Super+space, herdr F4 / Super+/), prefs, mutter fix.
+  dotfiles.gnome = {
+    enable = true;
+    terminal = terminalExe;
+    rofi.enable = true;
+  };
+  dotfiles.music-players.enable = true;
+
   # herdr flavours (private herdr-nix flake; setup skills: herdr-nix-app/-tui/-core).
   herdr-nix = {
     app.enable = true; # implies core: Claude resumes after reboot
@@ -172,23 +180,6 @@ in {
       region = "en_AU.UTF-8";
     };
 
-    "org/gnome/desktop/applications/terminal" = {
-      exec = "${terminalExe}";
-    };
-
-    # Set keyboard shortcut for terminal.
-    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
-      binding = "<Primary><Alt>t";
-      command = "${terminalExe}";
-      name = "Launch Terminal";
-    };
-
-    # Enable custom keybindings
-    "org/gnome/settings-daemon/plugins/media-keys" = {
-      custom-keybindings = [
-        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
-      ];
-    };
     # wallpaper
     "org/gnome/desktop/background" = {
       picture-uri = "file:///home/${username}/Pictures/Wallpapers/nix.png";
