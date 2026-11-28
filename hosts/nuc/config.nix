@@ -14,7 +14,11 @@
     ./herdr.nix
     ./egress.nix
     ./bitcoind.nix
+    ./public-pool.nix
   ];
+
+  # Off until bitcoind has synced (getblocktemplate fails during IBD). Flip to true and redeploy.
+  nuc.publicPool.enable = false;
 
   networking.hostName = "nuc";
   system.stateVersion = "26.05";

@@ -7,6 +7,7 @@ in {
     enable = true;
     # Initial sync: 12 GB lets most or all of the UTXO set stay cached, so it is rarely flushed
     # mid-sync. Lower to ~2000 once synced to give RAM back to the pool.
+    # TODO(post-sync): dbCache = 2000.
     dbCache = 12000;
     extraConfig = ''
       disablewallet=1

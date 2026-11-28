@@ -111,6 +111,7 @@
       public-pool-regtest = nixpkgs.legacyPackages.${system}.callPackage ./pkgs/public-pool/regtest-check.nix {
         public-pool = self.packages.${system}.public-pool;
       };
+      nuc-public-pool = nixpkgs.legacyPackages.${system}.callPackage ./hosts/nuc/public-pool-test.nix {};
     });
 
     formatter =
