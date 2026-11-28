@@ -98,6 +98,6 @@
 +/// unconditionally rather than letting it check, download, or replace.
 +pub fn update(_check_only: bool, _to: Option<String>, _quiet: bool, _json: bool) -> Result<()> {
 +    anyhow::bail!(
-+        "kungfu update is disabled in this build — this kungfu is Nix-managed; bump the rev in overlays/kungfu-overlay.nix and run nix-rebuild instead"
++        "kungfu update is disabled in this build — this kungfu is Nix-managed; bump the rev in its Nix package and rebuild instead"
 +    );
  }
