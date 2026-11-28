@@ -157,6 +157,10 @@ in {
     rofi.enable = true;
   };
   dotfiles.music-players.enable = true;
+  dotfiles.messengers = {
+    enable = true;
+    threema.enable = true;
+  };
 
   # herdr flavours (private herdr-nix flake; setup skills: herdr-nix-app/-tui/-core).
   herdr-nix = {
