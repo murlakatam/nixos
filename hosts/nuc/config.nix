@@ -1,4 +1,4 @@
-# Intel NUC (192.168.0.52): lean server, free disk. Future use: stablecoin minting (undecided).
+# Intel NUC (192.168.0.52): sandboxed server for a Bitcoin full node + solo pool (bitcoind.nix, public-pool.nix).
 # Server bits are copied from hosts/mediabox/config.nix (not shared: mediabox is edited in parallel).
 # Install procedure: docs/nuc-install.md.
 {
