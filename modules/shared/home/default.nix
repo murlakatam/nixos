@@ -27,6 +27,7 @@
   oh-my-claudecode = ./oh-my-claudecode;
   obsidian-second-brain = ./obsidian-second-brain;
   claude-plugins = ./claude-plugins;
+  kungfu = ./kungfu;
   gnome = ./gnome;
   music-players = ./music-players;
   messengers = ./messengers;
@@ -46,6 +47,7 @@
       ./oh-my-claudecode
       ./obsidian-second-brain
       ./claude-plugins
+      ./kungfu
       ./gnome
       ./music-players
       ./messengers

@@ -1,0 +1,45 @@
+# Path traversal via memory entry `id`: unvalidated ids reached
+# `dir.join(format!("{id}.md"))`, letting `../../` escape `.kungfu/memory/`,
+# reachable via MCP `memory_get`/`memory_update`/`memory_archive`. Adds a
+# validate_id() guard requiring `mem_<digits>`. No upstream issue filed yet —
+# drop this patch once kungfu itself validates ids on this path.
+diff --git a/crates/kungfu-storage/src/project_memory.rs b/crates/kungfu-storage/src/project_memory.rs
+index d7edddb..6d416bc 100644
+--- a/crates/kungfu-storage/src/project_memory.rs
++++ b/crates/kungfu-storage/src/project_memory.rs
+@@ -171,6 +171,19 @@ fn entry_terms(meta: &MemoryMeta, content: &str) -> HashSet<String> {
+     terms
+ }
+ 
++/// Reject anything but a store-generated id (`mem_<digits>`). Ids reach
++/// `get`/`remove` unvalidated from MCP tool params; without this, a value
++/// like `../../../../home/user/.ssh/id_rsa` (or an absolute path) escapes the
++/// memory directory for arbitrary `.md` read/overwrite/delete.
++fn validate_id(id: &str) -> Result<()> {
++    anyhow::ensure!(
++        id.strip_prefix("mem_")
++            .is_some_and(|n| !n.is_empty() && n.chars().all(|c| c.is_ascii_digit())),
++        "invalid memory id: {id}"
++    );
++    Ok(())
++}
++
+ /// The manual-memory store. Owns its directory and an in-memory manifest cache.
+ pub struct ProjectMemoryStore {
+     dir: PathBuf,
+@@ -408,6 +421,7 @@ impl ProjectMemoryStore {
+     }
+ 
+     pub fn get(&self, id: &str) -> Result<ProjectMemoryEntry> {
++        validate_id(id)?;
+         self.ensure_ready()?;
+         let path = self.entry_path(id);
+         if !path.exists() {
+@@ -434,6 +448,7 @@ impl ProjectMemoryStore {
+     }
+ 
+     pub fn remove(&self, id: &str) -> Result<()> {
++        validate_id(id)?;
+         self.ensure_ready()?;
+         let path = self.entry_path(id);
+         if !path.exists() {

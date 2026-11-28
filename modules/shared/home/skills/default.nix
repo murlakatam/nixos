@@ -10,16 +10,18 @@
   cfg = config.dotfiles.skills;
 
   allSkills = lib.attrNames (lib.filterAttrs (_: t: t == "directory") (builtins.readDir ./.));
-  enabled =
-    lib.filter (n: !(builtins.elem n cfg.exclude) && (n != "build-a-demo" || cfg.showboatPackage != null))
-    allSkills;
+  enabled = lib.filter (n:
+    !(builtins.elem n cfg.exclude)
+    && (n != "build-a-demo" || cfg.showboatPackage != null)
+    && (n != "kungfu" || config.dotfiles.kungfu.enable))
+  allSkills;
   has = n: builtins.elem n enabled;
 
   skillText = n:
     builtins.readFile (./. + "/${n}/SKILL.md")
     + lib.optionalString (cfg.extraSections ? ${n}) "\n${cfg.extraSections.${n}}";
 in {
-  imports = [../ai-permissions];
+  imports = [../ai-permissions ../kungfu];
 
   options.dotfiles.skills = {
     enable = lib.mkEnableOption "the shared generic Claude Code skills";

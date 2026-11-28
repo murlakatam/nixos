@@ -1,0 +1,103 @@
+# kungfu is a Nix-built, Nix-managed package here — `kungfu update` self-
+# replacing the running binary conflicts with that immutability (the Nix
+# store and this repo's own record of "what's installed" would silently
+# diverge from the actual binary on disk). Not an upstream bug — this
+# repo's own packaging decision — so no upstream issue and this patch is
+# never meant to land upstream or be dropped; update kungfu here by
+# bumping the rev in package.nix next to this patch.
+--- a/crates/kungfu-cli/src/commands.rs
++++ b/crates/kungfu-cli/src/commands.rs
+@@ -2556,84 +2556,14 @@
+         .update
+ }
+ 
+-/// `kungfu update` — check for and install a new release.
++/// `kungfu update` — disabled in this build.
+ ///
+-/// Explicit invocations always hit the network; `--quiet` (the SessionStart-hook
+-/// shape) respects the `[update] check` setting and the 24h cache instead.
+-pub fn update(check_only: bool, to: Option<String>, quiet: bool, json: bool) -> Result<()> {
+-    let config = update_config();
+-    let repo = kungfu_update::github::REPO;
+-
+-    if check_only {
+-        let status = if quiet {
+-            kungfu_update::ensure_checked(&config, repo)?
+-        } else {
+-            kungfu_update::check_now(repo, kungfu_update::CHECK_TIMEOUT)?
+-        };
+-        if json {
+-            println!(
+-                "{}",
+-                serde_json::to_string_pretty(&serde_json::json!({
+-                    "current": status.current,
+-                    "latest": status.latest,
+-                    "update_available": status.update_available,
+-                    "checked_at": status.checked_at,
+-                    "source": status.source.as_str(),
+-                }))?
+-            );
+-        } else if status.update_available || !quiet {
+-            println!("{}", status.summary());
+-        }
+-        return Ok(());
+-    }
+-
+-    let target = match to {
+-        Some(pinned) => kungfu_update::version::normalize(&pinned),
+-        None => {
+-            let status = kungfu_update::check_now(repo, kungfu_update::CHECK_TIMEOUT)?;
+-            let Some(latest) = status.latest.clone() else {
+-                anyhow::bail!("could not determine the latest release; retry or use --to X.Y.Z");
+-            };
+-            if !status.update_available {
+-                if json {
+-                    println!(
+-                        "{}",
+-                        serde_json::to_string_pretty(&serde_json::json!({
+-                            "status": "up_to_date",
+-                            "current": status.current,
+-                            "latest": latest,
+-                        }))?
+-                    );
+-                } else {
+-                    println!("{}", status.summary());
+-                }
+-                return Ok(());
+-            }
+-            latest
+-        }
+-    };
+-
+-    let applied = kungfu_update::apply::apply(repo, &target, kungfu_update::CURRENT_VERSION)?;
+-
+-    if json {
+-        println!(
+-            "{}",
+-            serde_json::to_string_pretty(&serde_json::json!({
+-                "status": "updated",
+-                "from": applied.from,
+-                "to": applied.to,
+-                "path": applied.path.to_string_lossy(),
+-                "checksum": applied.checksum.as_str(),
+-                "restart_required": "restart the MCP server / Claude Code session to load the new binary",
+-            }))?
+-        );
+-    } else {
+-        println!("kungfu {} → {}", applied.from, applied.to);
+-        println!("  {}", applied.path.display());
+-        println!("  checksum: {}", applied.checksum.as_str());
+-        println!();
+-        println!("Restart Claude Code (or reconnect MCP via /mcp) — a running server keeps the old binary.");
+-        println!("The index migrates itself on the next call if the schema changed.");
+-    }
+-    Ok(())
++/// This binary is built and installed by Nix (dotfiles nix-rebuild), which
++/// makes it immutable-by-convention; a self-replacing update would silently
++/// diverge it from the pinned rev the Nix store thinks is installed. Refuse
++/// unconditionally rather than letting it check, download, or replace.
++pub fn update(_check_only: bool, _to: Option<String>, _quiet: bool, _json: bool) -> Result<()> {
++    anyhow::bail!(
++        "kungfu update is disabled in this build — this kungfu is Nix-managed; bump the rev in overlays/kungfu-overlay.nix and run nix-rebuild instead"
++    );
+ }

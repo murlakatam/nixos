@@ -1,0 +1,45 @@
+# The self-updater's checksum check failed open: any error or 404 fetching
+# SHA256SUMS let the update proceed unverified. Makes a missing/unreachable
+# checksum fatal (bail!) instead of silently downgrading to
+# Checksum::Unavailable. No upstream issue filed yet — drop this patch once
+# kungfu itself fails closed here.
+#
+# Note: this Nix package builds from source and is immutable/Nix-managed;
+# `kungfu update` self-replacing the running binary is not a supported way to
+# upgrade it here regardless (use nix-rebuild). This patch is still worth
+# carrying — it hardens the code path in case `kungfu update` is ever invoked
+# directly against a Nix-built binary.
+diff --git a/crates/kungfu-update/src/apply.rs b/crates/kungfu-update/src/apply.rs
+index d3d5a99..2f6e4f2 100644
+--- a/crates/kungfu-update/src/apply.rs
++++ b/crates/kungfu-update/src/apply.rs
+@@ -130,18 +130,23 @@ fn cleanup_leftovers(dir: &Path) {
+     let _ = std::fs::remove_file(dir.join("kungfu.exe.old"));
+ }
+ 
++/// Fails closed: a release with no reachable `SHA256SUMS` (or no entry for
++/// this asset) is refused rather than installed unverified. An attacker who
++/// can make the SHA256SUMS request fail (or a proxy that 404s it) must not be
++/// able to silently downgrade this to an unverified install.
+ fn verify_checksum(repo: &str, version: &str, asset: &str, file: &Path) -> Result<Checksum> {
+     let url = github::release_asset_url(repo, version, "SHA256SUMS");
+     let sums = match github::fetch_optional_text(&url, METADATA_TIMEOUT) {
+         Ok(Some(text)) => text,
+-        Ok(None) => return Ok(Checksum::Unavailable),
+-        Err(e) => {
+-            tracing::debug!("SHA256SUMS unreachable: {e:#}");
+-            return Ok(Checksum::Unavailable);
+-        }
++        Ok(None) => bail!(
++            "no SHA256SUMS published for {version}; refusing to install an unverified binary"
++        ),
++        Err(e) => bail!("could not fetch SHA256SUMS for {version}: {e:#}"),
+     };
+     let Some(expected) = github::checksum_for(&sums, asset) else {
+-        return Ok(Checksum::Unavailable);
++        bail!(
++            "SHA256SUMS for {version} has no entry for {asset}; refusing to install an unverified binary"
++        );
+     };
+     let actual = sha256_file(file)?;
+     if actual != expected {

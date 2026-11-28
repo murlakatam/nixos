@@ -129,6 +129,7 @@ in {
     modelLabel.enable = true;
     statusLine.enable = true;
   };
+  dotfiles.kungfu.enable = true;
   dotfiles.skills = {
     enable = true;
     showboatPackage = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.showboat;
